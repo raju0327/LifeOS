@@ -1,0 +1,17 @@
+{
+  "name": "Life OS Enterprise Workspace",
+  "short_name": "Life OS",
+  "description": "Secure session profiles, productivity trackers, finance planner, and personal vault.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0b10",
+  "theme_color": "#0a0b10",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1160/1160358.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
