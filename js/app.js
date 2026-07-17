@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Personal & Lifestyle
       contacts: [],
       passwords: [],
+      vaultItems: [],
       trips: [],
       vehicleLogs: [],
       mediaItems: [], // Books & Movies
@@ -304,6 +305,9 @@ document.addEventListener('DOMContentLoaded', () => {
           if (!this.state.habits) {
             this.state.habits = [];
           }
+          if (!this.state.vaultItems) {
+            this.state.vaultItems = [];
+          }
           if (!this.state.passwordResetRequests) {
             this.state.passwordResetRequests = [];
           }
@@ -387,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'jobApplications', 'notifications',
         
         // Include all finance data keys
-        'categories', 'budgets', 'goals', 'subscriptions', 'loans', 'transactions', 'habits'
+        'categories', 'budgets', 'goals', 'subscriptions', 'loans', 'transactions', 'habits', 'vaultItems'
       ];
       keys.forEach(k => {
         dashboardPayload[k] = this.state[k];
@@ -476,7 +480,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'moodLogs', 'medicineReminders', 'nutritionLogs', 'workoutLogs', 'contacts', 
             'trips', 'vehicleLogs', 'mediaItems', 'shoppingList', 'skills', 
             'jobApplications', 'notifications',
-            'categories', 'budgets', 'goals', 'subscriptions', 'loans', 'transactions', 'habits'
+            'categories', 'budgets', 'goals', 'subscriptions', 'loans', 'transactions', 'habits', 'vaultItems'
           ];
           keys.forEach(k => {
             if (dashboardObj[k] !== undefined) {

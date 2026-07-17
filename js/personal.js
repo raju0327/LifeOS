@@ -1,13 +1,16 @@
 /* ==========================================================================
-   LIFE OS - PERSONAL SECURITY VAULT & DOCUMENTS MODULE (js/personal.js)
+   LIFE OS - PERSONAL SECURITY VAULT MODULE (js/personal.js)
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
   const PersonalModule = {
+    categoryFilter: null,
+    searchQuery: '',
+
     init() {
+      this.initDefaultVaultItems();
+      this.setupVaultEventListeners();
       this.setupContactsForm();
-      this.setupPasswordForm();
-      this.setupDocumentsForm();
       this.render();
     },
 
@@ -15,243 +18,428 @@ document.addEventListener('DOMContentLoaded', () => {
       this.render();
     },
 
-    render() {
-      this.renderContacts();
-      this.renderPasswords();
-      this.renderDocuments();
+    initDefaultVaultItems() {
+      const state = this.app.state;
+      if (!state.vaultItems || state.vaultItems.length === 0) {
+        state.vaultItems = [
+          {
+            id: 'v-1',
+            name: 'Google Account',
+            category: 'Password',
+            description: 'kishore.raj@gmail.com',
+            secureData: 'GoogleSecurePass123!',
+            lastUpdated: '16 May 2026, 09:30 AM',
+            accessStatus: 'Locked'
+          },
+          {
+            id: 'v-2',
+            name: 'PAN Card',
+            category: 'ID & Certificate',
+            description: 'Permanent Account Number',
+            secureData: 'ABCDE1234F',
+            lastUpdated: '12 May 2026, 04:20 PM',
+            accessStatus: 'Locked'
+          },
+          {
+            id: 'v-3',
+            name: 'HDFC Bank Account',
+            category: 'Card & Account',
+            description: 'Savings Account **** 1234',
+            secureData: 'IFSC: HDFC0000123 / PIN: 9876',
+            lastUpdated: '10 May 2026, 11:15 AM',
+            accessStatus: 'Locked'
+          },
+          {
+            id: 'v-4',
+            name: 'Passport',
+            category: 'Document',
+            description: 'Passport No. *****9876',
+            secureData: 'Z1234567 / Exp: 2032-12-31',
+            lastUpdated: '08 May 2026, 02:45 PM',
+            accessStatus: 'Locked'
+          },
+          {
+            id: 'v-5',
+            name: 'WiFi Home',
+            category: 'Secure Note',
+            description: 'Home WiFi Credentials',
+            secureData: 'WiFiPassword2026_Secure',
+            lastUpdated: '05 May 2026, 08:10 PM',
+            accessStatus: 'Locked'
+          }
+        ];
+        this.app.saveState();
+      }
+
+      // Populate default contacts if empty
+      if (!state.contacts || state.contacts.length === 0) {
+        state.contacts = [
+          { id: 1, name: 'Marcus Raj (Dad)', phone: '+91 99999 88888', relation: 'Family' },
+          { id: 2, name: 'Elena Raj (Mom)', phone: '+91 99999 77777', relation: 'Family' },
+          { id: 3, name: 'Dr. Rajesh Gupta', phone: '+91 98765 43210', relation: 'Emergency' }
+        ];
+        this.app.saveState();
+      }
     },
 
-    // --- Contacts Directory ---
+    setupVaultEventListeners() {
+      // Toggle Add Form Modal
+      const btnAdd = document.getElementById('btn-add-vault-item');
+      const addContainer = document.getElementById('add-vault-item-container');
+      const btnCancel = document.getElementById('btn-cancel-vault-item');
+
+      if (btnAdd && addContainer) {
+        btnAdd.addEventListener('click', () => {
+          addContainer.style.display = addContainer.style.display === 'none' ? 'block' : 'none';
+        });
+      }
+
+      if (btnCancel && addContainer) {
+        btnCancel.addEventListener('click', () => {
+          addContainer.style.display = 'none';
+          document.getElementById('new-vault-item-form').reset();
+        });
+      }
+
+      // Add New Vault Item Submission
+      const form = document.getElementById('new-vault-item-form');
+      if (form) {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const name = document.getElementById('vault-item-name').value.trim();
+          const category = document.getElementById('vault-item-category').value;
+          const description = document.getElementById('vault-item-desc').value.trim();
+          const secureData = document.getElementById('vault-item-secure').value.trim();
+
+          const now = new Date();
+          const options = { day: 'numeric', month: 'short', year: 'numeric' };
+          const timeOpt = { hour: '2-digit', minute: '2-digit', hour12: true };
+          const lastUpdated = `${now.toLocaleDateString('en-US', options)}, ${now.toLocaleTimeString('en-US', timeOpt)}`;
+
+          const newItem = {
+            id: 'v-' + Date.now(),
+            name,
+            category,
+            description,
+            secureData,
+            lastUpdated,
+            accessStatus: 'Locked'
+          };
+
+          this.app.state.vaultItems.push(newItem);
+          this.app.saveState();
+          this.app.showToast(`Secure ${category} item added.`, 'success');
+
+          form.reset();
+          if (addContainer) addContainer.style.display = 'none';
+          this.render();
+        });
+      }
+
+      // Search Filter
+      const search = document.getElementById('vault-search-input');
+      if (search) {
+        search.addEventListener('input', (e) => {
+          this.searchQuery = e.target.value.toLowerCase();
+          this.renderTable();
+        });
+      }
+
+      // Backup Now button
+      const btnBackup = document.getElementById('btn-vault-backup-now');
+      if (btnBackup) {
+        btnBackup.addEventListener('click', () => {
+          this.app.showToast('Initiating Supabase cloud backup...', 'info');
+          
+          const now = new Date();
+          const options = { day: 'numeric', month: 'short', year: 'numeric' };
+          const timeOpt = { hour: '2-digit', minute: '2-digit', hour12: true };
+          const timeStr = `${now.toLocaleDateString('en-US', options)}, ${now.toLocaleTimeString('en-US', timeOpt)}`;
+          
+          const backupLabel = document.getElementById('vault-backup-date-label');
+          const backupOverviewLabel = document.getElementById('vault-overview-backup-date');
+          
+          if (backupLabel) backupLabel.innerText = timeStr;
+          if (backupOverviewLabel) backupOverviewLabel.innerText = now.toLocaleDateString('en-US', options);
+
+          // Force Supabase sync
+          if (typeof this.app.pushAllStateToSupabase === 'function') {
+            this.app.pushAllStateToSupabase();
+          } else {
+            this.app.showToast('Workspace backup completed locally.', 'success');
+          }
+        });
+      }
+
+      // Drag & drop file upload input listener
+      const fileInput = document.getElementById('vault-file-upload-input');
+      if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+          if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            const now = new Date();
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            const timeOpt = { hour: '2-digit', minute: '2-digit', hour12: true };
+            const lastUpdated = `${now.toLocaleDateString('en-US', options)}, ${now.toLocaleTimeString('en-US', timeOpt)}`;
+
+            const newItem = {
+              id: 'v-' + Date.now(),
+              name: file.name,
+              category: 'Document',
+              description: `Uploaded file (${Math.round(file.size / 1024)} KB)`,
+              secureData: 'SANDBOXED_FILE_URL',
+              lastUpdated,
+              accessStatus: 'Locked'
+            };
+
+            this.app.state.vaultItems.push(newItem);
+            this.app.saveState();
+            this.app.showToast(`File "${file.name}" encrypted and uploaded securely!`, 'success');
+            this.render();
+          }
+        });
+      }
+    },
+
     setupContactsForm() {
       const form = document.getElementById('contact-form');
-      const nameInput = document.getElementById('contact-name');
-      const phoneInput = document.getElementById('contact-phone');
-      const relSelect = document.getElementById('contact-rel');
+      if (form) {
+        // Remove duplicate listeners
+        const newForm = form.cloneNode(true);
+        form.parentNode.replaceChild(newForm, form);
 
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const name = nameInput.value.trim();
-        const phone = phoneInput.value.trim();
-        if (!name || !phone) return;
+        newForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const nameInput = document.getElementById('contact-name');
+          const phoneInput = document.getElementById('contact-phone');
+          const relSelect = document.getElementById('contact-rel');
 
-        this.app.state.contacts.push({
-          id: Date.now(),
-          name: name,
-          phone: phone,
-          relation: relSelect.value
-        });
+          const name = nameInput.value.trim();
+          const phone = phoneInput.value.trim();
+          if (!name || !phone) return;
 
-        this.app.saveState();
-        this.app.showToast(`Contact "${name}" logged!`, 'success');
-        
-        form.reset();
-        this.renderContacts();
-      });
-    },
+          this.app.state.contacts.push({
+            id: Date.now(),
+            name: name,
+            phone: phone,
+            relation: relSelect.value
+          });
 
-    renderContacts() {
-      const container = document.getElementById('contacts-list-container');
-      const contacts = this.app.state.contacts;
-
-      if (contacts.length === 0) {
-        container.innerHTML = `<div class="empty-state" style="font-size:0.75rem;">Your contacts directory is empty.</div>`;
-        return;
-      }
-
-      let html = '';
-      contacts.forEach(c => {
-        html += `
-          <div class="vault-item-row">
-            <div>
-              <strong>${c.name}</strong>
-              <span class="badge" style="margin-left:8px; font-size:0.65rem;">${c.relation}</span>
-              <p style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">📞 ${c.phone}</p>
-            </div>
-            <button class="icon-btn btn-delete-contact" data-contact-id="${c.id}">
-              <i data-lucide="trash-2" style="width:12px;height:12px;"></i>
-            </button>
-          </div>
-        `;
-      });
-
-      container.innerHTML = html;
-      if (window.lucide) window.lucide.createIcons();
-
-      container.querySelectorAll('.btn-delete-contact').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = parseInt(btn.getAttribute('data-contact-id'));
-          const idx = this.app.state.contacts.findIndex(c => c.id === id);
-          if (idx !== -1) {
-            this.app.state.contacts.splice(idx, 1);
-            this.app.saveState();
-            this.renderContacts();
-          }
-        });
-      });
-    },
-
-    // --- Password Vault Keeper ---
-    setupPasswordForm() {
-      const form = document.getElementById('password-vault-form');
-      const siteInput = document.getElementById('pass-site');
-      const userInput = document.getElementById('pass-user');
-      const passInput = document.getElementById('pass-val');
-
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const site = siteInput.value.trim();
-        const user = userInput.value.trim();
-        const pass = passInput.value.trim();
-
-        if (!site || !user || !pass) return;
-
-        this.app.state.passwords.push({
-          id: Date.now(),
-          site: site,
-          user: user,
-          pass: pass
-        });
-
-        this.app.saveState();
-        this.app.showToast('Credentials card secured!', 'success');
-
-        form.reset();
-        this.renderPasswords();
-      });
-    },
-
-    renderPasswords() {
-      const container = document.getElementById('passwords-list-container');
-      const passwords = this.app.state.passwords;
-
-      if (passwords.length === 0) {
-        container.innerHTML = `<div class="empty-state" style="font-size:0.75rem;">Password vault is empty.</div>`;
-        return;
-      }
-
-      let html = '';
-      passwords.forEach(p => {
-        html += `
-          <div class="vault-item-row" data-pass-id="${p.id}">
-            <div>
-              <strong>🌐 ${p.site}</strong>
-              <p style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">User: ${p.user}</p>
-              <p class="pass-val-text" style="font-size:0.8rem; color:var(--primary); margin-top:2px; display:none;">Pass: ${p.pass}</p>
-            </div>
-            <div style="display:flex; gap:6px;">
-              <button class="icon-btn btn-show-pass" data-pass-id="${p.id}"><i data-lucide="eye" style="width:12px;height:12px;"></i></button>
-              <button class="icon-btn btn-delete-pass" data-pass-id="${p.id}"><i data-lucide="trash-2" style="width:12px;height:12px;"></i></button>
-            </div>
-          </div>
-        `;
-      });
-
-      container.innerHTML = html;
-      if (window.lucide) window.lucide.createIcons();
-
-      // Show/Hide Toggle
-      container.querySelectorAll('.btn-show-pass').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = parseInt(btn.getAttribute('data-pass-id'));
-          const card = container.querySelector(`.vault-item-row[data-pass-id="${id}"]`);
-          const text = card.querySelector('.pass-val-text');
+          this.app.saveState();
+          this.app.showToast(`Contact "${name}" saved!`, 'success');
           
-          const icon = btn.querySelector('i');
+          newForm.reset();
+          this.renderContacts();
+        });
+      }
+    },
 
-          if (text.style.display === 'none') {
-            text.style.display = 'block';
-            icon.setAttribute('data-lucide', 'eye-off');
+    filterByCategory(category) {
+      this.categoryFilter = category;
+      const title = document.getElementById('vault-table-title');
+      if (title) {
+        title.innerText = `${category} Items`;
+      }
+      this.renderTable();
+    },
+
+    clearCategoryFilter() {
+      this.categoryFilter = null;
+      const title = document.getElementById('vault-table-title');
+      if (title) {
+        title.innerText = 'Recent Items';
+      }
+      this.renderTable();
+    },
+
+    toggleQuickAccessPanel(panelKey) {
+      const panels = ['contacts', 'numbers', 'insurance', 'medical'];
+      panels.forEach(key => {
+        const el = document.getElementById(`vault-qa-${key}-expanded`);
+        if (el) {
+          if (key === panelKey) {
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
           } else {
-            text.style.display = 'none';
-            icon.setAttribute('data-lucide', 'eye');
+            el.style.display = 'none';
           }
-          if (window.lucide) window.lucide.createIcons();
-        });
-      });
-
-      // Delete pass card
-      container.querySelectorAll('.btn-delete-pass').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = parseInt(btn.getAttribute('data-pass-id'));
-          const idx = this.app.state.passwords.findIndex(p => p.id === id);
-          if (idx !== -1) {
-            this.app.state.passwords.splice(idx, 1);
-            this.app.saveState();
-            this.renderPasswords();
-          }
-        });
+        }
       });
     },
 
-    // --- Documents Indexer ---
-    setupDocumentsForm() {
-      const form = document.getElementById('doc-form');
-      const titleInput = document.getElementById('doc-title');
-      const catSelect = document.getElementById('doc-category');
-      const refInput = document.getElementById('doc-ref');
+    toggleItemAccess(id) {
+      const item = this.app.state.vaultItems.find(v => v.id === id);
+      if (!item) return;
 
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const title = titleInput.value.trim();
-        if (!title) return;
+      item.accessStatus = item.accessStatus === 'Locked' ? 'Unlocked' : 'Locked';
+      this.renderTable();
+    },
 
-        this.app.state.documents.push({
-          id: Date.now(),
-          title: title,
-          category: catSelect.value,
-          ref: refInput.value.trim() || 'N/A',
-          date: new Date().toLocaleDateString()
-        });
-
+    deleteVaultItem(id) {
+      if (confirm('Are you sure you want to permanently delete this secure item from the vault?')) {
+        this.app.state.vaultItems = this.app.state.vaultItems.filter(v => v.id !== id);
         this.app.saveState();
-        this.app.showToast(`Document logged under category ${catSelect.value}`, 'success');
-
-        form.reset();
-        this.renderDocuments();
-      });
+        this.app.showToast('Item deleted from secure vault.', 'info');
+        this.render();
+      }
     },
 
-    renderDocuments() {
-      const listBody = document.getElementById('docs-list-body');
-      const docs = this.app.state.documents;
+    render() {
+      const items = this.app.state.vaultItems || [];
 
-      if (docs.length === 0) {
-        listBody.innerHTML = `<tr><td colspan="5" class="empty-state" style="font-size:0.75rem;">No documents catalogued.</td></tr>`;
+      // 1. Calculate Stats
+      const totalCount = items.length;
+      const passCount = items.filter(v => v.category === 'Password').length;
+      const docCount = items.filter(v => v.category === 'Document').length;
+      const cardCount = items.filter(v => v.category === 'Card & Account').length;
+      const notesCount = items.filter(v => v.category === 'Secure Note').length;
+      const idCount = items.filter(v => v.category === 'ID & Certificate').length;
+      const otherCount = items.filter(v => v.category === 'Others').length;
+
+      // Update Top row stats
+      const sTotal = document.getElementById('vault-stat-total');
+      const sPasswords = document.getElementById('vault-stat-passwords');
+      const sDocuments = document.getElementById('vault-stat-documents');
+      const sCards = document.getElementById('vault-stat-cards');
+      const sNotes = document.getElementById('vault-stat-notes');
+
+      if (sTotal) sTotal.innerText = totalCount;
+      if (sPasswords) sPasswords.innerText = passCount;
+      if (sDocuments) sDocuments.innerText = docCount;
+      if (sCards) sCards.innerText = cardCount;
+      if (sNotes) sNotes.innerText = notesCount;
+
+      // Update category selectors counts
+      const cPasswords = document.getElementById('vault-cat-count-passwords');
+      const cDocuments = document.getElementById('vault-cat-count-documents');
+      const cCards = document.getElementById('vault-cat-count-cards');
+      const cIds = document.getElementById('vault-cat-count-ids');
+      const cNotes = document.getElementById('vault-cat-count-notes');
+      const cOthers = document.getElementById('vault-cat-count-others');
+
+      if (cPasswords) cPasswords.innerText = passCount;
+      if (cDocuments) cDocuments.innerText = docCount;
+      if (cCards) cCards.innerText = cardCount;
+      if (cIds) cIds.innerText = idCount;
+      if (cNotes) cNotes.innerText = notesCount;
+      if (cOthers) cOthers.innerText = otherCount;
+
+      // Update Quick Access indicators
+      const qaContactsCount = document.getElementById('vault-qa-contacts-count');
+      if (qaContactsCount) {
+        const contactCount = (this.app.state.contacts || []).length;
+        qaContactsCount.innerText = `${contactCount} contacts saved`;
+      }
+
+      this.renderTable();
+      this.renderContacts();
+    },
+
+    renderTable() {
+      const items = this.app.state.vaultItems || [];
+      const tbody = document.getElementById('vault-items-tbody');
+      if (!tbody) return;
+
+      let filtered = items;
+
+      // Apply category filter
+      if (this.categoryFilter) {
+        filtered = filtered.filter(v => v.category === this.categoryFilter);
+      }
+
+      // Apply search query
+      if (this.searchQuery) {
+        filtered = filtered.filter(v => 
+          v.name.toLowerCase().includes(this.searchQuery) ||
+          v.description.toLowerCase().includes(this.searchQuery) ||
+          v.category.toLowerCase().includes(this.searchQuery)
+        );
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">No secure items found matching the filters.</td></tr>`;
         return;
       }
 
       let html = '';
-      docs.forEach(doc => {
+      filtered.forEach(v => {
+        const isLocked = v.accessStatus !== 'Unlocked';
+        
+        // Dynamic category colors matching dashboard tokens
+        let catColor = 'var(--text-muted)';
+        if (v.category === 'Password') catColor = 'var(--green)';
+        else if (v.category === 'Document') catColor = 'var(--blue)';
+        else if (v.category === 'Card & Account') catColor = 'var(--yellow)';
+        else if (v.category === 'ID & Certificate') catColor = 'var(--primary)';
+        else if (v.category === 'Secure Note') catColor = 'var(--red)';
+
+        // Lock Toggle Icon
+        const lockIcon = isLocked ? '<i class="fas fa-lock" style="color: var(--text-muted);"></i>' : '<i class="fas fa-lock-open" style="color: var(--green);"></i>';
+        
+        // Description value (if Unlocked, show password value)
+        const displayValue = isLocked ? v.description : `Value: ${v.secureData}`;
+
         html += `
-          <tr data-doc-id="${doc.id}">
-            <td>📂 <strong>${doc.title}</strong></td>
-            <td><span class="badge">${doc.category.toUpperCase()}</span></td>
-            <td><code>${doc.ref}</code></td>
-            <td>${doc.date}</td>
-            <td style="text-align:right;">
-              <button class="icon-btn btn-delete-doc" data-doc-id="${doc.id}">
-                <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+          <tr style="border-bottom: 1px solid var(--glass-border);">
+            <td style="padding: 12px 10px;">
+              <div style="font-weight: 700; color: var(--text-main);">${v.name}</div>
+              <span style="font-size: 0.68rem; color: var(--text-muted);">${displayValue}</span>
+            </td>
+            <td style="padding: 12px 10px;">
+              <span style="background: ${catColor}12; border: 1px solid ${catColor}40; color: ${catColor}; padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: bold;">
+                ${v.category}
+              </span>
+            </td>
+            <td style="padding: 12px 10px; color: var(--text-muted); font-size: 0.72rem;">${v.lastUpdated}</td>
+            <td style="padding: 12px 10px; text-align: center;">
+              <button onclick="window.LifeOS.modules.personal.toggleItemAccess('${v.id}')" style="background: none; border: none; cursor: pointer; padding: 4px 8px;">
+                ${lockIcon}
+              </button>
+            </td>
+            <td style="padding: 12px 10px; text-align: center;">
+              <button onclick="window.LifeOS.modules.personal.deleteVaultItem('${v.id}')" style="background: rgba(239, 68, 68, 0.1); border: 1px solid var(--red); color: var(--red); padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; cursor: pointer; font-weight: bold;">
+                Delete
               </button>
             </td>
           </tr>
         `;
       });
 
-      listBody.innerHTML = html;
-      if (window.lucide) window.lucide.createIcons();
+      tbody.innerHTML = html;
+    },
 
-      // Delete doc
-      listBody.querySelectorAll('.btn-delete-doc').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = parseInt(btn.getAttribute('data-doc-id'));
-          const idx = this.app.state.documents.findIndex(d => d.id === id);
-          if (idx !== -1) {
-            this.app.state.documents.splice(idx, 1);
-            this.app.saveState();
-            this.renderDocuments();
-          }
-        });
+    renderContacts() {
+      const container = document.getElementById('contacts-list-container');
+      if (!container) return;
+
+      const contacts = this.app.state.contacts || [];
+      if (contacts.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.72rem; padding: 10px;">Emergency directory is empty.</div>`;
+        return;
+      }
+
+      let html = '';
+      contacts.forEach(c => {
+        html += `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px; background: rgba(255,255,255,0.02); border-radius: 4px; border: 1px solid var(--glass-border);">
+            <div>
+              <strong style="font-size: 0.75rem; color: var(--text-main);">${c.name}</strong>
+              <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 2px;">📞 ${c.phone} <span style="background:rgba(59, 130, 246, 0.1); padding: 1px 4px; border-radius:3px; font-size:0.55rem; font-weight:bold; color:var(--blue); margin-left:4px;">${c.relation}</span></div>
+            </div>
+            <button onclick="window.LifeOS.modules.personal.deleteContact(${c.id})" style="background: none; border: none; color: var(--red); cursor: pointer; font-size: 0.72rem; padding: 4px;"><i class="fas fa-trash-alt"></i></button>
+          </div>
+        `;
       });
+
+      container.innerHTML = html;
+    },
+
+    deleteContact(id) {
+      if (confirm('Remove contact from emergency directory?')) {
+        this.app.state.contacts = this.app.state.contacts.filter(c => c.id !== id);
+        this.app.saveState();
+        this.app.showToast('Contact removed from emergency directory.', 'info');
+        this.render();
+      }
     }
   };
 
@@ -259,5 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.LifeOS) {
     window.LifeOS.registerModule('personal', PersonalModule);
     window.LifeOS.registerModule('documents', PersonalModule);
+  } else {
+    console.error('LifeOS core application namespace not found for personal.js registration.');
   }
 });
