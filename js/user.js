@@ -227,6 +227,58 @@ document.addEventListener('DOMContentLoaded', () => {
       return minLength && hasUppercase && hasLowercase && hasNumber && hasSpecial;
     },
 
+    proceedWithLogin(targetAccount, passInput, rememberMe, userInput) {
+      targetAccount.failedAttempts = 0;
+      
+      this.app.state.user.isLoggedIn = true;
+      this.app.state.user.id = targetAccount.id; // Store active user ID
+      this.app.state.user.username = targetAccount.name;
+      this.app.state.user.avatar = targetAccount.avatar;
+      this.app.state.user.role = targetAccount.role === 'Father' || targetAccount.role === 'Mother' ? 'Administrator' : targetAccount.role;
+      this.app.state.user.email = targetAccount.email;
+      this.app.state.user.mobile = targetAccount.mobile;
+      this.app.state.user.password = passInput;
+
+      // Log session device details
+      const ip = '192.168.1.' + Math.floor(Math.random() * 200 + 50);
+      const device = navigator.userAgent.includes('Chrome') ? 'Chrome / Windows' : 'Webkit Browser';
+      const newSession = {
+        id: 'sess_' + Date.now(),
+        device,
+        ip,
+        time: new Date().toLocaleString()
+      };
+      if (!targetAccount.sessions) targetAccount.sessions = [];
+      targetAccount.sessions.unshift(newSession);
+      if (targetAccount.sessions.length > 5) {
+        targetAccount.sessions = targetAccount.sessions.slice(0, 5);
+      }
+
+      // Support Remember Me option
+      if (rememberMe) {
+        localStorage.setItem('lifeos_remembered_user', userInput);
+      } else {
+        localStorage.removeItem('lifeos_remembered_user');
+      }
+
+      this.app.activeViewedUser = targetAccount.id;
+      this.app.saveState();
+      
+      this.app.syncGlobalGoogleSheetData(false);
+      if (this.app.modules.finance) {
+        this.app.modules.finance.syncGoogleSheetData(false);
+      }
+      this.logSecurityEvent('Login Success', `Unlock successful via IP ${ip} on device ${device}`, targetAccount.name || targetAccount.username);
+      this.app.showToast(`Decrypted successfully! Welcome back, ${this.app.state.user.username}.`, 'success');
+      
+      // Clear inputs
+      const userField = document.getElementById('lock-login-user');
+      const passField = document.getElementById('lock-login-pass');
+      if (userField) userField.value = '';
+      if (passField) passField.value = '';
+      this.render();
+    },
+
     setupLockPortal() {
       const lockOverlay = document.getElementById('login-portal-standalone');
       const btnModeLogin = document.getElementById('lock-btn-mode-login');
@@ -285,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         this.recentLogins.push(now);
 
-        // Find user account
+        // Find user account locally
         let targetAccount = this.app.state.members.find(m => {
           if (m.isDeleted) return false;
           const idMatch = m.id && m.id.toLowerCase() === userInput.toLowerCase();
@@ -294,87 +346,98 @@ document.addEventListener('DOMContentLoaded', () => {
           return idMatch || nameMatch || emailMatch;
         });
 
-        if (!targetAccount) {
-          this.app.showToast('Authentication failed: Invalid credentials.', 'error');
-          return;
-        }
-
-        // Account Status Guard
-        if (targetAccount.status === 'Locked') {
-          this.app.showToast('Account is locked due to multiple failed login attempts. Contact Admin.', 'error');
-          return;
-        }
-        if (targetAccount.status === 'Suspended') {
-          this.app.showToast('Account is suspended. Access denied.', 'error');
-          return;
-        }
-        if (targetAccount.status === 'Deactivated') {
-          this.app.showToast('Account is deactivated. Re-enable it via administrator.', 'error');
-          return;
-        }
-
-        // Validate Password
-        if ((targetAccount.password || 'admin') === passInput) {
-          // Success
-          targetAccount.failedAttempts = 0;
-          
-          this.app.state.user.isLoggedIn = true;
-          this.app.state.user.id = targetAccount.id; // Store active user ID
-          this.app.state.user.username = targetAccount.name;
-          this.app.state.user.avatar = targetAccount.avatar;
-          this.app.state.user.role = targetAccount.role === 'Father' || targetAccount.role === 'Mother' ? 'Administrator' : targetAccount.role;
-          this.app.state.user.email = targetAccount.email;
-          this.app.state.user.mobile = targetAccount.mobile;
-          this.app.state.user.password = passInput;
-
-          // Log session device details
-          const ip = '192.168.1.' + Math.floor(Math.random() * 200 + 50);
-          const device = navigator.userAgent.includes('Chrome') ? 'Chrome / Windows' : 'Webkit Browser';
-          const newSession = {
-            id: 'sess_' + Date.now(),
-            device,
-            ip,
-            time: new Date().toLocaleString()
-          };
-          if (!targetAccount.sessions) targetAccount.sessions = [];
-          targetAccount.sessions.unshift(newSession);
-          if (targetAccount.sessions.length > 5) {
-            targetAccount.sessions = targetAccount.sessions.slice(0, 5);
+        const performValidation = (account) => {
+          // Account Status Guard
+          if (account.status === 'Locked') {
+            this.app.showToast('Account is locked due to multiple failed login attempts. Contact Admin.', 'error');
+            return false;
+          }
+          if (account.status === 'Suspended') {
+            this.app.showToast('Account is suspended. Access denied.', 'error');
+            return false;
+          }
+          if (account.status === 'Deactivated') {
+            this.app.showToast('Account is deactivated. Re-enable it via administrator.', 'error');
+            return false;
           }
 
-          // Support Remember Me option
-          if (rememberMe) {
-            localStorage.setItem('lifeos_remembered_user', userInput);
+          // Validate Password
+          if ((account.password || 'admin') === passInput) {
+            this.proceedWithLogin(account, passInput, rememberMe, userInput);
+            return true;
           } else {
-            localStorage.removeItem('lifeos_remembered_user');
+            // Failed attempt
+            account.failedAttempts = (account.failedAttempts || 0) + 1;
+            this.logSecurityEvent('Failed Login', `Incorrect password attempt (${account.failedAttempts}/5)`, account.name || account.username);
+            
+            if (account.failedAttempts >= 5) {
+              account.status = 'Locked';
+              this.logSecurityEvent('Account Locked', 'Account locked automatically due to 5 failed logins', account.name || account.username);
+              this.app.showToast('Account has been locked due to 5 failed login attempts.', 'error');
+            } else {
+              this.app.showToast(`Invalid password. Attempt ${account.failedAttempts} of 5.`, 'warning');
+            }
+            this.app.saveState();
+            return false;
           }
+        };
 
-          this.app.activeViewedUser = targetAccount.id;
-          this.app.saveState();
-          this.app.syncGlobalGoogleSheetData(false);
-          if (this.app.modules.finance) {
-            this.app.modules.finance.syncGoogleSheetData(false);
-          }
-          this.logSecurityEvent('Login Success', `Unlock successful via IP ${ip} on device ${device}`, targetAccount.name || targetAccount.username);
-          this.app.showToast(`Decrypted successfully! Welcome back, ${this.app.state.user.username}.`, 'success');
-          
-          // Clear inputs
-          document.getElementById('lock-login-user').value = '';
-          document.getElementById('lock-login-pass').value = '';
-          this.render();
+        if (targetAccount) {
+          performValidation(targetAccount);
         } else {
-          // Failed attempt
-          targetAccount.failedAttempts = (targetAccount.failedAttempts || 0) + 1;
-          this.logSecurityEvent('Failed Login', `Incorrect password attempt (${targetAccount.failedAttempts}/5)`, targetAccount.name || targetAccount.username);
-          
-          if (targetAccount.failedAttempts >= 5) {
-            targetAccount.status = 'Locked';
-            this.logSecurityEvent('Account Locked', 'Account locked automatically due to 5 failed logins', targetAccount.name || targetAccount.username);
-            this.app.showToast('Account has been locked due to 5 failed login attempts.', 'error');
+          // Fallback: Real-time query to Supabase to fetch latest global registry (highly useful for fresh installations / APKs)
+          const settings = this.app.state.supabaseSettings;
+          if (settings && settings.url && settings.anonKey) {
+            this.app.showToast('Verifying credentials with database...', 'info');
+            const secUrl = `${settings.url}/rest/v1/workspace_security?key=eq.security_registry&select=data`;
+            
+            fetch(secUrl, {
+              headers: {
+                'apikey': settings.anonKey,
+                'Authorization': `Bearer ${settings.anonKey}`
+              }
+            })
+            .then(r => r.ok ? r.json() : [])
+            .then(secResult => {
+              if (secResult && secResult.length > 0 && secResult[0].data) {
+                const decryptedStr = this.app.decryptData(secResult[0].data);
+                if (decryptedStr) {
+                  const securityObj = JSON.parse(decryptedStr);
+                  if (securityObj.members) {
+                    this.app.state.members = securityObj.members;
+                    this.app.saveState();
+                    
+                    // Re-lookup account
+                    targetAccount = this.app.state.members.find(m => {
+                      if (m.isDeleted) return false;
+                      const idMatch = m.id && m.id.toLowerCase() === userInput.toLowerCase();
+                      const nameMatch = m.name && m.name.toLowerCase() === userInput.toLowerCase();
+                      const emailMatch = m.email && m.email.toLowerCase() === userInput.toLowerCase();
+                      return idMatch || nameMatch || emailMatch;
+                    });
+
+                    if (targetAccount) {
+                      performValidation(targetAccount);
+                    } else {
+                      this.app.showToast('Authentication failed: Invalid credentials.', 'error');
+                    }
+                  } else {
+                    this.app.showToast('Authentication failed: Invalid credentials.', 'error');
+                  }
+                } else {
+                  this.app.showToast('Authentication failed: Invalid credentials.', 'error');
+                }
+              } else {
+                this.app.showToast('Authentication failed: Invalid credentials.', 'error');
+              }
+            })
+            .catch(err => {
+              console.error('Real-time auth pull error:', err);
+              this.app.showToast('Authentication failed: Connection offline or invalid database configurations.', 'error');
+            });
           } else {
-            this.app.showToast(`Invalid password. Attempt ${targetAccount.failedAttempts} of 5.`, 'warning');
+            this.app.showToast('Authentication failed: Invalid credentials.', 'error');
           }
-          this.app.saveState();
         }
       });
 
