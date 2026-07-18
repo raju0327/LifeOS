@@ -18,7 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initDefaultHabits() {
       const state = this.app.state;
-      if (!state.habits || state.habits.length === 0) {
+      if (!state.habits) state.habits = [];
+
+      if (!state.habitsSeeded) {
         // Seed mockup habits to match USER's screenshot perfectly!
         const today = new Date();
         const getPastDateStr = (daysAgo) => {
@@ -148,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
             weeklySchedule: [true, true, true, true, true, true, true]
           }
         ];
+        state.habitsSeeded = true;
         this.app.saveState();
       }
     },

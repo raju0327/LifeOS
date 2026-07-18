@@ -20,7 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initDefaultVaultItems() {
       const state = this.app.state;
-      if (!state.vaultItems || state.vaultItems.length === 0) {
+      if (!state.vaultItems) state.vaultItems = [];
+      if (!state.contacts) state.contacts = [];
+
+      if (!state.vaultSeeded) {
         state.vaultItems = [
           {
             id: 'v-1',
@@ -68,16 +71,14 @@ document.addEventListener('DOMContentLoaded', () => {
             accessStatus: 'Locked'
           }
         ];
-        this.app.saveState();
-      }
 
-      // Populate default contacts if empty
-      if (!state.contacts || state.contacts.length === 0) {
         state.contacts = [
           { id: 1, name: 'Marcus Raj (Dad)', phone: '+91 99999 88888', relation: 'Family' },
           { id: 2, name: 'Elena Raj (Mom)', phone: '+91 99999 77777', relation: 'Family' },
           { id: 3, name: 'Dr. Rajesh Gupta', phone: '+91 98765 43210', relation: 'Emergency' }
         ];
+
+        state.vaultSeeded = true;
         this.app.saveState();
       }
     },
@@ -179,6 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (confirmReset) {
             this.app.state.vaultItems = [];
             this.app.state.contacts = [];
+            this.app.state.vaultSeeded = false;
             this.initDefaultVaultItems();
             this.app.saveState();
             this.app.showToast('Vault database reset to default secure values.', 'success');
