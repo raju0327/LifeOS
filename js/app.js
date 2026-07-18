@@ -331,7 +331,9 @@ document.addEventListener('DOMContentLoaded', () => {
         members: this.state.members || [],
         passwords: this.state.passwords || [],
         securityLogs: this.state.securityLogs || [],
-        passwordResetRequests: this.state.passwordResetRequests || []
+        passwordResetRequests: this.state.passwordResetRequests || [],
+        vaultSeeded: this.state.vaultSeeded || false,
+        habitsSeeded: this.state.habitsSeeded || false
       };
 
       const encryptedData = this.encryptData(JSON.stringify(securityPayload));
@@ -450,6 +452,8 @@ document.addEventListener('DOMContentLoaded', () => {
               if (securityObj.passwords) this.state.passwords = securityObj.passwords;
               if (securityObj.securityLogs) this.state.securityLogs = securityObj.securityLogs;
               if (securityObj.passwordResetRequests) this.state.passwordResetRequests = securityObj.passwordResetRequests;
+              if (securityObj.vaultSeeded !== undefined) this.state.vaultSeeded = securityObj.vaultSeeded;
+              if (securityObj.habitsSeeded !== undefined) this.state.habitsSeeded = securityObj.habitsSeeded;
               mergedAny = true;
             }
           } catch (e) {
