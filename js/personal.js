@@ -27,168 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!state.contacts) state.contacts = [];
 
       if (!state.vaultSeeded) {
-        state.vaultItems = [
-          {
-            id: 'v-1',
-            name: 'Google Account',
-            category: 'Password',
-            description: 'kishore.raj@gmail.com',
-            secureData: 'GoogleSecurePass123!',
-            lastUpdated: '16 May 2026, 09:30 AM',
-            accessStatus: 'Locked'
-          },
-          {
-            id: 'v-2',
-            name: 'PAN Card',
-            category: 'ID & Certificate',
-            description: 'Permanent Account Number',
-            secureData: 'ABCDE1234F',
-            lastUpdated: '12 May 2026, 04:20 PM',
-            accessStatus: 'Locked'
-          },
-          {
-            id: 'v-3',
-            name: 'HDFC Bank Account',
-            category: 'Card & Account',
-            description: 'Savings Account **** 1234',
-            secureData: 'IFSC: HDFC0000123 / PIN: 9876',
-            lastUpdated: '10 May 2026, 11:15 AM',
-            accessStatus: 'Locked'
-          },
-          {
-            id: 'v-4',
-            name: 'Passport',
-            category: 'Document',
-            description: 'Passport No. *****9876',
-            secureData: 'Z1234567 / Exp: 2032-12-31',
-            lastUpdated: '08 May 2026, 02:45 PM',
-            accessStatus: 'Locked'
-          },
-          {
-            id: 'v-5',
-            name: 'WiFi Home',
-            category: 'Secure Note',
-            description: 'Home WiFi Credentials',
-            secureData: 'WiFiPassword2026_Secure',
-            lastUpdated: '05 May 2026, 08:10 PM',
-            accessStatus: 'Locked'
-          },
-          {
-            id: 'v-qa-n1',
-            name: 'Police / Emergency',
-            category: 'Important Number',
-            description: 'Helpline',
-            secureData: '100 / 112',
-            lastUpdated: '18 Jul 2026, 05:00 PM',
-            accessStatus: 'Unlocked'
-          },
-          {
-            id: 'v-qa-n2',
-            name: 'Fire Helpline',
-            category: 'Important Number',
-            description: 'Helpline',
-            secureData: '101',
-            lastUpdated: '18 Jul 2026, 05:00 PM',
-            accessStatus: 'Unlocked'
-          },
-          {
-            id: 'v-qa-n3',
-            name: 'Ambulance Services',
-            category: 'Important Number',
-            description: 'Helpline',
-            secureData: '102',
-            lastUpdated: '18 Jul 2026, 05:00 PM',
-            accessStatus: 'Unlocked'
-          },
-          {
-            id: 'v-qa-n4',
-            name: 'Women Helpline',
-            category: 'Important Number',
-            description: 'Helpline',
-            secureData: '1091',
-            lastUpdated: '18 Jul 2026, 05:00 PM',
-            accessStatus: 'Unlocked'
-          },
-          {
-            id: 'v-qa-n5',
-            name: 'National Cyber Crime',
-            category: 'Important Number',
-            description: 'Helpline',
-            secureData: '1930',
-            lastUpdated: '18 Jul 2026, 05:00 PM',
-            accessStatus: 'Unlocked'
-          },
-          {
-            id: 'v-qa-i1',
-            name: 'LIC Term Plan',
-            category: 'Insurance Detail',
-            description: 'Pol No: #554433',
-            secureData: 'Dec 2030',
-            lastUpdated: '18 Jul 2026, 05:00 PM',
-            accessStatus: 'Unlocked'
-          },
-          {
-            id: 'v-qa-i2',
-            name: 'HDFC Ergo SUV Car Insurance',
-            category: 'Insurance Detail',
-            description: 'SUV Policy',
-            secureData: 'Oct 2026',
-            lastUpdated: '18 Jul 2026, 05:00 PM',
-            accessStatus: 'Unlocked'
-          },
-          {
-            id: 'v-qa-i3',
-            name: 'Niva Bupa Health Shield',
-            category: 'Insurance Detail',
-            description: 'Health Shield',
-            secureData: 'Jun 2027',
-            lastUpdated: '18 Jul 2026, 05:00 PM',
-            accessStatus: 'Unlocked'
-          },
-          {
-            id: 'v-qa-i4',
-            name: 'Home Content Protection Policy',
-            category: 'Insurance Detail',
-            description: 'Home Policy',
-            secureData: 'Aug 2029',
-            lastUpdated: '18 Jul 2026, 05:00 PM',
-            accessStatus: 'Unlocked'
-          },
-          {
-            id: 'v-qa-m1',
-            name: 'Blood Group',
-            category: 'Medical Info',
-            description: 'Blood Type',
-            secureData: 'O Positive (O+)',
-            lastUpdated: '18 Jul 2026, 05:00 PM',
-            accessStatus: 'Unlocked'
-          },
-          {
-            id: 'v-qa-m2',
-            name: 'Allergies',
-            category: 'Medical Info',
-            description: 'Allergic Substances',
-            secureData: 'Penicillin, Peanut Oil',
-            lastUpdated: '18 Jul 2026, 05:00 PM',
-            accessStatus: 'Unlocked'
-          },
-          {
-            id: 'v-qa-m3',
-            name: 'Family Physician',
-            category: 'Medical Info',
-            description: 'Dr. Rajesh Gupta',
-            secureData: '+91 98765-43210',
-            lastUpdated: '18 Jul 2026, 05:00 PM',
-            accessStatus: 'Unlocked'
-          }
-        ];
-
-        state.contacts = [
-          { id: 1, name: 'Marcus Raj (Dad)', phone: '+91 99999 88888', relation: 'Family' },
-          { id: 2, name: 'Elena Raj (Mom)', phone: '+91 99999 77777', relation: 'Family' },
-          { id: 3, name: 'Dr. Rajesh Gupta', phone: '+91 98765 43210', relation: 'Emergency' }
-        ];
-
+        state.vaultItems = [];
+        state.contacts = [];
         state.vaultSeeded = true;
         this.app.saveState();
       }
@@ -296,14 +136,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const btnReset = document.getElementById('btn-vault-reset-data');
       if (btnReset) {
         btnReset.addEventListener('click', () => {
-          const confirmReset = confirm('Are you sure you want to reset your vault data? This will wipe out all custom secrets and restore the default secure items.');
+          const confirmReset = confirm('Are you sure you want to reset your vault data? This will permanently wipe out all secure items, contacts, numbers, insurance policies, and medical records.');
           if (confirmReset) {
             this.app.state.vaultItems = [];
             this.app.state.contacts = [];
             this.app.state.vaultSeeded = false;
             this.initDefaultVaultItems();
             this.app.saveState();
-            this.app.showToast('Vault database reset to default secure values.', 'success');
+            this.app.showToast('Vault data cleared completely.', 'success');
             this.render();
           }
         });
