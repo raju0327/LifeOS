@@ -2163,7 +2163,7 @@
               <h2>Personal Vault</h2>
               <p class="subtitle">Store, organize and protect your important personal information.</p>
             </div>
-            <button id="btn-add-vault-item" class="btn-primary-glow" style="padding: 10px 20px; font-size: 0.85rem; border: none; cursor: pointer; color: #fff; display: flex; align-items: center; gap: 8px;">
+            <button id="btn-add-vault-item" class="btn-primary-glow" onclick="const el = document.getElementById('add-vault-item-container'); if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none';" style="padding: 10px 20px; font-size: 0.85rem; border: none; cursor: pointer; color: #fff; display: flex; align-items: center; gap: 8px;">
               <i class="fas fa-plus"></i> Add New Item
             </button>
           </div>
@@ -2199,7 +2199,7 @@
               </div>
 
               <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button type="button" id="btn-cancel-vault-item" class="btn-primary-glow" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 8px 16px; cursor: pointer; color: #fff;">Cancel</button>
+                <button type="button" id="btn-cancel-vault-item" onclick="const el = document.getElementById('add-vault-item-container'); if(el) el.style.display = 'none'; document.getElementById('new-vault-item-form').reset();" class="btn-primary-glow" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 8px 16px; cursor: pointer; color: #fff;">Cancel</button>
                 <button type="submit" class="btn-primary-glow" style="padding: 8px 16px; border: none; cursor: pointer; color: #fff;">Save Secure Item</button>
               </div>
             </form>
