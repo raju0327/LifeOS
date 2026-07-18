@@ -172,8 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     getMockFinanceSettings() {
       return {
-        googleSheetUrl: 'https://script.google.com/macros/s/AKfycbwBgR14Sfj5jvaMqCaJ3tVEdhDjYRn5LgGf8ihBkYeK6ePYUYn6ov_Ax0w6zl0mSPky1A/exec',
-        googleSheetSyncEnabled: true,
         pinLockEnabled: false,
         currencySymbol: '₹',
         currencyCode: 'INR'

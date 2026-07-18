@@ -302,10 +302,8 @@ const FinanceModule = {
     this.bindEvents();
     this.initVoiceEntry();
     
-    // Auto sync sheet on initial start if configured
-    if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-      setTimeout(() => this.syncGoogleSheetData(true), 1200);
-    }
+    
+    // Database pulls are automatically handled by the app core.
   },
 
   onActive() {
@@ -416,9 +414,7 @@ const FinanceModule = {
       this.app.saveState();
       this.app.showToast(`Category "${name}" created successfully.`, 'success');
 
-      if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-        this.sendActionToGoogleSheet("saveBudgets", this.app.state.budgets);
-      }
+
 
       document.getElementById('finance-add-cat-id').value = '';
       document.getElementById('finance-add-cat-name').value = '';
@@ -557,7 +553,7 @@ const FinanceModule = {
 
     // Budget subview triggers
     document.getElementById('finance-btn-reset-data')?.addEventListener('click', () => {
-      this.syncGoogleSheetData(false);
+      this.app.syncGlobalStateWithSupabase(false);
     });
 
     // Subscriptions forms triggers
@@ -1239,10 +1235,7 @@ const FinanceModule = {
       this.app.saveState();
       this.app.showToast(`Deleted transaction: "${deleted.description}"`, 'info');
       
-      if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-        const memberObj = this.app.state.members.find(m => m.id === deleted.memberId) || { name: deleted.memberId };
-        this.sendActionToGoogleSheet("delete", { id: id, memberName: memberObj.name });
-      }
+
 
       this.render();
     }
@@ -1447,9 +1440,7 @@ const FinanceModule = {
     this.app.saveState();
     this.app.showToast('Transaction logged successfully!', 'success');
 
-    if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-      this.sendActionToGoogleSheet("add", newTx);
-    }
+
 
     document.getElementById('finance-add-transaction-form').reset();
     document.getElementById('finance-auto-cat-badge').style.display = 'none';
@@ -1541,9 +1532,7 @@ const FinanceModule = {
     this.app.saveState();
     this.app.showToast(`Savings target "${name}" created!`, 'success');
 
-    if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-      this.sendActionToGoogleSheet("saveGoals", this.app.state.goals);
-    }
+
 
     document.getElementById('finance-add-goal-form').reset();
     document.getElementById('finance-add-goal-form').style.display = 'none';
@@ -1558,9 +1547,7 @@ const FinanceModule = {
       this.app.saveState();
       this.app.showToast(`Deleted goal: "${deleted.name}"`, 'info');
 
-      if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-        this.sendActionToGoogleSheet("saveGoals", this.app.state.goals);
-      }
+
 
       this.renderSavingsGoalsList();
       this.render();
@@ -1617,10 +1604,7 @@ const FinanceModule = {
       this.app.saveState();
       this.app.showToast(`Deposited ₹${amount.toLocaleString()} into "${goal.name}"!`, 'success');
 
-      if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-        this.sendActionToGoogleSheet("saveGoals", this.app.state.goals);
-        this.sendActionToGoogleSheet("addTransaction", newTx);
-      }
+
 
       this.toggleModal('finance-goal-contribution-overlay', false);
       this.renderSavingsGoalsList();
@@ -1830,9 +1814,7 @@ const FinanceModule = {
     this.app.saveState();
     this.app.showToast(`Recurring bill "${name}" added!`, 'success');
 
-    if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-      this.sendActionToGoogleSheet("saveSubscriptions", this.app.state.subscriptions);
-    }
+
 
     document.getElementById('finance-add-sub-form').reset();
     document.getElementById('finance-add-sub-form').style.display = 'none';
@@ -1858,9 +1840,7 @@ const FinanceModule = {
       this.app.saveState();
       this.app.showToast(`Renewed subscription payment for ${sub.name}!`, 'success');
 
-      if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-        this.sendActionToGoogleSheet("addTransaction", newTx);
-      }
+
 
       this.render();
     }
@@ -1873,9 +1853,7 @@ const FinanceModule = {
       this.app.saveState();
       this.app.showToast(`Deleted sub tracker: "${deleted.name}"`, 'info');
 
-      if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-        this.sendActionToGoogleSheet("saveSubscriptions", this.app.state.subscriptions);
-      }
+
 
       this.renderSubscriptionsList();
       this.render();
@@ -1951,9 +1929,7 @@ const FinanceModule = {
     this.app.saveState();
     this.app.showToast(`Loan tracker "${name}" added!`, 'success');
 
-    if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-      this.sendActionToGoogleSheet("addLoan", newLoan);
-    }
+
 
     document.getElementById('finance-add-loan-form').reset();
     
@@ -1998,10 +1974,7 @@ const FinanceModule = {
       this.app.saveState();
       this.app.showToast(`EMI payment of ₹${amount.toLocaleString()} recorded!`, 'success');
 
-      if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-        this.sendActionToGoogleSheet("payLoan", { id: loanId, amount: amount });
-        this.sendActionToGoogleSheet("addTransaction", newTx);
-      }
+
 
       this.toggleModal('finance-pay-emi-overlay', false);
       this.renderEMILoansList();
@@ -2016,9 +1989,7 @@ const FinanceModule = {
       this.app.saveState();
       this.app.showToast(`Deleted loan tracker: "${deleted.name}"`, 'info');
 
-      if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-        this.sendActionToGoogleSheet("deleteLoan", { id: id });
-      }
+
 
       this.renderEMILoansList();
       this.render();
@@ -2083,9 +2054,7 @@ const FinanceModule = {
     this.app.saveState();
     this.app.showToast('Asset portfolio valuation logs updated.', 'success');
 
-    if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-      this.sendActionToGoogleSheet("saveInvestments", this.app.state.investments);
-    }
+
 
     document.getElementById('finance-edit-assets-form').style.display = 'none';
     this.renderInvestmentsList();
@@ -2426,9 +2395,7 @@ const FinanceModule = {
       this.app.saveState();
       this.app.showToast(`Updated budget limit for "${categoryObj.name}".`, 'success');
 
-      if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-        this.sendActionToGoogleSheet("saveBudgets", this.app.state.budgets);
-      }
+
 
       this.toggleModal('finance-category-details-overlay', false);
       this.render();
@@ -2499,9 +2466,7 @@ const FinanceModule = {
       this.app.saveState();
       this.app.showToast(`Updated profile details for "${name}"`, 'success');
 
-      if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-        this.sendActionToGoogleSheet("createSheet", { name: name });
-      }
+
 
       this.toggleModal('finance-edit-profile-overlay', false);
       this.render();
@@ -2601,9 +2566,7 @@ const FinanceModule = {
       this.app.saveState();
       this.app.showToast(`Savings goal "${name}" details saved.`, 'success');
 
-      if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-        this.sendActionToGoogleSheet("saveGoals", this.app.state.goals);
-      }
+
 
       this.toggleModal('finance-edit-goal-overlay', false);
       this.renderSavingsGoalsList();
@@ -2657,10 +2620,7 @@ const FinanceModule = {
     this.app.saveState();
     this.app.showToast(`Transferred ₹${amount.toLocaleString()} from ${labels[fromAcc]} to ${labels[toAcc]}!`, 'success');
 
-    if (this.app.state.financeSettings.googleSheetSyncEnabled && this.app.state.financeSettings.googleSheetUrl) {
-      this.sendActionToGoogleSheet("addTransaction", newTx1);
-      this.sendActionToGoogleSheet("addTransaction", newTx2);
-    }
+
 
     this.toggleModal('finance-transfer-funds-overlay', false);
     this.render();
@@ -2815,17 +2775,6 @@ const FinanceModule = {
 
   // --- DATABASE SYNC ENGINE ---
 
-  syncGoogleSheetData(isFirstLoad = false) {
-    this.app.syncGlobalStateWithSupabase(isFirstLoad);
-  },
-
-  pushFinanceStateToGoogleSheet() {
-    this.app.pushAllStateToSupabase();
-  },
-
-  sendActionToGoogleSheet(actionName, payloadData) {
-    this.pushFinanceStateToGoogleSheet();
-  },
 
 
 
