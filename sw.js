@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lifeos-cache-v3';
+const CACHE_NAME = 'lifeos-cache-v4';
 const ASSETS = [
   './index.html',
   './style.css',
@@ -42,6 +42,11 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
+  // Completely bypass external cross-origin requests (like Supabase API database calls)
+  if (!e.request.url.startsWith(self.location.origin)) {
+    return; // Let the browser handle these directly via the network stack!
+  }
+
   e.respondWith(
     caches.match(e.request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -56,3 +61,4 @@ self.addEventListener('fetch', (e) => {
     })
   );
 });
+

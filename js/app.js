@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
           const parsed = JSON.parse(decrypted);
           this.state = { ...this.state, ...parsed };
-           
+            
           const hasMockTransactions = this.state.transactions && this.state.transactions.some(t => t.id === 'tx-1' || t.id === 'tx-2');
           if (hasMockTransactions) {
             this.state.transactions = [];
@@ -230,91 +230,77 @@ document.addEventListener('DOMContentLoaded', () => {
             this.state.investments = {};
             this.saveState();
           }
-          
-          if (!this.state.supabaseSettings || !this.state.supabaseSettings.url) {
-            this.state.supabaseSettings = {
-              url: 'https://ytenffmtbmlhsfurjgrv.supabase.co',
-              anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0ZW5mZm10Ym1saHNmdXJqZ3J2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMDQzNTYsImV4cCI6MjA5OTc4MDM1Nn0.sd597y6U3lpFgNLEiEpI1w_dMxEdG1acen5KwWMuMIY',
-              syncEnabled: false
-            };
-          }
-
-          // Schema Migration Checks
-          if (!this.state.members || this.state.members.length === 0) {
-            this.state.members = this.getMockMembers();
-          }
-          if (this.state.members && !this.state.members.some(m => m.id === 'admin')) {
-            this.state.members.unshift({
-              id: 'admin',
-              name: 'User Admin',
-              role: 'Administrator',
-              avatar: '👨‍💼',
-              color: '#10b981',
-              glow: 'rgba(16, 185, 129, 0.15)',
-              password: 'admin',
-              email: 'admin@lifeos.com',
-              mobile: '+91 99999 99999',
-              status: 'Active',
-              failedAttempts: 0,
-              passwordHistory: ['admin'],
-              sessions: [],
-              isDeleted: false
-            });
-          }
-          if (!this.state.categories || Object.keys(this.state.categories).length === 0) {
-            this.state.categories = this.getMockCategories();
-          } else {
-            // Sync loaded category colors to match new cyber theme
-            const cyberColors = {
-              food: '#0052cc',
-              transport: '#3399ff',
-              rent: '#00d2ff',
-              shopping: '#80bfff',
-              bills: '#cbd5e0',
-              emi: '#475569',
-              entertainment: '#2b6cb0',
-              health: '#3182ce',
-              education: '#63b3ed',
-              investments: '#94a3b8',
-              basic: '#4a5568'
-            };
-            Object.keys(cyberColors).forEach(k => {
-              if (this.state.categories[k]) {
-                this.state.categories[k].color = cyberColors[k];
-              }
-            });
-          }
-          if (!this.state.budgets || Object.keys(this.state.budgets).length === 0) {
-            this.state.budgets = this.getMockBudgets();
-          }
-          if (!this.state.goals || this.state.goals.length === 0) {
-            this.state.goals = this.getMockGoals();
-          }
-          if (!this.state.investments || Object.keys(this.state.investments).length === 0) {
-            this.state.investments = this.getMockInvestments();
-          }
-          if (!this.state.financeSettings) {
-            this.state.financeSettings = this.getMockFinanceSettings();
-          }
-          if (!this.state.generalSheetUrl) {
-            this.state.generalSheetUrl = 'https://script.google.com/macros/s/AKfycbyL32umc1_Izj3YqBIqv3XqqvzG9xLCDiYRNUpHMWwpO0v0TBm-xqZhQgzLYjPCfzKd0A/exec';
-          }
-          if (!this.state.securityLogs) {
-            this.state.securityLogs = [];
-          }
-          if (!this.state.habits) {
-            this.state.habits = [];
-          }
-          if (!this.state.vaultItems) {
-            this.state.vaultItems = [];
-          }
-          if (!this.state.passwordResetRequests) {
-            this.state.passwordResetRequests = [];
-          }
         } catch (e) {
           console.error("Error reading db data, resetting.", e);
         }
       }
+
+      // Ensure defaults are populated regardless of whether localStorage is empty or populated
+      if (!this.state.supabaseSettings || !this.state.supabaseSettings.url) {
+        this.state.supabaseSettings = {
+          url: 'https://ytenffmtbmlhsfurjgrv.supabase.co',
+          anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0ZW5mZm10Ym1saHNmdXJqZ3J2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMDQzNTYsImV4cCI6MjA5OTc4MDM1Nn0.sd597y6U3lpFgNLEiEpI1w_dMxEdG1acen5KwWMuMIY',
+          syncEnabled: false
+        };
+      }
+
+      // Schema Migration Checks
+      if (!this.state.members || this.state.members.length === 0) {
+        this.state.members = this.getMockMembers();
+      }
+      this.restoreAdminMemberIfNeeded();
+
+      if (!this.state.categories || Object.keys(this.state.categories).length === 0) {
+        this.state.categories = this.getMockCategories();
+      } else {
+        // Sync loaded category colors to match new cyber theme
+        const cyberColors = {
+          food: '#0052cc',
+          transport: '#3399ff',
+          rent: '#00d2ff',
+          shopping: '#80bfff',
+          bills: '#cbd5e0',
+          emi: '#475569',
+          entertainment: '#2b6cb0',
+          health: '#3182ce',
+          education: '#63b3ed',
+          investments: '#94a3b8',
+          basic: '#4a5568'
+        };
+        Object.keys(cyberColors).forEach(k => {
+          if (this.state.categories[k]) {
+            this.state.categories[k].color = cyberColors[k];
+          }
+        });
+      }
+      if (!this.state.budgets || Object.keys(this.state.budgets).length === 0) {
+        this.state.budgets = this.getMockBudgets();
+      }
+      if (!this.state.goals || this.state.goals.length === 0) {
+        this.state.goals = this.getMockGoals();
+      }
+      if (!this.state.investments || Object.keys(this.state.investments).length === 0) {
+        this.state.investments = this.getMockInvestments();
+      }
+      if (!this.state.financeSettings) {
+        this.state.financeSettings = this.getMockFinanceSettings();
+      }
+      if (!this.state.generalSheetUrl) {
+        this.state.generalSheetUrl = 'https://script.google.com/macros/s/AKfycbyL32umc1_Izj3YqBIqv3XqqvzG9xLCDiYRNUpHMWwpO0v0TBm-xqZhQgzLYjPCfzKd0A/exec';
+      }
+      if (!this.state.securityLogs) {
+        this.state.securityLogs = [];
+      }
+      if (!this.state.habits) {
+        this.state.habits = [];
+      }
+      if (!this.state.vaultItems) {
+        this.state.vaultItems = [];
+      }
+      if (!this.state.passwordResetRequests) {
+        this.state.passwordResetRequests = [];
+      }
+
       this.activeViewedUser = this.state.user.id || 'admin';
     },
 
