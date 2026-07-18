@@ -2420,7 +2420,7 @@
                       <div style="width: 28px; height: 28px; border-radius: 4px; background: rgba(245, 158, 11, 0.1); display: flex; align-items: center; justify-content: center; color: var(--yellow);"><i class="fas fa-shield-alt" style="font-size: 0.78rem;"></i></div>
                       <div>
                         <h4 style="margin: 0; font-size: 0.75rem; font-weight: 700; color: var(--text-main);">Insurance Details</h4>
-                        <span style="font-size: 0.62rem; color: var(--text-muted);">4 policies saved</span>
+                        <span style="font-size: 0.62rem; color: var(--text-muted);" id="vault-qa-insurance-count">4 policies saved</span>
                       </div>
                     </div>
                     <i class="fas fa-chevron-right" style="font-size: 0.65rem; color: var(--text-muted);"></i>
@@ -2432,7 +2432,7 @@
                       <div style="width: 28px; height: 28px; border-radius: 4px; background: rgba(239, 68, 68, 0.1); display: flex; align-items: center; justify-content: center; color: var(--red);"><i class="fas fa-heartbeat" style="font-size: 0.78rem;"></i></div>
                       <div>
                         <h4 style="margin: 0; font-size: 0.75rem; font-weight: 700; color: var(--text-main);">Medical Information</h4>
-                        <span style="font-size: 0.62rem; color: var(--text-muted);">2 records saved</span>
+                        <span style="font-size: 0.62rem; color: var(--text-muted);" id="vault-qa-medical-count">2 records saved</span>
                       </div>
                     </div>
                     <i class="fas fa-chevron-right" style="font-size: 0.65rem; color: var(--text-muted);"></i>
@@ -2458,48 +2458,45 @@
                   </div>
                 </div>
 
-                <!-- Expanded Important Numbers -->
-                <div id="vault-qa-numbers-expanded" style="display: none; margin-top: 16px; border-top: 1px solid var(--glass-border); padding-top: 16px; font-size: 0.72rem; color: var(--text-muted);">
-                  <h4 style="margin: 0 0 10px 0; font-size: 0.8rem; color: var(--text-main); font-weight: bold;">Important Helpline Numbers</h4>
-                  <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.02); padding-bottom:4px;">
-                      <span>Police / Emergency</span><strong style="color:var(--text-main);">100 / 112</strong>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.02); padding-bottom:4px;">
-                      <span>Fire Helpline</span><strong style="color:var(--text-main);">101</strong>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.02); padding-bottom:4px;">
-                      <span>Ambulance Services</span><strong style="color:var(--text-main);">102</strong>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.02); padding-bottom:4px;">
-                      <span>Women Helpline</span><strong style="color:var(--text-main);">1091</strong>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.02); padding-bottom:4px;">
-                      <span>National Cyber Crime</span><strong style="color:var(--text-main);">1930</strong>
-                    </div>
-                  </div>
-                </div>
+                 <!-- Expanded Important Numbers -->
+                 <div id="vault-qa-numbers-expanded" style="display: none; margin-top: 16px; border-top: 1px solid var(--glass-border); padding-top: 16px;">
+                   <h4 style="margin: 0 0 10px 0; font-size: 0.8rem; color: var(--text-main); font-weight: bold;">Important Helpline Numbers</h4>
+                   <form id="vault-qa-numbers-form" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+                     <input type="text" id="qa-number-label" placeholder="Helpline Name (e.g. Police / Emergency)" required style="padding:6px; font-size:0.75rem;">
+                     <input type="text" id="qa-number-val" placeholder="Number (e.g. 100 / 112)" required style="padding:6px; font-size:0.75rem;">
+                     <button type="submit" class="btn-primary-glow" style="padding:6px; font-size:0.72rem; font-weight:bold; border:none; color:#fff; cursor:pointer;">Add Number</button>
+                   </form>
+                   <div id="qa-numbers-list-container" style="display:flex; flex-direction:column; gap:8px; max-height: 200px; overflow-y: auto;">
+                     <!-- Dynamic -->
+                   </div>
+                 </div>
 
-                <!-- Expanded Insurance Details -->
-                <div id="vault-qa-insurance-expanded" style="display: none; margin-top: 16px; border-top: 1px solid var(--glass-border); padding-top: 16px; font-size: 0.72rem; color: var(--text-muted);">
-                  <h4 style="margin: 0 0 10px 0; font-size: 0.8rem; color: var(--text-main); font-weight: bold;">Active Insurance Policies</h4>
-                  <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div>📝 <strong>LIC Term Plan</strong> (Pol No: #554433) - Exp: Dec 2030</div>
-                    <div>🚗 <strong>HDFC Ergo SUV Car Insurance</strong> - Exp: Oct 2026</div>
-                    <div>🏥 <strong>Niva Bupa Health Shield</strong> - Exp: Jun 2027</div>
-                    <div>🏠 <strong>Home Content Protection Policy</strong> - Exp: Aug 2029</div>
-                  </div>
-                </div>
+                 <!-- Expanded Insurance Details -->
+                 <div id="vault-qa-insurance-expanded" style="display: none; margin-top: 16px; border-top: 1px solid var(--glass-border); padding-top: 16px;">
+                   <h4 style="margin: 0 0 10px 0; font-size: 0.8rem; color: var(--text-main); font-weight: bold;">Active Insurance Policies</h4>
+                   <form id="vault-qa-insurance-form" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+                     <input type="text" id="qa-ins-name" placeholder="Policy Name (e.g. LIC Term Plan)" required style="padding:6px; font-size:0.75rem;">
+                     <input type="text" id="qa-ins-no" placeholder="Policy No (e.g. #554433)" required style="padding:6px; font-size:0.75rem;">
+                     <input type="text" id="qa-ins-exp" placeholder="Expiry (e.g. Dec 2030)" required style="padding:6px; font-size:0.75rem;">
+                     <button type="submit" class="btn-primary-glow" style="padding:6px; font-size:0.72rem; font-weight:bold; border:none; color:#fff; cursor:pointer;">Add Policy</button>
+                   </form>
+                   <div id="qa-insurance-list-container" style="display:flex; flex-direction:column; gap:8px; max-height: 200px; overflow-y: auto;">
+                     <!-- Dynamic -->
+                   </div>
+                 </div>
 
-                <!-- Expanded Medical Info -->
-                <div id="vault-qa-medical-expanded" style="display: none; margin-top: 16px; border-top: 1px solid var(--glass-border); padding-top: 16px; font-size: 0.72rem; color: var(--text-muted);">
-                  <h4 style="margin: 0 0 10px 0; font-size: 0.8rem; color: var(--text-main); font-weight: bold;">Medical & Allergy Records</h4>
-                  <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div>🩸 <strong>Blood Group</strong>: O Positive (O+)</div>
-                    <div>⚠️ <strong>Allergies</strong>: Penicillin, Peanut Oil</div>
-                    <div>🏥 <strong>Family Physician</strong>: Dr. Rajesh Gupta (+91 98765-43210)</div>
-                  </div>
-                </div>
+                 <!-- Expanded Medical Info -->
+                 <div id="vault-qa-medical-expanded" style="display: none; margin-top: 16px; border-top: 1px solid var(--glass-border); padding-top: 16px;">
+                   <h4 style="margin: 0 0 10px 0; font-size: 0.8rem; color: var(--text-main); font-weight: bold;">Medical & Allergy Records</h4>
+                   <form id="vault-qa-medical-form" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+                     <input type="text" id="qa-med-name" placeholder="Record Name (e.g. Blood Group)" required style="padding:6px; font-size:0.75rem;">
+                     <input type="text" id="qa-med-val" placeholder="Value (e.g. O+)" required style="padding:6px; font-size:0.75rem;">
+                     <button type="submit" class="btn-primary-glow" style="padding:6px; font-size:0.72rem; font-weight:bold; border:none; color:#fff; cursor:pointer;">Add Record</button>
+                   </form>
+                   <div id="qa-medical-list-container" style="display:flex; flex-direction:column; gap:8px; max-height: 200px; overflow-y: auto;">
+                     <!-- Dynamic -->
+                   </div>
+                 </div>
               </div>
 
               <div class="glass-card" style="padding: 20px;">

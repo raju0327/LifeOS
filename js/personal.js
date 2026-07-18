@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
       this.initDefaultVaultItems();
       this.setupVaultEventListeners();
       this.setupContactsForm();
+      this.setupNumbersForm();
+      this.setupInsuranceForm();
+      this.setupMedicalForm();
       this.render();
     },
 
@@ -69,6 +72,114 @@ document.addEventListener('DOMContentLoaded', () => {
             secureData: 'WiFiPassword2026_Secure',
             lastUpdated: '05 May 2026, 08:10 PM',
             accessStatus: 'Locked'
+          },
+          {
+            id: 'v-qa-n1',
+            name: 'Police / Emergency',
+            category: 'Important Number',
+            description: 'Helpline',
+            secureData: '100 / 112',
+            lastUpdated: '18 Jul 2026, 05:00 PM',
+            accessStatus: 'Unlocked'
+          },
+          {
+            id: 'v-qa-n2',
+            name: 'Fire Helpline',
+            category: 'Important Number',
+            description: 'Helpline',
+            secureData: '101',
+            lastUpdated: '18 Jul 2026, 05:00 PM',
+            accessStatus: 'Unlocked'
+          },
+          {
+            id: 'v-qa-n3',
+            name: 'Ambulance Services',
+            category: 'Important Number',
+            description: 'Helpline',
+            secureData: '102',
+            lastUpdated: '18 Jul 2026, 05:00 PM',
+            accessStatus: 'Unlocked'
+          },
+          {
+            id: 'v-qa-n4',
+            name: 'Women Helpline',
+            category: 'Important Number',
+            description: 'Helpline',
+            secureData: '1091',
+            lastUpdated: '18 Jul 2026, 05:00 PM',
+            accessStatus: 'Unlocked'
+          },
+          {
+            id: 'v-qa-n5',
+            name: 'National Cyber Crime',
+            category: 'Important Number',
+            description: 'Helpline',
+            secureData: '1930',
+            lastUpdated: '18 Jul 2026, 05:00 PM',
+            accessStatus: 'Unlocked'
+          },
+          {
+            id: 'v-qa-i1',
+            name: 'LIC Term Plan',
+            category: 'Insurance Detail',
+            description: 'Pol No: #554433',
+            secureData: 'Dec 2030',
+            lastUpdated: '18 Jul 2026, 05:00 PM',
+            accessStatus: 'Unlocked'
+          },
+          {
+            id: 'v-qa-i2',
+            name: 'HDFC Ergo SUV Car Insurance',
+            category: 'Insurance Detail',
+            description: 'SUV Policy',
+            secureData: 'Oct 2026',
+            lastUpdated: '18 Jul 2026, 05:00 PM',
+            accessStatus: 'Unlocked'
+          },
+          {
+            id: 'v-qa-i3',
+            name: 'Niva Bupa Health Shield',
+            category: 'Insurance Detail',
+            description: 'Health Shield',
+            secureData: 'Jun 2027',
+            lastUpdated: '18 Jul 2026, 05:00 PM',
+            accessStatus: 'Unlocked'
+          },
+          {
+            id: 'v-qa-i4',
+            name: 'Home Content Protection Policy',
+            category: 'Insurance Detail',
+            description: 'Home Policy',
+            secureData: 'Aug 2029',
+            lastUpdated: '18 Jul 2026, 05:00 PM',
+            accessStatus: 'Unlocked'
+          },
+          {
+            id: 'v-qa-m1',
+            name: 'Blood Group',
+            category: 'Medical Info',
+            description: 'Blood Type',
+            secureData: 'O Positive (O+)',
+            lastUpdated: '18 Jul 2026, 05:00 PM',
+            accessStatus: 'Unlocked'
+          },
+          {
+            id: 'v-qa-m2',
+            name: 'Allergies',
+            category: 'Medical Info',
+            description: 'Allergic Substances',
+            secureData: 'Penicillin, Peanut Oil',
+            lastUpdated: '18 Jul 2026, 05:00 PM',
+            accessStatus: 'Unlocked'
+          },
+          {
+            id: 'v-qa-m3',
+            name: 'Family Physician',
+            category: 'Medical Info',
+            description: 'Dr. Rajesh Gupta',
+            secureData: '+91 98765-43210',
+            lastUpdated: '18 Jul 2026, 05:00 PM',
+            accessStatus: 'Unlocked'
           }
         ];
 
@@ -107,33 +218,42 @@ document.addEventListener('DOMContentLoaded', () => {
       if (form) {
         form.addEventListener('submit', (e) => {
           e.preventDefault();
-          const name = document.getElementById('vault-item-name').value.trim();
-          const category = document.getElementById('vault-item-category').value;
-          const description = document.getElementById('vault-item-desc').value.trim();
-          const secureData = document.getElementById('vault-item-secure').value.trim();
+          try {
+            const name = document.getElementById('vault-item-name').value.trim();
+            const category = document.getElementById('vault-item-category').value;
+            const description = document.getElementById('vault-item-desc').value.trim();
+            const secureData = document.getElementById('vault-item-secure').value.trim();
 
-          const now = new Date();
-          const options = { day: 'numeric', month: 'short', year: 'numeric' };
-          const timeOpt = { hour: '2-digit', minute: '2-digit', hour12: true };
-          const lastUpdated = `${now.toLocaleDateString('en-US', options)}, ${now.toLocaleTimeString('en-US', timeOpt)}`;
+            const now = new Date();
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            const timeOpt = { hour: '2-digit', minute: '2-digit', hour12: true };
+            const lastUpdated = `${now.toLocaleDateString('en-US', options)}, ${now.toLocaleTimeString('en-US', timeOpt)}`;
 
-          const newItem = {
-            id: 'v-' + Date.now(),
-            name,
-            category,
-            description,
-            secureData,
-            lastUpdated,
-            accessStatus: 'Locked'
-          };
+            const newItem = {
+              id: 'v-' + Date.now(),
+              name,
+              category,
+              description,
+              secureData,
+              lastUpdated,
+              accessStatus: 'Locked'
+            };
 
-          this.app.state.vaultItems.push(newItem);
-          this.app.saveState();
-          this.app.showToast(`Secure ${category} item added.`, 'success');
+            if (!this.app.state.vaultItems || !Array.isArray(this.app.state.vaultItems)) {
+              this.app.state.vaultItems = [];
+            }
 
-          form.reset();
-          if (addContainer) addContainer.style.display = 'none';
-          this.render();
+            this.app.state.vaultItems.push(newItem);
+            this.app.saveState();
+            this.app.showToast(`Secure ${category} item added.`, 'success');
+
+            form.reset();
+            if (addContainer) addContainer.style.display = 'none';
+            this.render();
+          } catch (err) {
+            console.error('Error adding secure item:', err);
+            this.app.showToast('Could not save item: ' + err.message, 'error');
+          }
         });
       }
 
@@ -252,6 +372,152 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     },
 
+    setupNumbersForm() {
+      const form = document.getElementById('vault-qa-numbers-form');
+      if (form) {
+        const newForm = form.cloneNode(true);
+        form.parentNode.replaceChild(newForm, form);
+
+        newForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          try {
+            const labelInput = document.getElementById('qa-number-label');
+            const valInput = document.getElementById('qa-number-val');
+
+            const name = labelInput.value.trim();
+            const secureData = valInput.value.trim();
+            if (!name || !secureData) return;
+
+            const now = new Date();
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            const timeOpt = { hour: '2-digit', minute: '2-digit', hour12: true };
+            const lastUpdated = `${now.toLocaleDateString('en-US', options)}, ${now.toLocaleTimeString('en-US', timeOpt)}`;
+
+            const newItem = {
+              id: 'v-qa-' + Date.now(),
+              name: name,
+              category: 'Important Number',
+              description: 'Helpline',
+              secureData: secureData,
+              lastUpdated: lastUpdated,
+              accessStatus: 'Unlocked'
+            };
+
+            if (!this.app.state.vaultItems || !Array.isArray(this.app.state.vaultItems)) {
+              this.app.state.vaultItems = [];
+            }
+            this.app.state.vaultItems.push(newItem);
+            this.app.saveState();
+            this.app.showToast(`Number for "${name}" saved!`, 'success');
+            
+            newForm.reset();
+            this.render();
+          } catch (err) {
+            console.error('Error adding helpline number:', err);
+            this.app.showToast('Could not save number: ' + err.message, 'error');
+          }
+        });
+      }
+    },
+
+    setupInsuranceForm() {
+      const form = document.getElementById('vault-qa-insurance-form');
+      if (form) {
+        const newForm = form.cloneNode(true);
+        form.parentNode.replaceChild(newForm, form);
+
+        newForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          try {
+            const nameInput = document.getElementById('qa-ins-name');
+            const noInput = document.getElementById('qa-ins-no');
+            const expInput = document.getElementById('qa-ins-exp');
+
+            const name = nameInput.value.trim();
+            const policyNo = noInput.value.trim();
+            const expiry = expInput.value.trim();
+            if (!name || !policyNo || !expiry) return;
+
+            const now = new Date();
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            const timeOpt = { hour: '2-digit', minute: '2-digit', hour12: true };
+            const lastUpdated = `${now.toLocaleDateString('en-US', options)}, ${now.toLocaleTimeString('en-US', timeOpt)}`;
+
+            const newItem = {
+              id: 'v-qa-' + Date.now(),
+              name: name,
+              category: 'Insurance Detail',
+              description: policyNo,
+              secureData: expiry,
+              lastUpdated: lastUpdated,
+              accessStatus: 'Unlocked'
+            };
+
+            if (!this.app.state.vaultItems || !Array.isArray(this.app.state.vaultItems)) {
+              this.app.state.vaultItems = [];
+            }
+            this.app.state.vaultItems.push(newItem);
+            this.app.saveState();
+            this.app.showToast(`Insurance policy "${name}" saved!`, 'success');
+            
+            newForm.reset();
+            this.render();
+          } catch (err) {
+            console.error('Error adding insurance policy:', err);
+            this.app.showToast('Could not save policy: ' + err.message, 'error');
+          }
+        });
+      }
+    },
+
+    setupMedicalForm() {
+      const form = document.getElementById('vault-qa-medical-form');
+      if (form) {
+        const newForm = form.cloneNode(true);
+        form.parentNode.replaceChild(newForm, form);
+
+        newForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          try {
+            const nameInput = document.getElementById('qa-med-name');
+            const valInput = document.getElementById('qa-med-val');
+
+            const name = nameInput.value.trim();
+            const secureData = valInput.value.trim();
+            if (!name || !secureData) return;
+
+            const now = new Date();
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            const timeOpt = { hour: '2-digit', minute: '2-digit', hour12: true };
+            const lastUpdated = `${now.toLocaleDateString('en-US', options)}, ${now.toLocaleTimeString('en-US', timeOpt)}`;
+
+            const newItem = {
+              id: 'v-qa-' + Date.now(),
+              name: name,
+              category: 'Medical Info',
+              description: 'Medical Record',
+              secureData: secureData,
+              lastUpdated: lastUpdated,
+              accessStatus: 'Unlocked'
+            };
+
+            if (!this.app.state.vaultItems || !Array.isArray(this.app.state.vaultItems)) {
+              this.app.state.vaultItems = [];
+            }
+            this.app.state.vaultItems.push(newItem);
+            this.app.saveState();
+            this.app.showToast(`Medical record for "${name}" saved!`, 'success');
+            
+            newForm.reset();
+            this.render();
+          } catch (err) {
+            console.error('Error adding medical record:', err);
+            this.app.showToast('Could not save record: ' + err.message, 'error');
+          }
+        });
+      }
+    },
+
     filterByCategory(category) {
       this.categoryFilter = category;
       const title = document.getElementById('vault-table-title');
@@ -302,7 +568,8 @@ document.addEventListener('DOMContentLoaded', () => {
     },
 
     render() {
-      const items = this.app.state.vaultItems || [];
+      const allItems = this.app.state.vaultItems || [];
+      const items = allItems.filter(v => ['Password', 'Document', 'Card & Account', 'ID & Certificate', 'Secure Note', 'Others'].includes(v.category));
 
       // 1. Calculate Stats
       const totalCount = items.length;
@@ -350,10 +617,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       this.renderTable();
       this.renderContacts();
+      this.renderNumbers();
+      this.renderInsurance();
+      this.renderMedical();
     },
 
     renderTable() {
-      const items = this.app.state.vaultItems || [];
+      const allItems = this.app.state.vaultItems || [];
+      const items = allItems.filter(v => ['Password', 'Document', 'Card & Account', 'ID & Certificate', 'Secure Note', 'Others'].includes(v.category));
       const tbody = document.getElementById('vault-items-tbody');
       if (!tbody) return;
 
@@ -444,6 +715,102 @@ document.addEventListener('DOMContentLoaded', () => {
               <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 2px;">📞 ${c.phone} <span style="background:rgba(59, 130, 246, 0.1); padding: 1px 4px; border-radius:3px; font-size:0.55rem; font-weight:bold; color:var(--blue); margin-left:4px;">${c.relation}</span></div>
             </div>
             <button onclick="window.LifeOS.modules.personal.deleteContact(${c.id})" style="background: none; border: none; color: var(--red); cursor: pointer; font-size: 0.72rem; padding: 4px;"><i class="fas fa-trash-alt"></i></button>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    },
+
+    renderNumbers() {
+      const container = document.getElementById('qa-numbers-list-container');
+      if (!container) return;
+
+      const items = (this.app.state.vaultItems || []).filter(v => v.category === 'Important Number');
+      
+      const countLabel = document.getElementById('vault-qa-numbers-count');
+      if (countLabel) {
+        countLabel.innerText = `${items.length} numbers saved`;
+      }
+
+      if (items.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.72rem; padding: 10px;">No numbers saved.</div>`;
+        return;
+      }
+
+      let html = '';
+      items.forEach(num => {
+        html += `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px; background: rgba(255,255,255,0.02); border-radius: 4px; border: 1px solid var(--glass-border);">
+            <div>
+              <strong style="font-size: 0.75rem; color: var(--text-main);">${num.name}</strong>
+              <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 2px;">📞 ${num.secureData}</div>
+            </div>
+            <button onclick="window.LifeOS.modules.personal.deleteVaultItem('${num.id}')" style="background: none; border: none; color: var(--red); cursor: pointer; font-size: 0.72rem; padding: 4px;"><i class="fas fa-trash-alt"></i></button>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    },
+
+    renderInsurance() {
+      const container = document.getElementById('qa-insurance-list-container');
+      if (!container) return;
+
+      const items = (this.app.state.vaultItems || []).filter(v => v.category === 'Insurance Detail');
+      
+      const countLabel = document.getElementById('vault-qa-insurance-count');
+      if (countLabel) {
+        countLabel.innerText = `${items.length} policies saved`;
+      }
+
+      if (items.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.72rem; padding: 10px;">No policies saved.</div>`;
+        return;
+      }
+
+      let html = '';
+      items.forEach(ins => {
+        html += `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px; background: rgba(255,255,255,0.02); border-radius: 4px; border: 1px solid var(--glass-border);">
+            <div>
+              <strong style="font-size: 0.75rem; color: var(--text-main);">${ins.name}</strong>
+              <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 2px;">📝 No: ${ins.description} <span style="background:rgba(245, 158, 11, 0.1); padding: 1px 4px; border-radius:3px; font-size:0.55rem; font-weight:bold; color:var(--yellow); margin-left:4px;">Exp: ${ins.secureData}</span></div>
+            </div>
+            <button onclick="window.LifeOS.modules.personal.deleteVaultItem('${ins.id}')" style="background: none; border: none; color: var(--red); cursor: pointer; font-size: 0.72rem; padding: 4px;"><i class="fas fa-trash-alt"></i></button>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    },
+
+    renderMedical() {
+      const container = document.getElementById('qa-medical-list-container');
+      if (!container) return;
+
+      const items = (this.app.state.vaultItems || []).filter(v => v.category === 'Medical Info');
+      
+      const countLabel = document.getElementById('vault-qa-medical-count');
+      if (countLabel) {
+        countLabel.innerText = `${items.length} records saved`;
+      }
+
+      if (items.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.72rem; padding: 10px;">No records saved.</div>`;
+        return;
+      }
+
+      let html = '';
+      items.forEach(med => {
+        html += `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px; background: rgba(255,255,255,0.02); border-radius: 4px; border: 1px solid var(--glass-border);">
+            <div>
+              <strong style="font-size: 0.75rem; color: var(--text-main);">${med.name}</strong>
+              <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 2px;">ℹ️ ${med.secureData}</div>
+            </div>
+            <button onclick="window.LifeOS.modules.personal.deleteVaultItem('${med.id}')" style="background: none; border: none; color: var(--red); cursor: pointer; font-size: 0.72rem; padding: 4px;"><i class="fas fa-trash-alt"></i></button>
           </div>
         `;
       });
