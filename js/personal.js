@@ -8,13 +8,20 @@ document.addEventListener('DOMContentLoaded', () => {
     searchQuery: '',
 
     init() {
-      this.initDefaultVaultItems();
-      this.setupVaultEventListeners();
-      this.setupContactsForm();
-      this.setupNumbersForm();
-      this.setupInsuranceForm();
-      this.setupMedicalForm();
-      this.render();
+      try {
+        console.log('PersonalModule init starting...');
+        this.initDefaultVaultItems();
+        this.setupVaultEventListeners();
+        this.setupContactsForm();
+        this.setupNumbersForm();
+        this.setupInsuranceForm();
+        this.setupMedicalForm();
+        this.render();
+        console.log('PersonalModule init successful!');
+      } catch (err) {
+        console.error('Error in PersonalModule.init:', err);
+        alert('Personal Vault Init Error: ' + err.message);
+      }
     },
 
     onActive() {
@@ -40,8 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const addContainer = document.getElementById('add-vault-item-container');
       const btnCancel = document.getElementById('btn-cancel-vault-item');
 
+      console.log('setupVaultEventListeners checking elements:', { btnAdd, addContainer, btnCancel });
+
       if (btnAdd && addContainer) {
         btnAdd.addEventListener('click', () => {
+          console.log('Add vault item button clicked. Current display:', addContainer.style.display);
           addContainer.style.display = addContainer.style.display === 'none' ? 'block' : 'none';
         });
       }
