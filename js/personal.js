@@ -171,6 +171,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
+      // Reset Data button
+      const btnReset = document.getElementById('btn-vault-reset-data');
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          const confirmReset = confirm('Are you sure you want to reset your vault data? This will wipe out all custom secrets and restore the default secure items.');
+          if (confirmReset) {
+            this.app.state.vaultItems = [];
+            this.app.state.contacts = [];
+            this.initDefaultVaultItems();
+            this.app.saveState();
+            this.app.showToast('Vault database reset to default secure values.', 'success');
+            this.render();
+          }
+        });
+      }
+
       // Drag & drop file upload input listener
       const fileInput = document.getElementById('vault-file-upload-input');
       if (fileInput) {
