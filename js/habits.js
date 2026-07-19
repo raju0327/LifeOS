@@ -562,7 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
               const isSched = h.weeklySchedule[idx];
               const status = h.history[weekDateStr];
 
-              let dotStyle = 'background: rgba(255,255,255,0.03); border: 1.5px dashed rgba(255,255,255,0.15);';
+              let dotStyle = 'background: rgba(128,128,128,0.05); border: 1.5px dashed var(--glass-border);';
               let dotContent = '';
 
               if (isSched) {
@@ -576,14 +576,14 @@ document.addEventListener('DOMContentLoaded', () => {
                   dotStyle = 'background: var(--red); border: none; color: #fff;';
                   dotContent = '<i class="fas fa-times" style="font-size: 0.55rem;"></i>';
                 } else {
-                  dotStyle = 'background: rgba(255,255,255,0.02); border: 1.5px solid rgba(255,255,255,0.2);';
+                  dotStyle = 'background: rgba(128,128,128,0.02); border: 1.5px solid var(--glass-border);';
                 }
               } else {
-                dotStyle = 'opacity: 0.15; pointer-events: none; border: 1.5px dashed rgba(255,255,255,0.1);';
+                dotStyle = 'opacity: 0.15; pointer-events: none; border: 1.5px dashed var(--glass-border);';
               }
 
               historyDotsHtml += `
-                <div style="width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; ${dotStyle}">
+                <div style="width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-sizing: border-box; ${dotStyle}">
                   ${dotContent}
                 </div>
               `;
@@ -617,7 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             listHtml += `
               <!-- Habit Item Card -->
-              <div class="glass-card" style="padding: 16px; display: grid; grid-template-columns: 1.25fr 1fr auto; align-items: center; gap: 16px; border: 1px solid var(--glass-border); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.borderColor='${h.color}33'" onmouseout="this.style.borderColor='var(--glass-border)'">
+              <div class="habit-card-container" onmouseover="this.style.borderColor='${h.color}33'" onmouseout="this.style.borderColor='var(--glass-border)'">
                 <!-- Left Details -->
                 <div style="display: flex; align-items: center; gap: 12px;">
                   <div style="width: 40px; height: 40px; border-radius: 50%; background: ${h.color}15; border: 2px solid ${h.color}; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; box-shadow: 0 0 10px ${h.color}20;">
@@ -755,12 +755,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const barHeight = Math.max(8, Math.round(pct * 1.2)); // Scale to max 120px height
 
         html += `
-          <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+          <div style="display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 65px;">
             <span style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 4px;">${pct}%</span>
             <div style="width: 14px; height: 120px; background: rgba(255,255,255,0.03); border-radius: 4px; display: flex; align-items: flex-end; overflow: hidden; border: 1px solid var(--glass-border);">
               <div style="width: 100%; height: ${barHeight}px; background: ${h.color}; border-radius: 2px;"></div>
             </div>
-            <span style="font-size: 0.6rem; color: var(--text-main); margin-top: 6px; width: 45px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center;" title="${h.name}">${h.name}</span>
+            <span style="font-size: 0.6rem; color: var(--text-main); margin-top: 6px; width: 62px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center;" title="${h.name}">${h.name}</span>
           </div>
         `;
       });
@@ -922,11 +922,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const strokeDashoffset = circumference - (pct / 100) * circumference;
 
         html += `
-          <div style="display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 65px;">
+          <div style="display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 80px;">
             <div style="position: relative; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; margin-bottom: 6px;">
               <svg width="56" height="56" viewBox="0 0 56 56">
                 <!-- Outer Background Circle -->
-                <circle cx="28" cy="28" r="${radius}" stroke="rgba(255,255,255,0.03)" stroke-width="4" fill="none" />
+                <circle cx="28" cy="28" r="${radius}" stroke="rgba(128,128,128,0.15)" stroke-width="4" fill="none" />
                 <!-- Progress Arc -->
                 <circle cx="28" cy="28" r="${radius}" stroke="${h.color}" stroke-width="4" fill="none" 
                   stroke-dasharray="${circumference}" 
@@ -936,7 +936,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </svg>
               <span style="position: absolute; font-size: 0.68rem; font-weight: bold; color: var(--text-main);">${pct}%</span>
             </div>
-            <span style="font-size: 0.62rem; color: var(--text-muted); width: 62px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${h.name}">${h.name}</span>
+            <span style="font-size: 0.62rem; color: var(--text-muted); width: 76px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${h.name}">${h.name}</span>
           </div>
         `;
       });

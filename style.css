@@ -2768,3 +2768,24 @@ html, body {
   box-sizing: border-box !important;
   max-width: 100% !important;
 }
+
+/* Responsive Habit Card Container */
+.habit-card-container {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 1.25fr 1.2fr auto;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--glass-border);
+  transition: transform 0.2s, border-color 0.2s;
+  box-sizing: border-box;
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+}
+
+@media (max-width: 640px) {
+  .habit-card-container {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+}
