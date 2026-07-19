@@ -74,6 +74,25 @@ document.addEventListener('DOMContentLoaded', () => {
       vehicleLogs: [],
       mediaItems: [], // Books & Movies
       shoppingList: [],
+      
+      // Lifestyle & Travel Tracker
+      travelTrips: [],
+      travelItinerary: [],
+      travelExpenses: [],
+      travelGallery: [],
+      travelDocuments: [],
+      packingChecklist: [],
+      bucketList: [],
+      travelNotes: [],
+      visitedPlaces: [],
+      travelStatistics: {
+        countriesCount: 0,
+        citiesCount: 0,
+        tripsCount: 0,
+        daysTravelled: 0,
+        totalSpent: 0,
+        photosCaptured: 0
+      },
 
       // Career
       skills: [],
@@ -428,7 +447,11 @@ document.addEventListener('DOMContentLoaded', () => {
         'jobApplications', 'notifications',
         
         // Include all finance data keys
-        'categories', 'subscriptions', 'loans', 'transactions', 'habits', 'vaultItems'
+        'categories', 'subscriptions', 'loans', 'transactions', 'habits', 'vaultItems',
+        
+        // Travel Tracker keys
+        'travelTrips', 'travelItinerary', 'travelExpenses', 'travelGallery', 'travelDocuments', 
+        'packingChecklist', 'bucketList', 'travelNotes', 'visitedPlaces', 'travelStatistics'
       ];
       keys.forEach(k => {
         dashboardPayload[k] = this.state[k];
@@ -545,7 +568,11 @@ document.addEventListener('DOMContentLoaded', () => {
               'moodLogs', 'medicineReminders', 'nutritionLogs', 'workoutLogs', 'contacts', 
               'trips', 'vehicleLogs', 'mediaItems', 'shoppingList', 'skills', 
               'jobApplications', 'notifications',
-              'categories', 'subscriptions', 'loans', 'transactions', 'habits', 'vaultItems'
+              'categories', 'subscriptions', 'loans', 'transactions', 'habits', 'vaultItems',
+              
+              // Travel Tracker keys
+              'travelTrips', 'travelItinerary', 'travelExpenses', 'travelGallery', 'travelDocuments', 
+              'packingChecklist', 'bucketList', 'travelNotes', 'visitedPlaces', 'travelStatistics'
             ];
             keys.forEach(k => {
               if (dashboardObj[k] !== undefined) {
@@ -687,6 +714,23 @@ document.addEventListener('DOMContentLoaded', () => {
       this.state.vehicleLogs = [];
       this.state.mediaItems = [];
       this.state.shoppingList = [];
+      this.state.travelTrips = [];
+      this.state.travelItinerary = [];
+      this.state.travelExpenses = [];
+      this.state.travelGallery = [];
+      this.state.travelDocuments = [];
+      this.state.packingChecklist = [];
+      this.state.bucketList = [];
+      this.state.travelNotes = [];
+      this.state.visitedPlaces = [];
+      this.state.travelStatistics = {
+        countriesCount: 0,
+        citiesCount: 0,
+        tripsCount: 0,
+        daysTravelled: 0,
+        totalSpent: 0,
+        photosCaptured: 0
+      };
 
       // Career
       this.state.skills = [];

@@ -2602,110 +2602,647 @@
         <!-- 12. LIFESTYLE & TRAVEL VIEW -->
         <section id="lifestyle-view" class="view-panel">
           <div class="view-header">
-            <h2>Lifestyle & Travel Tracker</h2>
-            <p class="subtitle">Itineraries, vehicle logging, reading trackers, shopping lists, and watchlists</p>
+            <h2 style="display: flex; align-items: center; gap: 8px;">Lifestyle & Travel Tracker <i class="fas fa-plane-departure" style="color: var(--primary); font-size: 1.25rem;"></i></h2>
+            <p class="subtitle">Live well. Travel often. Make every moment count.</p>
           </div>
 
-          <div class="lifestyle-layout">
-            <div class="lifestyle-col">
-              <!-- Travel Planner -->
-              <div class="glass-card travel-card">
-                <h3>Travel & Trip Planner</h3>
-                <form id="travel-form">
-                  <div class="input-group">
-                    <label for="trip-dest">Destination</label>
-                    <input type="text" id="trip-dest" placeholder="e.g. Paris Tour, Tokyo Escape" required>
+          <!-- Tab Navigation row -->
+          <div class="travel-subnav" style="display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none;">
+            <button type="button" class="travel-subnav-btn active" data-subview="overview">
+              <i class="fas fa-th-large" style="margin-right: 6px;"></i> Overview
+            </button>
+            <button type="button" class="travel-subnav-btn" data-subview="plans">
+              <i class="fas fa-map-marked-alt" style="margin-right: 6px;"></i> Travel Plans
+            </button>
+            <button type="button" class="travel-subnav-btn" data-subview="trips">
+              <i class="fas fa-history" style="margin-right: 6px;"></i> Trips
+            </button>
+            <button type="button" class="travel-subnav-btn" data-subview="lifestyle">
+              <i class="fas fa-heartbeat" style="margin-right: 6px;"></i> Lifestyle
+            </button>
+            <button type="button" class="travel-subnav-btn" data-subview="bucket">
+              <i class="fas fa-star" style="margin-right: 6px;"></i> Bucket List
+            </button>
+            <button type="button" class="travel-subnav-btn" data-subview="expenses">
+              <i class="fas fa-wallet" style="margin-right: 6px;"></i> Expenses
+            </button>
+            <button type="button" class="travel-subnav-btn" data-subview="gallery">
+              <i class="fas fa-camera-retro" style="margin-right: 6px;"></i> Gallery
+            </button>
+            <button type="button" class="travel-subnav-btn" data-subview="map">
+              <i class="fas fa-globe-americas" style="margin-right: 6px;"></i> Map View
+            </button>
+          </div>
+
+          <!-- SUBVIEWS VIEWPORT -->
+          <div class="travel-viewport">
+
+            <!-- A. OVERVIEW PANEL -->
+            <div class="travel-subview-panel" id="travel-subview-overview">
+              <!-- Stats Row -->
+              <div class="travel-metrics-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px;">
+                <!-- Metric 1: Trips -->
+                <div class="glass-card travel-metric-card" style="display: flex; align-items: center; gap: 14px; padding: 16px;">
+                  <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(168, 85, 247, 0.15); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                    <i class="fas fa-suitcase" style="font-size: 1.15rem;"></i>
                   </div>
-                  <div class="form-row">
-                    <div class="input-group">
-                      <label for="trip-dates">Dates</label>
-                      <input type="text" id="trip-dates" placeholder="Dec 12 - Dec 20" required>
-                    </div>
-                    <div class="input-group">
-                      <label for="trip-packing">Packing checklist (comma list)</label>
-                      <input type="text" id="trip-packing" placeholder="Passport, Camera, Jacket">
-                    </div>
+                  <div>
+                    <h4 style="margin: 0; font-size: 1.3rem; font-weight: 700;" id="travel-stat-trips-count">0</h4>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); display: block;">Trips This Year</span>
+                    <span style="font-size: 0.6rem; color: var(--primary); display: block; margin-top: 1px;" id="travel-stat-upcoming-badge">0 Upcoming</span>
                   </div>
-                  <button type="submit" class="btn-primary-glow btn-full">Create Trip</button>
-                </form>
-                <div class="trips-list" id="trips-list-container" style="margin-top: 16px;">
-                  <!-- Dynamic -->
+                </div>
+
+                <!-- Metric 2: Days Travelled -->
+                <div class="glass-card travel-metric-card" style="display: flex; align-items: center; gap: 14px; padding: 16px;">
+                  <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(59, 130, 246, 0.15); display: flex; align-items: center; justify-content: center; color: var(--blue);">
+                    <i class="fas fa-plane" style="font-size: 1.15rem;"></i>
+                  </div>
+                  <div>
+                    <h4 style="margin: 0; font-size: 1.3rem; font-weight: 700;" id="travel-stat-days-count">0</h4>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); display: block;">Days Travelled</span>
+                    <span style="font-size: 0.6rem; color: var(--green); display: block; margin-top: 1px;" id="travel-stat-days-badge">+0 days vs last year</span>
+                  </div>
+                </div>
+
+                <!-- Metric 3: Places Visited -->
+                <div class="glass-card travel-metric-card" style="display: flex; align-items: center; gap: 14px; padding: 16px;">
+                  <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center; color: var(--green);">
+                    <i class="fas fa-map-marker-alt" style="font-size: 1.15rem;"></i>
+                  </div>
+                  <div>
+                    <h4 style="margin: 0; font-size: 1.3rem; font-weight: 700;" id="travel-stat-places-count">0</h4>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); display: block;">Places Visited</span>
+                    <span style="font-size: 0.6rem; color: var(--green); display: block; margin-top: 1px;" id="travel-stat-countries-badge">0 Countries</span>
+                  </div>
+                </div>
+
+                <!-- Metric 4: Total Spent -->
+                <div class="glass-card travel-metric-card" style="display: flex; align-items: center; gap: 14px; padding: 16px;">
+                  <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(245, 158, 11, 0.15); display: flex; align-items: center; justify-content: center; color: var(--yellow);">
+                    <i class="fas fa-coins" style="font-size: 1.15rem;"></i>
+                  </div>
+                  <div>
+                    <h4 style="margin: 0; font-size: 1.3rem; font-weight: 700;" id="travel-stat-spent-count">₹0</h4>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); display: block;">Total Spent</span>
+                    <span style="font-size: 0.6rem; color: var(--yellow); display: block; margin-top: 1px;" id="travel-stat-spent-badge">0% vs budget</span>
+                  </div>
+                </div>
+
+                <!-- Metric 5: Photos Captured -->
+                <div class="glass-card travel-metric-card" style="display: flex; align-items: center; gap: 14px; padding: 16px;">
+                  <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(20, 184, 166, 0.15); display: flex; align-items: center; justify-content: center; color: var(--teal);">
+                    <i class="fas fa-camera" style="font-size: 1.15rem;"></i>
+                  </div>
+                  <div>
+                    <h4 style="margin: 0; font-size: 1.3rem; font-weight: 700;" id="travel-stat-photos-count">0</h4>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); display: block;">Photos Captured</span>
+                    <span style="font-size: 0.6rem; color: var(--teal); display: block; margin-top: 1px;">This Year</span>
+                  </div>
                 </div>
               </div>
 
-              <!-- Vehicle logs -->
-              <div class="glass-card vehicle-card">
-                <h3>Vehicle & Fuel Logs</h3>
-                <form id="vehicle-form">
-                  <div class="input-group">
-                    <label for="veh-action">Action / Log Type</label>
-                    <select id="veh-action">
-                      <option value="Fuel Refill">⛽ Fuel Refill</option>
-                      <option value="Maintenance Service">🛠️ Maintenance Service</option>
-                      <option value="Insurance Renewal">🛡️ Insurance Renewal</option>
-                    </select>
+              <!-- Main Dashboard Core (Split Column Grid) -->
+              <div class="travel-dashboard-split-grid" style="display: grid; grid-template-columns: 1.25fr 1fr; gap: 24px; margin-bottom: 24px; align-items: start;">
+                
+                <!-- Left: Highlighted Upcoming Trip -->
+                <div class="glass-card upcoming-trip-highlight-card" style="padding: 20px;" id="travel-upcoming-highlight-wrapper">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                      <i class="fas fa-star" style="color: var(--yellow);"></i> Featured Upcoming Trip
+                    </h3>
+                    <button class="icon-btn" id="travel-btn-quick-manage" style="display: none;"><i class="fas fa-ellipsis-v"></i></button>
                   </div>
-                  <div class="form-row">
-                    <div class="input-group">
-                      <label for="veh-odo">Odometer (Kilometers)</label>
-                      <input type="number" id="veh-odo" placeholder="42500" required>
-                    </div>
-                    <div class="input-group">
-                      <label for="veh-cost">Cost (Rs)</label>
-                      <input type="number" id="veh-cost" min="0.01" step="0.01" placeholder="45.50" required>
+                  <!-- Content Rendered dynamically or empty state -->
+                  <div id="travel-upcoming-highlight-content"></div>
+                </div>
+
+                <!-- Right: Travel Map SVG -->
+                <div class="glass-card travel-map-card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 340px;">
+                  <div>
+                    <h3 style="margin: 0 0 16px 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Travel Footprint</h3>
+                    
+                    <!-- SVG World Map Dotted Mockup -->
+                    <div style="position: relative; width: 100%; height: 180px; background: rgba(0,0,0,0.15); border-radius: var(--radius-sm); border: 1px solid var(--glass-border); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                      <svg viewBox="0 0 400 200" width="100%" height="100%" style="opacity: 0.6;">
+                        <!-- Styled landmass shapes -->
+                        <path d="M 30,50 Q 50,40 70,60 T 110,50 T 140,70 T 160,50 T 120,30 Z" fill="rgba(255,255,255,0.04)" />
+                        <path d="M 220,60 Q 250,30 280,50 T 320,40 T 360,70 T 380,50 T 340,30 Z" fill="rgba(255,255,255,0.04)" />
+                        <path d="M 80,120 Q 110,130 130,110 T 170,140 T 190,120 T 150,100 Z" fill="rgba(255,255,255,0.04)" />
+                        <path d="M 250,130 Q 280,140 310,120 T 350,150 T 370,130 T 330,110 Z" fill="rgba(255,255,255,0.04)" />
+                        
+                        <!-- Travel Route paths -->
+                        <path d="M 120,60 Q 200,30 280,50" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="4,4" id="map-route-1" />
+                        <path d="M 130,110 Q 220,120 310,120" fill="none" stroke="var(--primary-dark)" stroke-width="1.5" stroke-dasharray="4,4" id="map-route-2" />
+                        
+                        <!-- Pulse Pin dots -->
+                        <circle cx="120" cy="60" r="4" fill="var(--primary)" />
+                        <circle cx="120" cy="60" r="8" fill="none" stroke="var(--primary)" stroke-width="1" opacity="0.5">
+                          <animate attributeName="r" values="4;10;4" dur="2s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="280" cy="50" r="4" fill="var(--primary)" />
+                        
+                        <circle cx="130" cy="110" r="4" fill="var(--primary)" />
+                        <circle cx="310" cy="120" r="4" fill="var(--primary)" />
+                      </svg>
+                      <div style="position: absolute; right: 10px; top: 10px; display: flex; flex-direction: column; gap: 4px;">
+                        <button class="icon-btn" style="padding:4px; font-size:0.7rem; width:22px; height:22px;"><i class="fas fa-plus"></i></button>
+                        <button class="icon-btn" style="padding:4px; font-size:0.7rem; width:22px; height:22px;"><i class="fas fa-minus"></i></button>
+                      </div>
                     </div>
                   </div>
-                  <button type="submit" class="btn-primary-glow btn-full">Record Vehicle Log</button>
-                </form>
-                <ul class="simple-list" id="vehicle-logs-container" style="margin-top: 16px;">
-                  <!-- Dynamic -->
-                </ul>
+
+                  <!-- Footprint summary -->
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; flex-wrap: wrap; gap: 10px; border-top: 1px solid var(--glass-border); padding-top: 12px;">
+                    <span style="font-size: 0.72rem; color: var(--text-muted);"><i class="fas fa-globe-asia" style="margin-right: 4px; color: var(--primary);"></i> <strong id="travel-map-countries-count" style="color:var(--text-main);">0</strong> Countries</span>
+                    <span style="font-size: 0.72rem; color: var(--text-muted);"><i class="fas fa-city" style="margin-right: 4px; color: var(--primary);"></i> <strong id="travel-map-cities-count" style="color:var(--text-main);">0</strong> Cities</span>
+                    <span style="font-size: 0.72rem; color: var(--text-muted);"><i class="fas fa-route" style="margin-right: 4px; color: var(--primary);"></i> <strong id="travel-map-trips-count" style="color:var(--text-main);">0</strong> Trips</span>
+                    <span style="font-size: 0.72rem; color: var(--text-muted);"><i class="fas fa-history" style="margin-right: 4px; color: var(--primary);"></i> <strong id="travel-map-days-count" style="color:var(--text-main);">0</strong> Days</span>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Quick Add Row (Mockup Style, only on mobile or flex) -->
+              <div class="travel-quick-add-card glass-card" style="padding: 16px; margin-bottom: 24px;">
+                <h3 style="margin: 0 0 12px 0; font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Quick Add</h3>
+                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;" class="travel-quick-add-grid">
+                  <button type="button" class="btn-glass-subtle travel-quick-btn" id="travel-btn-quick-plan"><i class="fas fa-plane-departure" style="color: var(--primary);"></i> Plan Trip</button>
+                  <button type="button" class="btn-glass-subtle travel-quick-btn" id="travel-btn-quick-expense"><i class="fas fa-wallet" style="color: var(--yellow);"></i> Add Expense</button>
+                  <button type="button" class="btn-glass-subtle travel-quick-btn" id="travel-btn-quick-bucket"><i class="fas fa-star" style="color: var(--primary-light);"></i> Bucket List</button>
+                  <button type="button" class="btn-glass-subtle travel-quick-btn" id="travel-btn-quick-pack"><i class="fas fa-box" style="color: var(--blue);"></i> Packing List</button>
+                  <button type="button" class="btn-glass-subtle travel-quick-btn" id="travel-btn-quick-note"><i class="fas fa-sticky-note" style="color: var(--teal);"></i> New Note</button>
+                </div>
+              </div>
+
+              <!-- 3-Column Detailed Lists Grid -->
+              <div class="travel-overview-lists-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 24px; align-items: start;">
+                <!-- Column 1: Upcoming Plans -->
+                <div class="glass-card" style="padding: 20px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="margin: 0; font-size: 0.9rem; font-weight: 700; color: var(--text-main);">Upcoming Plans</h3>
+                    <a href="#" class="view-all-link travel-view-all-btn" data-subview="plans">View All</a>
+                  </div>
+                  <div class="travel-overview-list" id="travel-list-upcoming-plans" style="display: flex; flex-direction: column; gap: 12px;">
+                    <!-- Dynamically filled -->
+                  </div>
+                </div>
+
+                <!-- Column 2: Lifestyle Summary -->
+                <div class="glass-card" style="padding: 20px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="margin: 0; font-size: 0.9rem; font-weight: 700; color: var(--text-main);">Lifestyle Summary</h3>
+                    <a href="#" class="view-all-link travel-view-all-btn" data-subview="lifestyle">This Week</a>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 16px;" id="travel-list-lifestyle-summary">
+                    <!-- Steps -->
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: rgba(16,185,129,0.1); display: flex; align-items: center; justify-content: center; color: var(--green);">
+                          <i class="fas fa-shoe-prints" style="font-size:0.75rem;"></i>
+                        </div>
+                        <div>
+                          <span style="font-size: 0.78rem; font-weight: 600; display: block; color: var(--text-main);">Steps</span>
+                          <span style="font-size: 0.65rem; color: var(--text-muted);">Daily Average</span>
+                        </div>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-main);" id="travel-lifestyle-steps-val">7,892</span>
+                        <div style="width: 32px; height: 32px;" class="lifestyle-ring-container" data-pct="78" data-color="var(--green)"></div>
+                      </div>
+                    </div>
+                    <!-- Workout -->
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: rgba(59,130,246,0.1); display: flex; align-items: center; justify-content: center; color: var(--blue);">
+                          <i class="fas fa-dumbbell" style="font-size:0.75rem;"></i>
+                        </div>
+                        <div>
+                          <span style="font-size: 0.78rem; font-weight: 600; display: block; color: var(--text-main);">Workout</span>
+                          <span style="font-size: 0.65rem; color: var(--text-muted);">Sessions</span>
+                        </div>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-main);" id="travel-lifestyle-workout-val">3 / 5</span>
+                        <div style="width: 32px; height: 32px;" class="lifestyle-ring-container" data-pct="60" data-color="var(--blue)"></div>
+                      </div>
+                    </div>
+                    <!-- Water Intake -->
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: rgba(6,182,212,0.1); display: flex; align-items: center; justify-content: center; color: var(--teal);">
+                          <i class="fas fa-tint" style="font-size:0.75rem;"></i>
+                        </div>
+                        <div>
+                          <span style="font-size: 0.78rem; font-weight: 600; display: block; color: var(--text-main);">Water Intake</span>
+                          <span style="font-size: 0.65rem; color: var(--text-muted);">Daily Average</span>
+                        </div>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-main);" id="travel-lifestyle-water-val">6 / 8 cups</span>
+                        <div style="width: 32px; height: 32px;" class="lifestyle-ring-container" data-pct="75" data-color="var(--teal)"></div>
+                      </div>
+                    </div>
+                    <!-- Sleep -->
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: rgba(168,85,247,0.1); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                          <i class="fas fa-moon" style="font-size:0.75rem;"></i>
+                        </div>
+                        <div>
+                          <span style="font-size: 0.78rem; font-weight: 600; display: block; color: var(--text-main);">Sleep</span>
+                          <span style="font-size: 0.65rem; color: var(--text-muted);">Daily Average</span>
+                        </div>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-main);" id="travel-lifestyle-sleep-val">7h 10m</span>
+                        <div style="width: 32px; height: 32px;" class="lifestyle-ring-container" data-pct="71" data-color="var(--primary)"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Column 3: Recent Trips -->
+                <div class="glass-card" style="padding: 20px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="margin: 0; font-size: 0.9rem; font-weight: 700; color: var(--text-main);">Recent Trips</h3>
+                    <a href="#" class="view-all-link travel-view-all-btn" data-subview="trips">View All</a>
+                  </div>
+                  <div class="travel-overview-list" id="travel-list-recent-trips" style="display: flex; flex-direction: column; gap: 12px;">
+                    <!-- Dynamically filled -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom Row: Bucket List Tray -->
+              <div class="glass-card" style="padding: 20px; margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                  <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-star" style="color: var(--yellow);"></i> Wanderlust Bucket List
+                  </h3>
+                  <a href="#" class="view-all-link travel-view-all-btn" data-subview="bucket">View All</a>
+                </div>
+                
+                <!-- Horizontal scrolling bucket list cards -->
+                <div style="display: flex; gap: 16px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: thin;" id="travel-overview-bucket-list-tray">
+                  <!-- Dynamically filled + Add card -->
+                </div>
               </div>
             </div>
 
-            <div class="lifestyle-col">
-              <!-- Books Library & Movie Watchlist -->
-              <div class="glass-card media-library-card">
-                <h3>Books & Movies Tracker</h3>
-                <form id="media-form">
-                  <div class="input-group">
-                    <label for="media-name">Title</label>
-                    <input type="text" id="media-name" placeholder="Atomic Habits, Inception" required>
+            <!-- B. TRAVEL PLANS PANEL -->
+            <div class="travel-subview-panel hidden-panel" id="travel-subview-plans">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; gap: 12px; align-items: center; flex-grow: 1; min-width: 250px;">
+                  <div style="position: relative; flex-grow: 1; max-width: 300px;">
+                    <i class="fas fa-search" style="position: absolute; left: 10px; top: 9px; color: var(--text-muted); font-size: 0.8rem;"></i>
+                    <input type="text" id="travel-plans-search" placeholder="Search planned trips..." style="width: 100%; box-sizing: border-box; padding: 6px 12px 6px 30px; font-size: 0.8rem; border-radius: var(--radius-sm); background: var(--bg-sidebar); border: 1px solid var(--glass-border); color: var(--text-main);">
                   </div>
-                  <div class="form-row">
+                </div>
+                <button type="button" class="btn-primary-glow" id="travel-btn-add-trip-plan"><i class="fas fa-plus" style="margin-right: 4px;"></i> Plan A Trip</button>
+              </div>
+
+              <!-- Dual Split Layout: Left Trips list, Right detailed trip planner drawer -->
+              <div class="travel-plans-layout" style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px; align-items: start;">
+                
+                <!-- Left: List of Trips -->
+                <div style="display: flex; flex-direction: column; gap: 14px;" id="travel-plans-trips-list">
+                  <!-- Dynamically filled -->
+                </div>
+
+                <!-- Right: Trip Planner Detail Drawer -->
+                <div class="glass-card" style="padding: 20px; min-height: 400px;" id="travel-plans-detail-drawer">
+                  <div class="empty-state" style="padding: 80px 0; text-align: center; color: var(--text-muted);">
+                    <i class="fas fa-plane-departure" style="font-size: 2.5rem; opacity: 0.2; margin-bottom: 12px; display: block;"></i>
+                    Select a planned trip to customize itinerary, checklist, budget expenses, and documents.
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- C. TRIPS PANEL (COMPLETED) -->
+            <div class="travel-subview-panel hidden-panel" id="travel-subview-trips">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-main);">Travel History (Completed Trips)</h3>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;" id="travel-completed-trips-grid" class="travel-completed-trips-grid">
+                <!-- Dynamically filled completed trip cards -->
+              </div>
+            </div>
+
+            <!-- D. LIFESTYLE PANEL -->
+            <div class="travel-subview-panel hidden-panel" id="travel-subview-lifestyle">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;" class="travel-lifestyle-grid">
+                <!-- Log Metrics Card -->
+                <div class="glass-card" style="padding: 20px;">
+                  <h3 style="margin: 0 0 20px 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);"><i class="fas fa-edit" style="margin-right: 6px; color: var(--primary);"></i> Log Lifestyle Activity</h3>
+                  <form id="travel-lifestyle-form" style="display: flex; flex-direction: column; gap: 16px;">
                     <div class="input-group">
-                      <label for="media-type">Format</label>
-                      <select id="media-type">
-                        <option value="Book">📖 Book Library</option>
-                        <option value="Movie">🎬 Movie Watchlist</option>
+                      <label for="lifestyle-input-steps">Daily Steps Count</label>
+                      <input type="number" id="lifestyle-input-steps" placeholder="e.g. 8000" min="0" required>
+                    </div>
+                    <div class="form-row">
+                      <div class="input-group">
+                        <label for="lifestyle-input-workouts-done">Workouts Completed</label>
+                        <input type="number" id="lifestyle-input-workouts-done" placeholder="3" min="0" required>
+                      </div>
+                      <div class="input-group">
+                        <label for="lifestyle-input-workouts-target">Weekly Workouts Target</label>
+                        <input type="number" id="lifestyle-input-workouts-target" value="5" min="1" required>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="input-group">
+                        <label for="lifestyle-input-water-done">Cups of Water Logged</label>
+                        <input type="number" id="lifestyle-input-water-done" placeholder="6" min="0" required>
+                      </div>
+                      <div class="input-group">
+                        <label for="lifestyle-input-water-target">Daily Cups Target</label>
+                        <input type="number" id="lifestyle-input-water-target" value="8" min="1" required>
+                      </div>
+                    </div>
+                    <div class="input-group">
+                      <label for="lifestyle-input-sleep">Sleep Duration</label>
+                      <div style="display: flex; gap: 10px;">
+                        <input type="number" id="lifestyle-input-sleep-hrs" placeholder="Hours (e.g. 7)" min="0" max="24" required style="flex:1;">
+                        <input type="number" id="lifestyle-input-sleep-mins" placeholder="Minutes (e.g. 10)" min="0" max="59" required style="flex:1;">
+                      </div>
+                    </div>
+                    <button type="submit" class="btn-primary-glow btn-full">Save Lifestyle Logs</button>
+                  </form>
+                </div>
+
+                <!-- Circular compliance gauges -->
+                <div class="glass-card" style="padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+                  <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);"><i class="fas fa-heartbeat" style="margin-right: 6px; color: var(--primary);"></i> Weekly Progress Metrics</h3>
+                  
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: center;">
+                    <!-- Gauge 1: Steps -->
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; background: rgba(255,255,255,0.01); border: 1px solid var(--glass-border); border-radius: var(--radius-md);">
+                      <div style="width: 70px; height: 70px; margin-bottom: 8px;" class="lifestyle-ring-container-large" id="lifestyle-gauge-steps" data-color="var(--green)"></div>
+                      <strong style="font-size: 0.85rem; color:var(--text-main); display:block;">Steps Target</strong>
+                      <span style="font-size: 0.65rem; color: var(--text-muted);" id="lifestyle-desc-steps">0 / 10000 daily</span>
+                    </div>
+
+                    <!-- Gauge 2: Workouts -->
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; background: rgba(255,255,255,0.01); border: 1px solid var(--glass-border); border-radius: var(--radius-md);">
+                      <div style="width: 70px; height: 70px; margin-bottom: 8px;" class="lifestyle-ring-container-large" id="lifestyle-gauge-workouts" data-color="var(--blue)"></div>
+                      <strong style="font-size: 0.85rem; color:var(--text-main); display:block;">Workout Sessions</strong>
+                      <span style="font-size: 0.65rem; color: var(--text-muted);" id="lifestyle-desc-workouts">0 / 5 sessions</span>
+                    </div>
+
+                    <!-- Gauge 3: Water -->
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; background: rgba(255,255,255,0.01); border: 1px solid var(--glass-border); border-radius: var(--radius-md);">
+                      <div style="width: 70px; height: 70px; margin-bottom: 8px;" class="lifestyle-ring-container-large" id="lifestyle-gauge-water" data-color="var(--teal)"></div>
+                      <strong style="font-size: 0.85rem; color:var(--text-main); display:block;">Water Intake</strong>
+                      <span style="font-size: 0.65rem; color: var(--text-muted);" id="lifestyle-desc-water">0 / 8 cups daily</span>
+                    </div>
+
+                    <!-- Gauge 4: Sleep -->
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; background: rgba(255,255,255,0.01); border: 1px solid var(--glass-border); border-radius: var(--radius-md);">
+                      <div style="width: 70px; height: 70px; margin-bottom: 8px;" class="lifestyle-ring-container-large" id="lifestyle-gauge-sleep" data-color="var(--primary)"></div>
+                      <strong style="font-size: 0.85rem; color:var(--text-main); display:block;">Sleep Goal</strong>
+                      <span style="font-size: 0.65rem; color: var(--text-muted);" id="lifestyle-desc-sleep">0h / 8h daily</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- E. BUCKET LIST PANEL -->
+            <div class="travel-subview-panel hidden-panel" id="travel-subview-bucket">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-main);">My Travel Bucket List</h3>
+                <button type="button" class="btn-primary-glow" id="travel-btn-open-bucket-modal"><i class="fas fa-plus" style="margin-right: 4px;"></i> Add Destination</button>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;" id="travel-bucket-list-grid" class="travel-bucket-list-grid">
+                <!-- Dynamically filled with bucket cards -->
+              </div>
+            </div>
+
+            <!-- F. EXPENSES PANEL -->
+            <div class="travel-subview-panel hidden-panel" id="travel-subview-expenses">
+              <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px; align-items: start;" class="travel-expenses-layout">
+                <!-- Log Expense Form -->
+                <div class="glass-card" style="padding: 20px;">
+                  <h3 style="margin: 0 0 20px 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Log Travel Expense</h3>
+                  <form id="travel-expense-form" style="display: flex; flex-direction: column; gap: 16px;">
+                    <div class="input-group">
+                      <label for="expense-input-trip">Select Trip</label>
+                      <select id="expense-input-trip" required>
+                        <!-- Dynamic options -->
                       </select>
                     </div>
-                    <div class="input-group">
-                      <label for="media-progress">Status / Progress</label>
-                      <input type="text" id="media-progress" placeholder="e.g. Page 120, Unwatched" required>
+                    <div class="form-row">
+                      <div class="input-group">
+                        <label for="expense-input-amount">Amount (Rs)</label>
+                        <input type="number" id="expense-input-amount" placeholder="e.g. 1200" min="0" required>
+                      </div>
+                      <div class="input-group">
+                        <label for="expense-input-category">Category</label>
+                        <select id="expense-input-category">
+                          <option value="Flight">✈️ Flights / Transport</option>
+                          <option value="Hotel">🏨 Accommodations</option>
+                          <option value="Food">🍔 Dining & Drinks</option>
+                          <option value="Activity">🎟️ Activities & Tours</option>
+                          <option value="Shopping">🛍️ Souvenirs / Shopping</option>
+                          <option value="Other">💸 Miscellaneous</option>
+                        </select>
+                      </div>
                     </div>
-                  </div>
-                  <button type="submit" class="btn-primary-glow btn-full">Save to Library</button>
-                </form>
-                <ul class="simple-list" id="media-list-container" style="margin-top: 16px;">
-                  <!-- Dynamic -->
-                </ul>
-              </div>
+                    <div class="input-group">
+                      <label for="expense-input-desc">Description</label>
+                      <input type="text" id="expense-input-desc" placeholder="e.g. Flight to Goa, Dinner at Ooty" required>
+                    </div>
+                    <div class="input-group">
+                      <label for="expense-input-date">Expense Date</label>
+                      <input type="date" id="expense-input-date" required>
+                    </div>
+                    <button type="submit" class="btn-primary-glow btn-full">Log Expense</button>
+                  </form>
+                </div>
 
-              <!-- Shopping Lists -->
-              <div class="glass-card shopping-card">
-                <h3>Shopping Lists & Wishlists</h3>
-                <form id="shopping-form" class="form-row" style="margin-bottom: 16px;">
-                  <input type="text" id="shop-item" placeholder="Grocery list item, gadget wishlist..." required
-                    style="flex:3;">
-                  <button type="submit" class="btn-primary-glow" style="flex:1;">Add Item</button>
-                </form>
-                <ul class="simple-list" id="shopping-list-container">
-                  <!-- Dynamic -->
-                </ul>
+                <!-- Expense Ledger list -->
+                <div class="glass-card" style="padding: 20px;">
+                  <h3 style="margin: 0 0 16px 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Expense Ledger</h3>
+                  <div style="max-height: 400px; overflow-y: auto;">
+                    <table style="width: 100%; border-collapse: collapse;" class="ledger-table">
+                      <thead>
+                        <tr style="border-bottom: 1px solid var(--glass-border); text-align: left; font-size: 0.72rem; color: var(--text-muted);">
+                          <th style="padding: 10px 6px;">Trip</th>
+                          <th style="padding: 10px 6px;">Category</th>
+                          <th style="padding: 10px 6px;">Amount</th>
+                          <th style="padding: 10px 6px;">Date</th>
+                          <th style="padding: 10px 6px; text-align: right;">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody id="travel-expenses-ledger-rows" style="font-size: 0.78rem;">
+                        <!-- Dynamic rows -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             </div>
+
+            <!-- G. GALLERY PANEL -->
+            <div class="travel-subview-panel hidden-panel" id="travel-subview-gallery">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-main);">Travel Memories Gallery</h3>
+                <button type="button" class="btn-primary-glow" id="travel-btn-open-gallery-modal"><i class="fas fa-plus" style="margin-right: 4px;"></i> Log Memory Photo</button>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;" id="travel-gallery-grid" class="travel-gallery-grid">
+                <!-- Dynamically filled with gallery photo cards -->
+              </div>
+            </div>
+
+            <!-- H. MAP VIEW PANEL -->
+            <div class="travel-subview-panel hidden-panel" id="travel-subview-map">
+              <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;" class="travel-map-layout">
+                <!-- Left: Full Width Styled Map -->
+                <div class="glass-card" style="padding: 20px; min-height: 420px; display: flex; flex-direction: column;">
+                  <h3 style="margin: 0 0 16px 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Interactive Location Map</h3>
+                  <div style="position: relative; flex-grow: 1; background: rgba(0,0,0,0.25); border-radius: var(--radius-sm); border: 1px solid var(--glass-border); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <!-- Styled vector graphic representing map view grid -->
+                    <svg viewBox="0 0 800 400" width="100%" height="100%">
+                      <path d="M 50,80 C 150,40 250,120 350,90 T 550,110 T 750,70" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="2" />
+                      <!-- Grid lines -->
+                      <line x1="100" y1="0" x2="100" y2="400" stroke="rgba(255,255,255,0.01)" />
+                      <line x1="200" y1="0" x2="200" y2="400" stroke="rgba(255,255,255,0.01)" />
+                      <line x1="300" y1="0" x2="300" y2="400" stroke="rgba(255,255,255,0.01)" />
+                      <line x1="400" y1="0" x2="400" y2="400" stroke="rgba(255,255,255,0.01)" />
+                      <line x1="500" y1="0" x2="500" y2="400" stroke="rgba(255,255,255,0.01)" />
+                      <line x1="600" y1="0" x2="600" y2="400" stroke="rgba(255,255,255,0.01)" />
+                      <line x1="700" y1="0" x2="700" y2="400" stroke="rgba(255,255,255,0.01)" />
+                      
+                      <!-- Dynamic nodes overlay -->
+                      <g id="travel-map-view-nodes-container"></g>
+                    </svg>
+                  </div>
+                </div>
+
+                <!-- Right: Places Visited logger list -->
+                <div class="glass-card" style="padding: 20px;">
+                  <h3 style="margin: 0 0 16px 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Visited Locations</h3>
+                  <form id="travel-visited-form" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+                    <div class="form-row">
+                      <input type="text" id="visited-input-city" placeholder="City (e.g. Paris)" required style="flex:1;">
+                      <input type="text" id="visited-input-country" placeholder="Country (e.g. France)" required style="flex:1;">
+                    </div>
+                    <div class="form-row">
+                      <input type="number" id="visited-input-lat" placeholder="Latitude (e.g. 48.8)" step="0.0001" required style="flex:1;">
+                      <input type="number" id="visited-input-lng" placeholder="Longitude (e.g. 2.3)" step="0.0001" required style="flex:1;">
+                    </div>
+                    <button type="submit" class="btn-primary-glow btn-full">Add Coordinates</button>
+                  </form>
+
+                  <div style="max-height: 250px; overflow-y: auto;" id="travel-visited-places-list">
+                    <!-- Dynamic -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
+
+          <!-- Modals & Overlays -->
+          
+          <!-- Add/Edit Trip Modal -->
+          <div class="modal-overlay hidden" id="travel-trip-modal-overlay">
+            <div class="modal-card glass-card" style="max-width: 500px; width: 90%;">
+              <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 id="travel-modal-title" style="margin: 0; font-size: 1rem; font-weight: 700;">Plan New Trip</h3>
+                <button type="button" class="icon-btn" id="travel-btn-close-modal"><i class="fas fa-times"></i></button>
+              </div>
+              <form id="travel-trip-form" style="display: flex; flex-direction: column; gap: 16px;">
+                <input type="hidden" id="travel-trip-id">
+                <div class="input-group">
+                  <label for="travel-input-dest">Destination</label>
+                  <input type="text" id="travel-input-dest" placeholder="e.g. Paris Tour, Ooty Escapade" required>
+                </div>
+                <div class="form-row">
+                  <div class="input-group">
+                    <label for="travel-input-start">Start Date</label>
+                    <input type="date" id="travel-input-start" required>
+                  </div>
+                  <div class="input-group">
+                    <label for="travel-input-end">End Date</label>
+                    <input type="date" id="travel-input-end" required>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="input-group">
+                    <label for="travel-input-budget">Budget (Rs)</label>
+                    <input type="number" id="travel-input-budget" placeholder="15000" min="0" required>
+                  </div>
+                  <div class="input-group">
+                    <label for="travel-input-travelers">Travelers</label>
+                    <input type="number" id="travel-input-travelers" value="1" min="1" required>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label for="travel-input-image">Cover Image URL</label>
+                  <input type="url" id="travel-input-image" placeholder="https://images.unsplash.com/... (optional)">
+                </div>
+                <button type="submit" class="btn-primary-glow btn-full" id="travel-btn-submit-trip">Save Trip Plan</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Add Bucket Item Modal -->
+          <div class="modal-overlay hidden" id="travel-bucket-modal-overlay">
+            <div class="modal-card glass-card" style="max-width: 400px; width: 90%;">
+              <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0; font-size: 1rem; font-weight: 700;">Add Dream Destination</h3>
+                <button type="button" class="icon-btn" id="travel-btn-close-bucket-modal"><i class="fas fa-times"></i></button>
+              </div>
+              <form id="travel-bucket-form" style="display: flex; flex-direction: column; gap: 16px;">
+                <div class="input-group">
+                  <label for="bucket-input-dest">Destination Name</label>
+                  <input type="text" id="bucket-input-dest" placeholder="e.g. Cappadocia" required>
+                </div>
+                <div class="input-group">
+                  <label for="bucket-input-country">Country</label>
+                  <input type="text" id="bucket-input-country" placeholder="e.g. Turkey" required>
+                </div>
+                <div class="input-group">
+                  <label for="bucket-input-image">Photo Image URL</label>
+                  <input type="url" id="bucket-input-image" placeholder="https://images.unsplash.com/..." required>
+                </div>
+                <button type="submit" class="btn-primary-glow btn-full">Add To Bucket List</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Add Photo Memory Modal -->
+          <div class="modal-overlay hidden" id="travel-gallery-modal-overlay">
+            <div class="modal-card glass-card" style="max-width: 400px; width: 90%;">
+              <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0; font-size: 1rem; font-weight: 700;">Log Memory Photo</h3>
+                <button type="button" class="icon-btn" id="travel-btn-close-gallery-modal"><i class="fas fa-times"></i></button>
+              </div>
+              <form id="travel-gallery-form" style="display: flex; flex-direction: column; gap: 16px;">
+                <div class="input-group">
+                  <label for="gallery-input-trip">Select Associated Trip</label>
+                  <select id="gallery-input-trip">
+                    <option value="">No Associated Trip (General)</option>
+                    <!-- Dynamic -->
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label for="gallery-input-url">Photo Image URL</label>
+                  <input type="url" id="gallery-input-url" placeholder="https://images.unsplash.com/..." required>
+                </div>
+                <div class="input-group">
+                  <label for="gallery-input-caption">Memory Caption</label>
+                  <input type="text" id="gallery-input-caption" placeholder="e.g. Sunset hike in Ooty" required>
+                </div>
+                <button type="submit" class="btn-primary-glow btn-full">Save Memory Photo</button>
+              </form>
+            </div>
+          </div>
+
         </section>
 
         <!-- 13. CAREER PORTFOLIO VIEW -->
