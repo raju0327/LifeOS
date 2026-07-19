@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lifeos-cache-v10';
+const CACHE_NAME = 'lifeos-cache-v11';
 const ASSETS = [
   './index.html',
   './style.css',
@@ -48,17 +48,29 @@ self.addEventListener('fetch', (e) => {
   }
 
   e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(e.request).catch(() => {
-        // Fallback for offline if page requested is main index
-        if (e.request.mode === 'navigate') {
-          return caches.match('./index.html');
+    fetch(e.request)
+      .then((response) => {
+        // Cache new assets or updates on the fly
+        if (response.status === 200 && e.request.method === 'GET') {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(e.request, responseClone);
+          });
         }
-      });
-    })
+        return response;
+      })
+      .catch(() => {
+        // Offline or network failed: Fallback to Cache
+        return caches.match(e.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          // Fallback for offline if page requested is main index
+          if (e.request.mode === 'navigate') {
+            return caches.match('./index.html');
+          }
+        });
+      })
   );
 });
 
