@@ -121,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
       this.setupGlobalSearch();
       this.setupQuickActions();
       this.initMobileNavigation();
+      this.initPullToRefresh();
       
       // Initialize Lucide Icons
       if (window.lucide) {
@@ -506,7 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     syncGlobalStateWithSupabase(isFirstLoad = false) {
       const settings = this.state.supabaseSettings;
-      if (!settings || !settings.url || !settings.anonKey) return;
+      if (!settings || !settings.url || !settings.anonKey) return Promise.reject('No Supabase settings configured');
 
       const runSync = () => {
         if (!isFirstLoad) this.showToast('Pulling dashboard records from Database...', 'info');
@@ -611,25 +612,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
           if (mergedAny) {
             this.saveStateLocallyOnly();
-            this.showToast('Global database sync completed.', 'success');
+            if (!isFirstLoad) this.showToast('Global database sync completed.', 'success');
             
             Object.keys(this.modules).forEach(key => {
               if (typeof this.modules[key].render === 'function') {
-                this.modules[key].render();
+                try {
+                  this.modules[key].render();
+                } catch (e) {
+                  console.warn(`Failed rendering module ${key}:`, e);
+                }
               }
             });
           }
+          return dashboardObj;
         })
         .catch(err => {
           console.error('Supabase fetch error:', err);
-          this.showToast('Database fetch request failed.', 'error');
+          if (!isFirstLoad) this.showToast('Database fetch request failed.', 'error');
+          throw err;
         });
       };
 
       if (!this.userUuidMap) {
-        this.loadUserUuidMap().then(runSync);
+        return this.loadUserUuidMap().then(runSync);
       } else {
-        runSync();
+        return runSync();
       }
     },
 
@@ -1429,6 +1436,178 @@ document.addEventListener('DOMContentLoaded', () => {
       const budgetSpentPercent = budgetMax > 0 ? Math.min(Math.round((expenses / budgetMax) * 100), 100) : 0;
       budgetFill.style.width = `${budgetSpentPercent}%`;
       budgetDesc.textContent = `${budgetSpentPercent}% of ${currency}${budgetMax.toLocaleString(undefined, {maximumFractionDigits: 0})} budget spent`;
+    },
+
+    // Pull down to refresh gesture implementation for mobile & desktop
+    initPullToRefresh() {
+      const mainContent = document.querySelector('.main-content');
+      if (!mainContent) return;
+
+      mainContent.style.position = 'relative';
+
+      const ptrElement = document.createElement('div');
+      ptrElement.id = 'pull-to-refresh-indicator';
+      ptrElement.className = 'pull-to-refresh-indicator';
+      ptrElement.innerHTML = `
+        <div class="ptr-content">
+          <div class="ptr-icon-spinner">
+            <i class="fas fa-arrow-down ptr-icon" id="ptr-arrow-icon"></i>
+            <div class="ptr-spinner-element hidden" id="ptr-spinner-icon"></div>
+          </div>
+          <span class="ptr-label" id="ptr-label-text">Pull to refresh</span>
+        </div>
+      `;
+      mainContent.insertBefore(ptrElement, mainContent.firstChild);
+
+      let startY = 0;
+      let currentY = 0;
+      let isPulling = false;
+      let activePull = false;
+      const pullThreshold = 75; 
+      const maxPull = 120; 
+
+      const getEventY = (e) => {
+        if (e.touches && e.touches.length) {
+          return e.touches[0].pageY;
+        }
+        return e.pageY;
+      };
+
+      const startPull = (e) => {
+        if (!this.state.user.isLoggedIn) return;
+        if (mainContent.scrollTop !== 0) return;
+        if (ptrElement.classList.contains('refreshing')) return;
+
+        startY = getEventY(e);
+        activePull = true;
+        isPulling = false;
+      };
+
+      const movePull = (e) => {
+        if (!activePull) return;
+        currentY = getEventY(e);
+        const diff = currentY - startY;
+
+        if (diff > 0) {
+          if (!isPulling) {
+            isPulling = true;
+            ptrElement.classList.add('visible');
+            ptrElement.classList.remove('hidden');
+          }
+
+          if (e.cancelable) {
+            e.preventDefault();
+          }
+
+          const pullDist = Math.min(diff * 0.45, maxPull);
+          ptrElement.style.top = `${10 + pullDist}px`;
+
+          const arrowIcon = document.getElementById('ptr-arrow-icon');
+          const labelText = document.getElementById('ptr-label-text');
+
+          if (pullDist >= pullThreshold) {
+            if (arrowIcon) arrowIcon.style.transform = 'rotate(180deg)';
+            if (labelText) labelText.textContent = 'Release to refresh';
+          } else {
+            if (arrowIcon) arrowIcon.style.transform = 'rotate(0deg)';
+            if (labelText) labelText.textContent = 'Pull to refresh';
+          }
+        }
+      };
+
+      const endPull = () => {
+        if (!activePull) return;
+        activePull = false;
+
+        if (isPulling) {
+          isPulling = false;
+          const diff = currentY - startY;
+          const pullDist = diff * 0.45;
+
+          const arrowIcon = document.getElementById('ptr-arrow-icon');
+          const spinnerIcon = document.getElementById('ptr-spinner-icon');
+          const labelText = document.getElementById('ptr-label-text');
+
+          if (pullDist >= pullThreshold) {
+            ptrElement.classList.add('refreshing');
+            ptrElement.style.top = `${10 + pullThreshold}px`;
+            
+            if (arrowIcon) arrowIcon.classList.add('hidden');
+            if (spinnerIcon) spinnerIcon.classList.remove('hidden');
+            if (labelText) labelText.textContent = 'Refreshing...';
+
+            const prevScrollTop = mainContent.scrollTop;
+
+            this.syncGlobalStateWithSupabase(false)
+              .then(() => {
+                if (labelText) labelText.textContent = 'Updated!';
+                ptrElement.style.boxShadow = '0 4px 20px rgba(16, 185, 129, 0.4), 0 0 10px rgba(16, 185, 129, 0.3)';
+                
+                setTimeout(() => {
+                  ptrElement.classList.remove('refreshing', 'visible');
+                  ptrElement.classList.add('hidden');
+                  ptrElement.style.top = '10px';
+                  ptrElement.style.boxShadow = '';
+                  
+                  if (arrowIcon) {
+                    arrowIcon.classList.remove('hidden');
+                    arrowIcon.style.transform = 'rotate(0deg)';
+                  }
+                  if (spinnerIcon) spinnerIcon.classList.add('hidden');
+                  mainContent.scrollTop = prevScrollTop;
+                }, 1000);
+              })
+              .catch((err) => {
+                console.error('Pull to refresh failed:', err);
+                if (labelText) labelText.textContent = 'Sync Failed';
+                ptrElement.style.boxShadow = '0 4px 20px rgba(239, 68, 68, 0.4), 0 0 10px rgba(239, 68, 68, 0.3)';
+                this.showToast('Database refresh failed. Touch to retry.', 'error');
+                
+                setTimeout(() => {
+                  ptrElement.classList.remove('refreshing', 'visible');
+                  ptrElement.classList.add('hidden');
+                  ptrElement.style.top = '10px';
+                  ptrElement.style.boxShadow = '';
+                  
+                  if (arrowIcon) {
+                    arrowIcon.classList.remove('hidden');
+                    arrowIcon.style.transform = 'rotate(0deg)';
+                  }
+                  if (spinnerIcon) spinnerIcon.classList.add('hidden');
+                }, 2000);
+              });
+          } else {
+            ptrElement.classList.remove('visible');
+            ptrElement.classList.add('hidden');
+            ptrElement.style.top = '10px';
+            if (arrowIcon) arrowIcon.style.transform = 'rotate(0deg)';
+          }
+        }
+      };
+
+      mainContent.addEventListener('touchstart', startPull, { passive: true });
+      mainContent.addEventListener('touchmove', movePull, { passive: false });
+      mainContent.addEventListener('touchend', endPull, { passive: true });
+      mainContent.addEventListener('touchcancel', endPull, { passive: true });
+
+      let isMouseDown = false;
+      mainContent.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        isMouseDown = true;
+        startPull(e);
+      });
+      mainContent.addEventListener('mousemove', (e) => {
+        if (!isMouseDown) return;
+        movePull(e);
+      });
+      const handleMouseUp = () => {
+        if (isMouseDown) {
+          isMouseDown = false;
+          endPull();
+        }
+      };
+      mainContent.addEventListener('mouseup', handleMouseUp);
+      mainContent.addEventListener('mouseleave', handleMouseUp);
     },
 
     // Banner notification popup Toast

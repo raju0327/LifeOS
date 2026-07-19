@@ -2903,3 +2903,66 @@ html, body {
     gap: 14px !important;
   }
 }
+
+
+/* Pull to Refresh Indicator Styles */
+.pull-to-refresh-indicator {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translate(-50%, -20px) scale(0.8);
+  z-index: 999;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px);
+  padding: 8px 16px;
+  border-radius: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 10px rgba(163, 112, 247, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28), top 0.1s ease;
+}
+.pull-to-refresh-indicator.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.ptr-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ptr-icon-spinner {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ptr-icon {
+  font-size: 0.85rem;
+  color: var(--primary);
+  transition: transform 0.2s ease;
+}
+.ptr-spinner-element {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(163, 112, 247, 0.2);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: ptr-spin 0.8s linear infinite;
+}
+@keyframes ptr-spin {
+  to { transform: rotate(360deg); }
+}
+.ptr-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+.pull-to-refresh-indicator.hidden {
+  display: none !important;
+}
