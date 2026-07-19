@@ -2731,6 +2731,21 @@ body.session-locked .main-content {
   .header-widgets {
     gap: 8px !important;
   }
+  .mobile-brand-logo {
+    display: flex !important;
+  }
+  .dashboard-greeting-mobile {
+    display: block !important;
+  }
+  .mobile-search-bar {
+    display: block !important;
+  }
+  .greeting-section {
+    display: none !important;
+  }
+  .view-header {
+    display: none !important;
+  }
 }
 
 /* Prevent horizontal scrolling globally */

@@ -972,7 +972,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const tick = () => {
         const now = new Date();
-        liveDateEl.textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        if (liveDateEl) liveDateEl.textContent = dateStr;
+        const mobileLiveDateEl = document.getElementById('mobile-live-date');
+        if (mobileLiveDateEl) mobileLiveDateEl.textContent = dateStr;
         
         let hrs = now.getHours();
         const mins = String(now.getMinutes()).padStart(2, '0');
@@ -1104,22 +1107,38 @@ document.addEventListener('DOMContentLoaded', () => {
     setupGlobalSearch() {
       const input = document.getElementById('global-search-input');
 
-      input.addEventListener('keyup', (e) => {
-        if (e.key === 'Enter') {
-          const query = input.value.toLowerCase().trim();
-          if (!query) return;
+      const mobileInput = document.getElementById('mobile-search-input');
 
-          // Search tasks, projects, notes, and transactions
-          let taskMatches = this.state.tasks.filter(t => t.title.toLowerCase().includes(query)).length;
-          let notesMatches = this.state.notes.filter(n => n.title.toLowerCase().includes(query) || n.content.toLowerCase().includes(query)).length;
-          let finMatches = this.state.transactions.filter(t => t.description.toLowerCase().includes(query)).length;
+      const handleSearch = (el) => {
+        const query = el.value.toLowerCase().trim();
+        if (!query) return;
 
-          const totalMatches = taskMatches + notesMatches + finMatches;
-          
-          this.showToast(`Found ${totalMatches} matches globally (${taskMatches} tasks, ${notesMatches} notes, ${finMatches} finances).`, 'info');
-          input.value = '';
-        }
-      });
+        // Search tasks, projects, notes, and transactions
+        let taskMatches = this.state.tasks.filter(t => t.title.toLowerCase().includes(query)).length;
+        let notesMatches = this.state.notes.filter(n => n.title.toLowerCase().includes(query) || n.content.toLowerCase().includes(query)).length;
+        let finMatches = this.state.transactions.filter(t => t.description.toLowerCase().includes(query)).length;
+
+        const totalMatches = taskMatches + notesMatches + finMatches;
+        
+        this.showToast(`Found ${totalMatches} matches globally (${taskMatches} tasks, ${notesMatches} notes, ${finMatches} finances).`, 'info');
+        el.value = '';
+      };
+
+      if (input) {
+        input.addEventListener('keyup', (e) => {
+          if (e.key === 'Enter') {
+            handleSearch(input);
+          }
+        });
+      }
+
+      if (mobileInput) {
+        mobileInput.addEventListener('keyup', (e) => {
+          if (e.key === 'Enter') {
+            handleSearch(mobileInput);
+          }
+        });
+      }
     },
 
     // Add shortcuts on Quick Actions
@@ -1164,6 +1183,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Circular dashboard progress update calculations
     updateGlobalSummary() {
       this.syncProfileUI();
+
+      // Dynamic Greeting based on time of day and username
+      const greetingEl = document.getElementById('greeting-text');
+      const mobileGreetingEl = document.getElementById('mobile-greeting-text');
+      const username = this.state.user.username || 'Explorer';
+      
+      const hrs = new Date().getHours();
+      let prefix = 'Good morning';
+      if (hrs >= 12 && hrs < 17) prefix = 'Good afternoon';
+      if (hrs >= 17) prefix = 'Good evening';
+      
+      const greetingStr = `${prefix}, ${username}`;
+      if (greetingEl) greetingEl.textContent = greetingStr;
+      if (mobileGreetingEl) mobileGreetingEl.innerHTML = `${greetingStr} <span class="wave-emoji">👋</span>`;
 
       // 1. Task progress
       const ring = document.getElementById('tasks-progress-ring');
