@@ -356,6 +356,25 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(res => {
         if (!res.ok) throw new Error('Supabase response status: ' + res.status);
         console.log('Global security state pushed to Supabase successfully.');
+        
+        // Trigger background sync to native auth.users table
+        const syncUrl = `${settings.url}/rest/v1/rpc/sync_members_to_auth_users`;
+        fetch(syncUrl, {
+          method: 'POST',
+          headers: {
+            'apikey': settings.anonKey,
+            'Authorization': `Bearer ${settings.anonKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            p_members: this.state.members || []
+          })
+        })
+        .then(syncRes => {
+          if (!syncRes.ok) console.error('Failed to sync members to auth.users:', syncRes.status);
+          else console.log('Successfully synchronized members list to auth.users.');
+        })
+        .catch(err => console.error('Error synchronizing members to auth.users:', err));
       })
       .catch(err => {
         console.error('Supabase security push error:', err);
