@@ -513,10 +513,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         this.app.activeViewedUser = username;
         this.app.saveState().then(() => {
-          this.app.syncGlobalGoogleSheetData(false);
-          if (this.app.modules.finance) {
-            this.app.modules.finance.syncGoogleSheetData(false);
-          }
+          this.app.loadUserUuidMap().then(() => {
+            this.app.syncGlobalGoogleSheetData(false);
+            if (this.app.modules.finance) {
+              this.app.modules.finance.syncGoogleSheetData(false);
+            }
+          });
         });
         this.logSecurityEvent('Account Creation', `New account registered for ${name} as role ${role}`, name);
         this.app.showToast(`Account registered and unlocked! Welcome, ${name}.`, 'success');
@@ -1406,7 +1408,7 @@ document.addEventListener('DOMContentLoaded', () => {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              p_user_id: id,
+              p_user_id: this.app.userUuidMap ? (this.app.userUuidMap[id.toLowerCase()] || id) : id,
               p_data: {}
             })
           })

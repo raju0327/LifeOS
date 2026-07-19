@@ -2499,7 +2499,7 @@ const FinanceModule = {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          p_user_id: id,
+          p_user_id: this.app.userUuidMap ? (this.app.userUuidMap[id.toLowerCase()] || id) : id,
           p_data: {}
         })
       })

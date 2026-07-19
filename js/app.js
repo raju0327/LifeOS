@@ -300,6 +300,35 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       this.activeViewedUser = this.state.user.id || 'admin';
+      this.loadUserUuidMap();
+    },
+
+    loadUserUuidMap() {
+      const settings = this.state.supabaseSettings;
+      if (!settings || !settings.url || !settings.anonKey) return Promise.resolve();
+
+      const mapUrl = `${settings.url}/rest/v1/rpc/get_user_uuid_mappings`;
+      return fetch(mapUrl, {
+        method: 'POST',
+        headers: {
+          'apikey': settings.anonKey,
+          'Authorization': `Bearer ${settings.anonKey}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(r => r.ok ? r.json() : [])
+      .then(mappings => {
+        this.userUuidMap = {};
+        mappings.forEach(m => {
+          if (m.username && m.uuid) {
+            this.userUuidMap[m.username.toLowerCase()] = m.uuid;
+          }
+        });
+        console.log('UUID mappings loaded:', this.userUuidMap);
+      })
+      .catch(err => {
+        console.error('Error fetching UUID mappings:', err);
+      });
     },
 
     // Save to local storage and sync stats
@@ -386,6 +415,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!settings || !settings.url || !settings.anonKey) return Promise.resolve();
 
       const username = this.state.user.id || 'admin';
+      const defaultAdminUuid = '85a62604-52ce-4f55-b5be-23aa8915497b';
+      const resolvedUuid = this.userUuidMap ? (this.userUuidMap[username.toLowerCase()] || defaultAdminUuid) : defaultAdminUuid;
 
       const dashboardPayload = {};
       const keys = [
@@ -436,7 +467,7 @@ document.addEventListener('DOMContentLoaded', () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          p_user_id: username,
+          p_user_id: resolvedUuid,
           p_data: dashboardPayload
         })
       })
@@ -453,115 +484,125 @@ document.addEventListener('DOMContentLoaded', () => {
       const settings = this.state.supabaseSettings;
       if (!settings || !settings.url || !settings.anonKey) return;
 
-      if (!isFirstLoad) this.showToast('Pulling dashboard records from Database...', 'info');
+      const runSync = () => {
+        if (!isFirstLoad) this.showToast('Pulling dashboard records from Database...', 'info');
 
-      const username = this.state.user.id || 'admin';
+        const username = this.state.user.id || 'admin';
+        const defaultAdminUuid = '85a62604-52ce-4f55-b5be-23aa8915497b';
+        const resolvedUuid = this.userUuidMap ? (this.userUuidMap[username.toLowerCase()] || defaultAdminUuid) : defaultAdminUuid;
 
-      const secUrl = `${settings.url}/rest/v1/workspace_security?key=eq.security_registry&select=data`;
-      const rpcUrl = `${settings.url}/rest/v1/rpc/get_user_dashboard`;
+        const secUrl = `${settings.url}/rest/v1/workspace_security?key=eq.security_registry&select=data`;
+        const rpcUrl = `${settings.url}/rest/v1/rpc/get_user_dashboard`;
 
-      let mergedAny = false;
+        let mergedAny = false;
 
-      Promise.all([
-        fetch(secUrl, {
-          headers: {
-            'apikey': settings.anonKey,
-            'Authorization': `Bearer ${settings.anonKey}`
-          }
-        }).then(r => r.ok ? r.json() : []),
-        fetch(rpcUrl, {
-          method: 'POST',
-          headers: {
-            'apikey': settings.anonKey,
-            'Authorization': `Bearer ${settings.anonKey}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            p_user_id: username
-          })
-        }).then(r => r.ok ? r.json() : null)
-      ])
-      .then(([secResult, dashboardObj]) => {
-        if (secResult && secResult.length > 0 && secResult[0].data) {
-          try {
-            const decryptedStr = this.decryptData(secResult[0].data);
-            if (decryptedStr) {
-              const securityObj = JSON.parse(decryptedStr);
-              if (securityObj.members) {
-                this.state.members = securityObj.members;
-                this.restoreAdminMemberIfNeeded();
-              }
-              if (securityObj.passwords) this.state.passwords = securityObj.passwords;
-              if (securityObj.securityLogs) this.state.securityLogs = securityObj.securityLogs;
-              if (securityObj.passwordResetRequests) this.state.passwordResetRequests = securityObj.passwordResetRequests;
-              if (securityObj.vaultSeeded !== undefined) this.state.vaultSeeded = securityObj.vaultSeeded;
-              if (securityObj.habitsSeeded !== undefined) this.state.habitsSeeded = securityObj.habitsSeeded;
-              mergedAny = true;
+        return Promise.all([
+          fetch(secUrl, {
+            headers: {
+              'apikey': settings.anonKey,
+              'Authorization': `Bearer ${settings.anonKey}`
             }
-          } catch (e) {
-            console.warn('Failed parsing Supabase security registry:', e);
-          }
-        }
-
-        if (dashboardObj) {
-          const keys = [
-            'tasks', 'projects', 'events', 'timeblocks', 'notes', 'bookmarks', 
-            'journalEntries', 'visionBoard', 'documents', 'waterIntake', 'sleepLogs', 
-            'moodLogs', 'medicineReminders', 'nutritionLogs', 'workoutLogs', 'contacts', 
-            'trips', 'vehicleLogs', 'mediaItems', 'shoppingList', 'skills', 
-            'jobApplications', 'notifications',
-            'categories', 'subscriptions', 'loans', 'transactions', 'habits', 'vaultItems'
-          ];
-          keys.forEach(k => {
-            if (dashboardObj[k] !== undefined) {
-              if (k === 'categories' && Object.keys(dashboardObj[k]).length === 0) {
-                return;
+          }).then(r => r.ok ? r.json() : []),
+          fetch(rpcUrl, {
+            method: 'POST',
+            headers: {
+              'apikey': settings.anonKey,
+              'Authorization': `Bearer ${settings.anonKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              p_user_id: resolvedUuid
+            })
+          }).then(r => r.ok ? r.json() : null)
+        ])
+        .then(([secResult, dashboardObj]) => {
+          if (secResult && secResult.length > 0 && secResult[0].data) {
+            try {
+              const decryptedStr = this.decryptData(secResult[0].data);
+              if (decryptedStr) {
+                const securityObj = JSON.parse(decryptedStr);
+                if (securityObj.members) {
+                  this.state.members = securityObj.members;
+                  this.restoreAdminMemberIfNeeded();
+                }
+                if (securityObj.passwords) this.state.passwords = securityObj.passwords;
+                if (securityObj.securityLogs) this.state.securityLogs = securityObj.securityLogs;
+                if (securityObj.passwordResetRequests) this.state.passwordResetRequests = securityObj.passwordResetRequests;
+                if (securityObj.vaultSeeded !== undefined) this.state.vaultSeeded = securityObj.vaultSeeded;
+                if (securityObj.habitsSeeded !== undefined) this.state.habitsSeeded = securityObj.habitsSeeded;
+                mergedAny = true;
               }
-              this.state[k] = dashboardObj[k];
+            } catch (e) {
+              console.warn('Failed parsing Supabase security registry:', e);
             }
-          });
+          }
 
-          // Map budgets back from DB format {limit, spent, period} to flat numbers {food: 15000}
-          if (dashboardObj.budgets && Object.keys(dashboardObj.budgets).length > 0) {
-            const flatBudgets = {};
-            Object.keys(dashboardObj.budgets).forEach(catId => {
-              const val = dashboardObj.budgets[catId];
-              if (val !== null && typeof val === 'object' && val.limit !== undefined) {
-                flatBudgets[catId] = Number(val.limit) || 0;
-              } else {
-                flatBudgets[catId] = Number(val) || 0;
+          if (dashboardObj) {
+            const keys = [
+              'tasks', 'projects', 'events', 'timeblocks', 'notes', 'bookmarks', 
+              'journalEntries', 'visionBoard', 'documents', 'waterIntake', 'sleepLogs', 
+              'moodLogs', 'medicineReminders', 'nutritionLogs', 'workoutLogs', 'contacts', 
+              'trips', 'vehicleLogs', 'mediaItems', 'shoppingList', 'skills', 
+              'jobApplications', 'notifications',
+              'categories', 'subscriptions', 'loans', 'transactions', 'habits', 'vaultItems'
+            ];
+            keys.forEach(k => {
+              if (dashboardObj[k] !== undefined) {
+                if (k === 'categories' && Object.keys(dashboardObj[k]).length === 0) {
+                  return;
+                }
+                this.state[k] = dashboardObj[k];
               }
             });
-            this.state.budgets = flatBudgets;
-          }
 
-          // Map goals back: DB returns {saved}, state expects {current}
-          if (dashboardObj.goals && dashboardObj.goals.length > 0) {
-            this.state.goals = dashboardObj.goals.map(g => ({
-              ...g,
-              current: g.current !== undefined ? g.current : (g.saved || 0),
-              saved: g.saved !== undefined ? g.saved : (g.current || 0)
-            }));
-          }
-
-          mergedAny = true;
-        }
-
-        if (mergedAny) {
-          this.saveStateLocallyOnly();
-          this.showToast('Global database sync completed.', 'success');
-          
-          Object.keys(this.modules).forEach(key => {
-            if (typeof this.modules[key].render === 'function') {
-              this.modules[key].render();
+            // Map budgets back from DB format {limit, spent, period} to flat numbers {food: 15000}
+            if (dashboardObj.budgets && Object.keys(dashboardObj.budgets).length > 0) {
+              const flatBudgets = {};
+              Object.keys(dashboardObj.budgets).forEach(catId => {
+                const val = dashboardObj.budgets[catId];
+                if (val !== null && typeof val === 'object' && val.limit !== undefined) {
+                  flatBudgets[catId] = Number(val.limit) || 0;
+                } else {
+                  flatBudgets[catId] = Number(val) || 0;
+                }
+              });
+              this.state.budgets = flatBudgets;
             }
-          });
-        }
-      })
-      .catch(err => {
-        console.error('Supabase fetch error:', err);
-        this.showToast('Database fetch request failed.', 'error');
-      });
+
+            // Map goals back: DB returns {saved}, state expects {current}
+            if (dashboardObj.goals && dashboardObj.goals.length > 0) {
+              this.state.goals = dashboardObj.goals.map(g => ({
+                ...g,
+                current: g.current !== undefined ? g.current : (g.saved || 0),
+                saved: g.saved !== undefined ? g.saved : (g.current || 0)
+              }));
+            }
+
+            mergedAny = true;
+          }
+
+          if (mergedAny) {
+            this.saveStateLocallyOnly();
+            this.showToast('Global database sync completed.', 'success');
+            
+            Object.keys(this.modules).forEach(key => {
+              if (typeof this.modules[key].render === 'function') {
+                this.modules[key].render();
+              }
+            });
+          }
+        })
+        .catch(err => {
+          console.error('Supabase fetch error:', err);
+          this.showToast('Database fetch request failed.', 'error');
+        });
+      };
+
+      if (!this.userUuidMap) {
+        this.loadUserUuidMap().then(runSync);
+      } else {
+        runSync();
+      }
     },
 
     restoreAdminMemberIfNeeded() {
