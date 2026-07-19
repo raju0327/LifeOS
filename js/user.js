@@ -262,7 +262,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       this.app.activeViewedUser = targetAccount.id;
-      this.app.saveState().then(() => {
+      this.app.saveStateLocallyOnly();
+      this.app.pushSecurityStateToSupabase().then(() => {
         this.app.syncGlobalGoogleSheetData(false);
         if (this.app.modules.finance) {
           this.app.modules.finance.syncGoogleSheetData(false);
@@ -512,7 +513,8 @@ document.addEventListener('DOMContentLoaded', () => {
         this.app.state.user.password = pass;
 
         this.app.activeViewedUser = username;
-        this.app.saveState().then(() => {
+        this.app.saveStateLocallyOnly();
+        this.app.pushSecurityStateToSupabase().then(() => {
           this.app.loadUserUuidMap().then(() => {
             this.app.syncGlobalGoogleSheetData(false);
             if (this.app.modules.finance) {
