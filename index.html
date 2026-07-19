@@ -191,6 +191,9 @@
 
       <!-- Top Status Bar -->
       <header class="top-bar">
+        <button id="mobile-menu-toggle" style="display: none; width: 38px; height: 38px; justify-content: center; align-items: center; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); margin-right: 8px; cursor: pointer;">
+          <i class="fas fa-bars" style="font-size: 1.1rem; color: var(--text-main);"></i>
+        </button>
         <div class="greeting-section">
           <h1 id="greeting-text">Good morning, Explorer</h1>
           <p id="live-date">Saturday, July 11, 2026</p>
@@ -270,39 +273,27 @@
             <p class="subtitle">Your key statistics and focus for today</p>
           </div>
 
-          <!-- Focus & Quick Actions -->
-          <div class="dashboard-row-split">
-            <div class="glass-card focus-card">
-              <div class="focus-title">
-                <i data-lucide="sparkles"></i>
-                <h3>Primary Focus for Today</h3>
-              </div>
-              <div class="focus-input-container">
-                <input type="text" id="daily-focus-input" placeholder="What is your main goal for today?" />
-                <button id="save-focus-btn" class="btn-primary-glow">Set Focus</button>
-              </div>
-              <div id="focus-display-container" class="hidden-display">
-                <p id="focus-display-text"></p>
-                <button id="clear-focus-btn" class="icon-btn"><i data-lucide="x"></i></button>
-              </div>
+          <!-- Focus Card (Mockup Style, Full Width) -->
+          <div class="glass-card focus-card" style="margin-bottom: 24px;">
+            <div class="focus-title">
+              <i data-lucide="sparkles"></i>
+              <h3>Primary Focus for Today</h3>
             </div>
-
-            <!-- Quick Actions Panel -->
-            <div class="glass-card quick-actions-card">
-              <h3>Quick Actions</h3>
-              <div class="quick-actions-grid">
-                <button class="quick-action-btn" data-action="task"><i data-lucide="plus-circle"></i>New Task</button>
-                <button class="quick-action-btn" data-action="note"><i data-lucide="file-plus"></i>New Note</button>
-                <button class="quick-action-btn" data-action="finance"><i data-lucide="circle-dollar-sign"></i>Log
-                  Exp</button>
-                <button class="quick-action-btn" data-action="water"><i data-lucide="glass-water"></i>Drink
-                  Water</button>
-              </div>
+            <div class="focus-input-container">
+              <input type="text" id="daily-focus-input" placeholder="What is your main goal for today?" />
+              <button id="save-focus-btn" class="btn-primary-glow">Set Focus</button>
+            </div>
+            <div id="focus-display-container" class="hidden-display">
+              <p id="focus-display-text"></p>
+              <button id="clear-focus-btn" class="icon-btn"><i data-lucide="x"></i></button>
             </div>
           </div>
 
-          <!-- Grid of Summary Widgets -->
-          <div class="dashboard-grid">
+          <!-- Section: Today's Overview -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Today's Overview</h3>
+          </div>
+          <div class="dashboard-grid" style="margin-bottom: 24px;">
             <!-- Task Completion -->
             <div class="glass-card stat-card">
               <div class="stat-header">
@@ -347,16 +338,14 @@
               </div>
               <div class="health-summary-body">
                 <div class="health-mini-item">
-                  <div class="health-mini-icon text-blue"><i data-lucide="glass-water"
-                      style="width:14px;height:14px;"></i></div>
+                  <div class="health-mini-icon text-blue"><i data-lucide="glass-water" style="width:14px;height:14px;"></i></div>
                   <div class="health-mini-info">
                     <span class="health-mini-label">Water</span>
                     <span class="health-mini-val" id="dashboard-water-val">0 / 8 cups</span>
                   </div>
                 </div>
                 <div class="health-mini-item">
-                  <div class="health-mini-icon text-purple"><i data-lucide="bed" style="width:14px;height:14px;"></i>
-                  </div>
+                  <div class="health-mini-icon text-purple"><i data-lucide="bed" style="width:14px;height:14px;"></i></div>
                   <div class="health-mini-info">
                     <span class="health-mini-label">Sleep</span>
                     <span class="health-mini-val" id="dashboard-sleep-val">0h Logged</span>
@@ -372,35 +361,73 @@
                 <i data-lucide="wallet" class="text-green"></i>
               </div>
               <div class="budget-summary-body">
-                <div class="budget-number" id="dashboard-budget-val">$0.00</div>
+                <div class="budget-number" id="dashboard-budget-val">₹0</div>
                 <div class="budget-bar-container">
                   <div class="budget-bar" id="dashboard-budget-fill" style="width: 0%"></div>
                 </div>
-                <span id="dashboard-budget-desc">0% of allowance spent</span>
+                <span id="dashboard-budget-desc">0% of budget spent</span>
               </div>
             </div>
           </div>
 
-          <!-- Quote & Agenda -->
-          <div class="dashboard-footer-grid">
-            <div class="glass-card quote-card">
-              <div class="quote-header">
-                <i data-lucide="quote"></i>
-                <span>Daily Inspiration</span>
-              </div>
-              <blockquote id="quote-text">"Make the days count."</blockquote>
-              <cite id="quote-author">— Ali</cite>
+          <!-- Section: Quick Actions (Mockup Style, 4 horizontal columns) -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Quick Actions</h3>
+          </div>
+          <div class="glass-card quick-actions-card" style="margin-bottom: 24px; padding: 16px;">
+            <div class="quick-actions-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+              <button class="quick-action-btn" data-action="task" style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 4px; font-size: 0.72rem; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); background: var(--glass-highlight); color: var(--text-main); cursor: pointer;">
+                <i class="fas fa-plus-circle" style="font-size: 1.25rem; color: var(--primary);"></i>
+                <span>New Task</span>
+              </button>
+              <button class="quick-action-btn" data-action="note" style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 4px; font-size: 0.72rem; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); background: var(--glass-highlight); color: var(--text-main); cursor: pointer;">
+                <i class="fas fa-file-plus" style="font-size: 1.25rem; color: var(--green);"></i>
+                <span>New Note</span>
+              </button>
+              <button class="quick-action-btn" data-action="finance" style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 4px; font-size: 0.72rem; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); background: var(--glass-highlight); color: var(--text-main); cursor: pointer;">
+                <i class="fas fa-wallet" style="font-size: 1.25rem; color: var(--orange);"></i>
+                <span>Add Expense</span>
+              </button>
+              <button class="quick-action-btn" data-action="water" style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 4px; font-size: 0.72rem; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); background: var(--glass-highlight); color: var(--text-main); cursor: pointer;">
+                <i class="fas fa-glass-water" style="font-size: 1.25rem; color: var(--blue);"></i>
+                <span>Drink Water</span>
+              </button>
             </div>
+          </div>
 
+          <!-- Section: Agenda & Habits side-by-side -->
+          <div class="dashboard-footer-grid" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; margin-bottom: 24px;">
+            <!-- Today's Agenda -->
             <div class="glass-card overview-schedule-card">
-              <div class="card-header-with-action">
-                <h3>Today's Agenda</h3>
-                <a href="#planner" class="small-link" data-view="planner">Full Calendar</a>
+              <div class="card-header-with-action" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Today's Agenda</h3>
+                <a href="#planner" class="small-link" data-view="planner" style="font-size: 0.75rem; color: var(--primary); text-decoration: none;">View All</a>
               </div>
               <div class="mini-schedule-list" id="dashboard-agenda-list">
                 <div class="empty-state">No agenda scheduled for today</div>
               </div>
             </div>
+
+            <!-- Today's Habits (Mockup Style) -->
+            <div class="glass-card overview-habits-card">
+              <div class="card-header-with-action" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Today's Habits</h3>
+                <a href="#habits" class="small-link" data-view="habits" style="font-size: 0.75rem; color: var(--primary); text-decoration: none;">View All</a>
+              </div>
+              <div class="mini-habits-list" id="dashboard-habits-list">
+                <div class="empty-state">No habits tracked today</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Daily Inspiration (Quote Card at bottom) -->
+          <div class="glass-card quote-card" style="margin-bottom: 20px;">
+            <div class="quote-header" style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">
+              <i data-lucide="quote" style="width: 14px; height: 14px; color: var(--primary);"></i>
+              <span>Daily Inspiration</span>
+            </div>
+            <blockquote id="quote-text" style="font-style: italic; font-size: 0.95rem; line-height: 1.4; margin: 10px 0 4px 0; color: var(--text-main);">"Make the days count."</blockquote>
+            <cite id="quote-author" style="font-size: 0.75rem; color: var(--text-muted); display: block; text-align: right;">— Ali</cite>
           </div>
         </section>
 
@@ -3922,5 +3949,58 @@
       });
     }
   </script>
+
+  <!-- Mobile Sidebar Overlay -->
+  <div id="sidebar-overlay" class="sidebar-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1000; cursor: pointer;"></div>
+
+  <!-- Mobile Bottom Navigation Bar (Mockup-Style) -->
+  <div class="mobile-bottom-nav">
+    <button class="mobile-nav-btn active" data-view="dashboard">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </button>
+    <button class="mobile-nav-btn" data-view="planner">
+      <i class="fas fa-calendar-alt"></i>
+      <span>Calendar</span>
+    </button>
+    <button class="mobile-nav-btn center-add-btn" id="mobile-quick-add-btn">
+      <i class="fas fa-plus"></i>
+    </button>
+    <button class="mobile-nav-btn" data-view="habits">
+      <i class="fas fa-check-circle"></i>
+      <span>Trackers</span>
+    </button>
+    <button class="mobile-nav-btn" data-view="user">
+      <i class="fas fa-user-circle"></i>
+      <span>Profile</span>
+    </button>
+  </div>
+
+  <!-- Mobile Quick Add Actions Drawer Sheet -->
+  <div class="mobile-action-drawer-overlay" id="mobile-action-drawer-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1002; transition: all 0.3s ease; align-items: flex-end; justify-content: center;">
+    <div class="mobile-action-drawer glass-card" style="width: 100%; border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 24px; border: 1px solid var(--glass-border); border-bottom: none; transform: translateY(100%); transition: transform 0.3s ease-out; background: var(--bg-card); box-sizing: border-box;">
+      <div style="width: 40px; height: 4px; background: var(--glass-border); border-radius: 2px; margin: 0 auto 20px auto;"></div>
+      <h3 style="margin: 0 0 16px 0; font-size: 1rem; font-weight: 700; color: var(--text-main); text-align: center;">Quick Actions</h3>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+        <button class="quick-action-btn mobile-drawer-action" data-action="task" style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 8px; font-size: 0.8rem; border-radius: var(--radius-md); border: 1px solid var(--glass-border); background: var(--glass-highlight); color: var(--text-main); cursor: pointer; font-weight: 600;">
+          <i class="fas fa-plus-circle" style="font-size: 1.45rem; color: var(--primary); margin-bottom: 4px;"></i>
+          <span>New Task</span>
+        </button>
+        <button class="quick-action-btn mobile-drawer-action" data-action="note" style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 8px; font-size: 0.8rem; border-radius: var(--radius-md); border: 1px solid var(--glass-border); background: var(--glass-highlight); color: var(--text-main); cursor: pointer; font-weight: 600;">
+          <i class="fas fa-file-plus" style="font-size: 1.45rem; color: var(--green); margin-bottom: 4px;"></i>
+          <span>New Note</span>
+        </button>
+        <button class="quick-action-btn mobile-drawer-action" data-action="finance" style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 8px; font-size: 0.8rem; border-radius: var(--radius-md); border: 1px solid var(--glass-border); background: var(--glass-highlight); color: var(--text-main); cursor: pointer; font-weight: 600;">
+          <i class="fas fa-wallet" style="font-size: 1.45rem; color: var(--orange); margin-bottom: 4px;"></i>
+          <span>Add Expense</span>
+        </button>
+        <button class="quick-action-btn mobile-drawer-action" data-action="water" style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 8px; font-size: 0.8rem; border-radius: var(--radius-md); border: 1px solid var(--glass-border); background: var(--glass-highlight); color: var(--text-main); cursor: pointer; font-weight: 600;">
+          <i class="fas fa-glass-water" style="font-size: 1.45rem; color: var(--blue); margin-bottom: 4px;"></i>
+          <span>Drink Water</span>
+        </button>
+      </div>
+      <button id="close-mobile-drawer-btn" class="btn-primary-glow-secondary btn-full" style="margin-top: 20px; border-radius: var(--radius-md); padding: 12px 18px; width: 100%; border: 1px solid var(--glass-border); background: var(--glass-highlight); color: var(--text-main); cursor: pointer; font-weight: 600;">Cancel</button>
+    </div>
+  </div>
 </body>
 </html>

@@ -101,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
       this.setupNotifications();
       this.setupGlobalSearch();
       this.setupQuickActions();
+      this.initMobileNavigation();
       
       // Initialize Lucide Icons
       if (window.lucide) {
@@ -815,6 +816,155 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     },
 
+    // Mobile Navigation & Portals
+    initMobileNavigation() {
+      // 1. Hamburger menu toggle to slide in desktop sidebar on mobile
+      const menuToggle = document.getElementById('mobile-menu-toggle');
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+
+      if (menuToggle && sidebar) {
+        menuToggle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          sidebar.classList.toggle('open');
+          overlay?.classList.toggle('open');
+        });
+      }
+
+      // Close sidebar if clicking overlay
+      if (overlay) {
+        overlay.addEventListener('click', () => {
+          sidebar?.classList.remove('open');
+          overlay.classList.remove('open');
+        });
+      }
+
+      // Close sidebar if clicking any link inside it on mobile
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(item => {
+        item.addEventListener('click', () => {
+          if (sidebar?.classList.contains('open')) {
+            sidebar.classList.remove('open');
+            overlay?.classList.remove('open');
+          }
+        });
+      });
+
+      // 2. Mobile bottom nav tab buttons
+      const mobileNavButtons = document.querySelectorAll('.mobile-nav-btn');
+      mobileNavButtons.forEach(btn => {
+        if (btn.id === 'mobile-quick-add-btn') return; // skip center add button
+        
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetView = btn.getAttribute('data-view');
+          
+          // Click corresponding desktop sidebar item to trigger SPA navigation
+          const desktopNavBtn = document.querySelector(`.nav-item[data-view="${targetView}"]`);
+          if (desktopNavBtn) {
+            desktopNavBtn.click();
+          }
+
+          // Update active style on mobile nav buttons
+          mobileNavButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+
+      // Synchronize mobile bottom nav active class when desktop sidebar changes active view
+      const observer = new MutationObserver(() => {
+        const activeNav = document.querySelector('.nav-item.active');
+        if (activeNav) {
+          const currentView = activeNav.getAttribute('data-view');
+          mobileNavButtons.forEach(btn => {
+            if (btn.getAttribute('data-view') === currentView) {
+              btn.classList.add('active');
+            } else {
+              btn.classList.remove('active');
+            }
+          });
+        }
+      });
+
+      const sidebarNav = document.querySelector('.sidebar-nav');
+      if (sidebarNav) {
+        observer.observe(sidebarNav, { subtree: true, attributes: true, attributeFilter: ['class'] });
+      }
+
+      // 3. Center Quick Add Button sheet modal toggles
+      const quickAddBtn = document.getElementById('mobile-quick-add-btn');
+      const actionDrawerOverlay = document.getElementById('mobile-action-drawer-overlay');
+      const actionDrawer = actionDrawerOverlay?.querySelector('.mobile-action-drawer');
+      const closeDrawerBtn = document.getElementById('close-mobile-drawer-btn');
+
+      if (quickAddBtn && actionDrawerOverlay && actionDrawer) {
+        quickAddBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          actionDrawerOverlay.style.display = 'flex';
+          setTimeout(() => {
+            actionDrawer.style.transform = 'translateY(0)';
+          }, 10);
+        });
+      }
+
+      const closeDrawer = () => {
+        if (actionDrawer && actionDrawerOverlay) {
+          actionDrawer.style.transform = 'translateY(100%)';
+          setTimeout(() => {
+            actionDrawerOverlay.style.display = 'none';
+          }, 300);
+        }
+      };
+
+      if (closeDrawerBtn) {
+        closeDrawerBtn.addEventListener('click', closeDrawer);
+      }
+
+      if (actionDrawerOverlay) {
+        actionDrawerOverlay.addEventListener('click', (e) => {
+          if (e.target === actionDrawerOverlay) {
+            closeDrawer();
+          }
+        });
+      }
+
+      // 4. Quick Actions in Drawer trigger corresponding actions
+      const drawerActions = document.querySelectorAll('.mobile-drawer-action');
+      drawerActions.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          closeDrawer();
+          const action = btn.getAttribute('data-action');
+          
+          if (action === 'task') {
+            document.querySelector('.nav-item[data-view="tasks"]')?.click();
+            this.showToast('Write a task title to insert.', 'info');
+          } else if (action === 'note') {
+            document.querySelector('.nav-item[data-view="notes"]')?.click();
+            this.showToast('Write note content to log.', 'info');
+          } else if (action === 'finance') {
+            document.querySelector('.nav-item[data-view="finance"]')?.click();
+            this.showToast('Log a new transaction cost.', 'info');
+          } else if (action === 'water') {
+            this.state.waterIntake = Math.min(this.state.waterIntake + 1, 12);
+            this.saveState();
+            this.showToast('Cup of water added!', 'success');
+          }
+        });
+      });
+
+      // 5. Global Link data-view router binding
+      document.addEventListener('click', (e) => {
+        const link = e.target.closest('[data-view]');
+        if (!link || link.classList.contains('nav-item') || link.classList.contains('dropdown-item') || link.classList.contains('user-subnav-btn') || link.classList.contains('mobile-nav-btn')) return;
+        
+        const targetView = link.getAttribute('data-view');
+        const navBtn = document.querySelector(`.nav-item[data-view="${targetView}"]`);
+        if (navBtn) {
+          navBtn.click();
+        }
+      });
+    },
+
     // Clock
     initClock() {
       const liveClockEl = document.getElementById('live-clock');
@@ -1024,35 +1174,128 @@ document.addEventListener('DOMContentLoaded', () => {
       const compTasks = this.state.tasks.filter(t => t.completed);
       const total = this.state.tasks.length;
 
+      const isMobile = window.innerWidth <= 768;
+      const baseCircum = isMobile ? 150.8 : 251.32;
+
       if (total > 0) {
         const percent = Math.round((compTasks.length / total) * 100);
-        // circum = 2 * PI * r = 2 * 3.1416 * 40 = 251.32
-        const offset = 251.32 - (percent / 100) * 251.32;
-        ring.style.strokeDashoffset = offset;
-        text.textContent = `${percent}%`;
-        desc.textContent = `${compTasks.length} of ${total} tasks complete`;
+        const offset = baseCircum - (percent / 100) * baseCircum;
+        if (ring) ring.style.strokeDashoffset = offset;
+        if (text) text.textContent = `${percent}%`;
+        if (desc) desc.textContent = `${compTasks.length} of ${total} tasks complete`;
       } else {
-        ring.style.strokeDashoffset = 251.32;
-        text.textContent = '0%';
-        desc.textContent = 'No tasks logged';
+        if (ring) ring.style.strokeDashoffset = baseCircum;
+        if (text) text.textContent = '0%';
+        if (desc) desc.textContent = 'No tasks logged';
       }
 
-      // 2. Habits (Calculates dummy compliance from logged state habits)
+      // 2. Habits (Calculates actual completion from current state habits list)
       const habitsRing = document.getElementById('habits-progress-ring');
       const habitsText = document.getElementById('habits-progress-text');
       const habitsDesc = document.getElementById('habits-summary-desc');
 
-      // Habits list isn't globally declared, so we can mock or map it from modules.
-      // To prevent crashes, look at storage length or return default
-      const habitsLength = this.state.skills.length; // mock representative habits length
-      if (habitsLength > 0) {
-        habitsRing.style.strokeDashoffset = 251.32 * 0.4;
-        habitsText.textContent = `60%`;
-        habitsDesc.textContent = `3 of 5 habits complete today`;
+      const habitsList = this.state.habits || [];
+      const today = new Date();
+      const todayDayIdx = today.getDay(); // 0 is Sunday, 1 is Monday, etc.
+      const todayStr = today.toLocaleDateString('sv').substring(0, 10);
+
+      // Filter habits scheduled for today
+      const todayHabits = habitsList.filter(h => h.weeklySchedule[todayDayIdx]);
+      const compHabits = todayHabits.filter(h => h.history[todayStr] === 'done');
+
+      if (todayHabits.length > 0) {
+        const percent = Math.round((compHabits.length / todayHabits.length) * 100);
+        const offset = baseCircum - (percent / 100) * baseCircum;
+        if (habitsRing) habitsRing.style.strokeDashoffset = offset;
+        if (habitsText) habitsText.textContent = `${percent}%`;
+        if (habitsDesc) habitsDesc.textContent = `${compHabits.length} of ${todayHabits.length} habits complete`;
       } else {
-        habitsRing.style.strokeDashoffset = 251.32;
-        habitsText.textContent = '0%';
-        habitsDesc.textContent = 'No habits logged';
+        if (habitsRing) habitsRing.style.strokeDashoffset = baseCircum;
+        if (habitsText) habitsText.textContent = '0%';
+        if (habitsDesc) habitsDesc.textContent = 'No habits scheduled today';
+      }
+
+      // Render Dashboard Habits List
+      const dashboardHabitsList = document.getElementById('dashboard-habits-list');
+      if (dashboardHabitsList) {
+        if (habitsList.length === 0) {
+          dashboardHabitsList.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 15px;">No habits created yet. Go to <a href="#habits" data-view="habits" style="color: var(--primary);">Habit Tracker</a> to add some!</div>`;
+        } else {
+          // Find start of week (Sunday)
+          const startOfWeek = new Date();
+          const dayOffset = startOfWeek.getDay();
+          startOfWeek.setDate(startOfWeek.getDate() - dayOffset);
+          
+          const daysAbbr = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+          let headersHtml = '';
+          daysAbbr.forEach((abbr, idx) => {
+            headersHtml += `<span style="font-size: 0.6rem; width: 18px; text-align: center; display: inline-block; color: var(--text-muted); font-weight: bold;">${abbr}</span>`;
+          });
+          
+          let habitsHtml = `
+            <div style="display: flex; justify-content: flex-end; padding-right: 12px; margin-bottom: 6px;">
+              <div style="display: flex; gap: 4px;">
+                ${headersHtml}
+              </div>
+            </div>
+          `;
+          
+          // Display up to 5 habits on the dashboard for cleanliness
+          const displayHabits = habitsList.slice(0, 5);
+          
+          displayHabits.forEach(h => {
+            let dotsHtml = '';
+            for (let idx = 0; idx < 7; idx++) {
+              const weekDate = new Date(startOfWeek);
+              weekDate.setDate(startOfWeek.getDate() + idx);
+              const weekDateStr = weekDate.toLocaleDateString('sv').substring(0, 10);
+              const isSched = h.weeklySchedule[idx];
+              const status = h.history[weekDateStr];
+              
+              let dotStyle = 'background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.15);';
+              let dotContent = '';
+              
+              if (isSched) {
+                if (status === 'done') {
+                  dotStyle = 'background: var(--green); border: none; color: #fff; box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);';
+                  dotContent = '<i class="fas fa-check" style="font-size: 0.5rem;"></i>';
+                } else if (status === 'partial') {
+                  dotStyle = 'background: var(--yellow); border: none; color: #fff;';
+                  dotContent = '<i class="fas fa-adjust" style="font-size: 0.5rem;"></i>';
+                } else if (status === 'missed') {
+                  dotStyle = 'background: rgba(239, 68, 68, 0.2); border: 1px solid var(--red); color: var(--red);';
+                  dotContent = '<i class="fas fa-times" style="font-size: 0.5rem;"></i>';
+                } else {
+                  dotStyle = 'background: rgba(255,255,255,0.02); border: 1.2px solid rgba(255,255,255,0.2);';
+                }
+              } else {
+                dotStyle = 'opacity: 0.15; pointer-events: none; border: 1px dashed rgba(255,255,255,0.1);';
+              }
+              
+              dotsHtml += `
+                <div style="width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; ${dotStyle}">
+                  ${dotContent}
+                </div>
+              `;
+            }
+            
+            habitsHtml += `
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--glass-highlight); border: 1px solid var(--glass-border); border-radius: var(--radius-md); margin-bottom: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 26px; height: 26px; border-radius: 50%; background: ${h.color}15; border: 1.5px solid ${h.color}; display: flex; align-items: center; justify-content: center; font-size: 0.95rem;">
+                    ${h.icon}
+                  </div>
+                  <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-main);">${h.name}</span>
+                </div>
+                <div style="display: flex; gap: 4px;">
+                  ${dotsHtml}
+                </div>
+              </div>
+            `;
+          });
+          
+          dashboardHabitsList.innerHTML = habitsHtml;
+        }
       }
 
       // 3. Health
