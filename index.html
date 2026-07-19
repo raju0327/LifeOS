@@ -2058,48 +2058,46 @@
             </div>
           </div>
 
-          <!-- Main Layout Grid -->
-          <div class="user-dashboard-grid" style="align-items: start; margin-bottom: 24px;">
-            <!-- Left Side: Today's Habits List -->
-            <div class="glass-card" style="padding: 20px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
-                <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Habit List</h3>
-                <span style="font-size: 0.8rem; color: var(--text-muted);" id="habits-today-date-label">July 19, 2026</span>
+          <!-- Full-Width Habit List (matches mockup) -->
+          <div class="glass-card" style="padding: 20px; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+              <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Habit List</h3>
+              <span style="font-size: 0.8rem; color: var(--text-muted);" id="habits-today-date-label">July 19, 2026</span>
+            </div>
+
+            <!-- Controls Row: Search & Filters -->
+            <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 20px; flex-wrap: wrap;">
+              <div style="position: relative; flex-grow: 1; min-width: 180px;">
+                <i class="fas fa-search" style="position: absolute; left: 10px; top: 9px; color: var(--text-muted); font-size: 0.8rem;"></i>
+                <input type="text" id="habit-search-input" placeholder="Search habits..." style="width: 100%; box-sizing: border-box; padding: 6px 12px 6px 30px; font-size: 0.8rem; border-radius: var(--radius-sm); background: var(--bg-sidebar); border: 1px solid var(--glass-border); color: var(--text-main);">
+              </div>
+              
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="habit-filter-buttons">
+                <button type="button" class="habit-filter-btn active" data-filter="all">All</button>
+                <button type="button" class="habit-filter-btn" data-filter="active">Active</button>
+                <button type="button" class="habit-filter-btn" data-filter="completed">Completed</button>
+                <button type="button" class="habit-filter-btn" data-filter="missed">Missed</button>
               </div>
 
-              <!-- Controls Row: Search & Filters -->
-              <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 20px; flex-wrap: wrap;">
-                <div style="position: relative; flex-grow: 1; min-width: 180px;">
-                  <i class="fas fa-search" style="position: absolute; left: 10px; top: 9px; color: var(--text-muted); font-size: 0.8rem;"></i>
-                  <input type="text" id="habit-search-input" placeholder="Search habits..." style="width: 100%; box-sizing: border-box; padding: 6px 12px 6px 30px; font-size: 0.8rem; border-radius: var(--radius-sm); background: var(--bg-sidebar); border: 1px solid var(--glass-border); color: var(--text-main);">
-                </div>
-                
-                <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="habit-filter-buttons">
-                  <button type="button" class="habit-filter-btn active" data-filter="all">All</button>
-                  <button type="button" class="habit-filter-btn" data-filter="active">Active</button>
-                  <button type="button" class="habit-filter-btn" data-filter="completed">Completed</button>
-                  <button type="button" class="habit-filter-btn" data-filter="missed">Missed</button>
-                </div>
-
-                <div style="display: flex; gap: 6px;">
-                  <button type="button" id="btn-toggle-manage-mode" class="btn-primary-glow" style="padding: 4px 12px; font-size: 0.72rem; border-radius: var(--radius-sm); border: none; cursor: pointer; color: #fff; background: rgba(168, 85, 247, 0.1); border: 1px solid var(--primary);"><i class="fas fa-cog"></i> Manage Mode</button>
-                  <button type="button" id="btn-done-manage-mode" class="btn-primary-glow hidden" style="padding: 4px 12px; font-size: 0.72rem; border-radius: var(--radius-sm); border: none; cursor: pointer; color: #fff; background: var(--green);"><i class="fas fa-check"></i> Done</button>
-                </div>
-              </div>
-
-              <div style="display: flex; flex-direction: column; gap: 16px;" id="habits-today-list">
-                <!-- Dynamically filled -->
-              </div>
-
-              <!-- Legend (visible only in Manage Mode) -->
-              <div id="habits-manage-legend" class="hidden" style="margin-top: 20px; padding: 12px; border: 1px dashed var(--glass-border); border-radius: var(--radius-sm); display: flex; gap: 15px; justify-content: flex-end; font-size: 0.72rem; color: var(--text-muted);">
-                <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: rgba(59, 130, 246, 0.1); border: 1.5px solid var(--blue); display: flex; align-items: center; justify-content: center; color: var(--blue);"><i class="fas fa-pencil-alt" style="font-size: 0.65rem;"></i></span> Edit Habit</span>
-                <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: rgba(239, 68, 68, 0.1); border: 1.5px solid var(--red); display: flex; align-items: center; justify-content: center; color: var(--red);"><i class="fas fa-trash-alt" style="font-size: 0.65rem;"></i></span> Delete Habit</span>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" id="btn-toggle-manage-mode" class="btn-primary-glow" style="padding: 4px 12px; font-size: 0.72rem; border-radius: var(--radius-sm); border: none; cursor: pointer; color: #fff; background: rgba(168, 85, 247, 0.1); border: 1px solid var(--primary);"><i class="fas fa-cog"></i> Manage Mode</button>
+                <button type="button" id="btn-done-manage-mode" class="btn-primary-glow hidden" style="padding: 4px 12px; font-size: 0.72rem; border-radius: var(--radius-sm); border: none; cursor: pointer; color: #fff; background: var(--green);"><i class="fas fa-check"></i> Done</button>
               </div>
             </div>
 
-            <!-- Right Side: Overview Charts, Calendar, Streaks -->
-            <div style="display: flex; flex-direction: column; gap: 24px;">
+            <div style="display: flex; flex-direction: column; gap: 16px;" id="habits-today-list">
+              <!-- Dynamically filled -->
+            </div>
+
+            <!-- Legend (visible only in Manage Mode) -->
+            <div id="habits-manage-legend" class="hidden" style="margin-top: 20px; padding: 12px; border: 1px dashed var(--glass-border); border-radius: var(--radius-sm); display: flex; gap: 15px; justify-content: flex-end; font-size: 0.72rem; color: var(--text-muted);">
+              <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: rgba(59, 130, 246, 0.1); border: 1.5px solid var(--blue); display: flex; align-items: center; justify-content: center; color: var(--blue);"><i class="fas fa-pencil-alt" style="font-size: 0.65rem;"></i></span> Edit Habit</span>
+              <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: rgba(239, 68, 68, 0.1); border: 1.5px solid var(--red); display: flex; align-items: center; justify-content: center; color: var(--red);"><i class="fas fa-trash-alt" style="font-size: 0.65rem;"></i></span> Delete Habit</span>
+            </div>
+          </div>
+
+          <!-- Bottom Layout Grid: Analytics & Trends -->
+          <div class="user-dashboard-grid" style="align-items: start; margin-bottom: 24px;">
               <!-- Habit Completion Overview (Bar Chart) -->
               <div class="glass-card" style="padding: 20px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -2148,7 +2146,6 @@
                 </div>
               </div>
             </div>
-          </div>
 
           <!-- Bottom Row: Monthly Progress and Motivation -->
           <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: stretch; margin-bottom: 24px;">
