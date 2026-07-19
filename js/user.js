@@ -262,12 +262,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       this.app.activeViewedUser = targetAccount.id;
-      this.app.saveState();
-      
-      this.app.syncGlobalGoogleSheetData(false);
-      if (this.app.modules.finance) {
-        this.app.modules.finance.syncGoogleSheetData(false);
-      }
+      this.app.saveState().then(() => {
+        this.app.syncGlobalGoogleSheetData(false);
+        if (this.app.modules.finance) {
+          this.app.modules.finance.syncGoogleSheetData(false);
+        }
+      });
       this.logSecurityEvent('Login Success', `Unlock successful via IP ${ip} on device ${device}`, targetAccount.name || targetAccount.username);
       this.app.showToast(`Decrypted successfully! Welcome back, ${this.app.state.user.username}.`, 'success');
       
@@ -512,11 +512,12 @@ document.addEventListener('DOMContentLoaded', () => {
         this.app.state.user.password = pass;
 
         this.app.activeViewedUser = username;
-        this.app.saveState();
-        this.app.syncGlobalGoogleSheetData(false);
-        if (this.app.modules.finance) {
-          this.app.modules.finance.syncGoogleSheetData(false);
-        }
+        this.app.saveState().then(() => {
+          this.app.syncGlobalGoogleSheetData(false);
+          if (this.app.modules.finance) {
+            this.app.modules.finance.syncGoogleSheetData(false);
+          }
+        });
         this.logSecurityEvent('Account Creation', `New account registered for ${name} as role ${role}`, name);
         this.app.showToast(`Account registered and unlocked! Welcome, ${name}.`, 'success');
 
@@ -1419,16 +1420,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 2. Remove from members array and save
         this.app.state.members = this.app.state.members.filter(m => m.id !== id);
-        this.app.saveState();
+        this.app.saveState().then(() => {
+          // 3. Switch viewed user back to admin if we were viewing the deleted user
+          if (this.app.activeViewedUser === id) {
+            this.app.activeViewedUser = this.app.state.user.id || 'admin';
+            this.app.syncGlobalGoogleSheetData(false);
+          }
+        });
         
         this.logSecurityEvent('Account Deletion', `Permanently deleted user profile account`, member.name);
         this.app.showToast(`User profile "${member.name}" permanently deleted.`, 'success');
-
-        // 3. Switch viewed user back to admin if we were viewing the deleted user
-        if (this.app.activeViewedUser === id) {
-          this.app.activeViewedUser = this.app.state.user.id || 'admin';
-          this.app.syncGlobalGoogleSheetData(false);
-        }
 
         this.render();
       }

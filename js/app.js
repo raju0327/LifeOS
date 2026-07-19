@@ -160,9 +160,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     getMockGoals() {
       return [
-        { id: 'goal-1', name: 'Family Vacation Fund', target: 250000, current: 185000, color: '#00d2ff' },
-        { id: 'goal-2', name: 'New Living Room TV', target: 80000, current: 42000, color: '#3399ff' },
-        { id: 'goal-3', name: 'Emergency Savings', target: 150000, current: 30000, color: '#0052cc' }
+        { id: 'goal-1', name: 'Family Vacation Fund', target: 250000, current: 185000, saved: 185000, color: '#00d2ff' },
+        { id: 'goal-2', name: 'New Living Room TV', target: 80000, current: 42000, saved: 42000, color: '#3399ff' },
+        { id: 'goal-3', name: 'Emergency Savings', target: 150000, current: 30000, saved: 30000, color: '#0052cc' }
       ];
     },
 
@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save to local storage and sync stats
     saveState() {
       this.saveStateLocallyOnly();
-      this.pushGlobalStateToGoogleSheet();
+      return this.pushGlobalStateToGoogleSheet();
     },
 
     saveStateLocallyOnly() {
@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- SUPABASE DATABASE SYNC ENGINE ---
     pushSecurityStateToSupabase() {
       const settings = this.state.supabaseSettings;
-      if (!settings || !settings.url || !settings.anonKey) return;
+      if (!settings || !settings.url || !settings.anonKey) return Promise.resolve();
 
       const securityPayload = {
         members: this.state.members || [],
@@ -339,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const encryptedData = this.encryptData(JSON.stringify(securityPayload));
       const endpoint = `${settings.url}/rest/v1/workspace_security?key=eq.security_registry`;
 
-      fetch(endpoint, {
+      return fetch(endpoint, {
         method: 'POST',
         headers: {
           'apikey': settings.anonKey,
@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     pushAllStateToSupabase() {
       const settings = this.state.supabaseSettings;
-      if (!settings || !settings.url || !settings.anonKey) return;
+      if (!settings || !settings.url || !settings.anonKey) return Promise.resolve();
 
       const username = this.state.user.id || 'admin';
 
@@ -377,15 +377,39 @@ document.addEventListener('DOMContentLoaded', () => {
         'jobApplications', 'notifications',
         
         // Include all finance data keys
-        'categories', 'budgets', 'goals', 'subscriptions', 'loans', 'transactions', 'habits', 'vaultItems'
+        'categories', 'subscriptions', 'loans', 'transactions', 'habits', 'vaultItems'
       ];
       keys.forEach(k => {
         dashboardPayload[k] = this.state[k];
       });
 
+      // Transform budgets: state stores flat numbers {food: 15000}, DB expects {limit, spent, period}
+      const rawBudgets = this.state.budgets || {};
+      dashboardPayload.budgets = {};
+      Object.keys(rawBudgets).forEach(catId => {
+        const val = rawBudgets[catId];
+        if (val !== null && typeof val === 'object') {
+          // Already in DB format
+          dashboardPayload.budgets[catId] = val;
+        } else {
+          // Convert flat number to DB format
+          dashboardPayload.budgets[catId] = {
+            limit: Number(val) || 0,
+            spent: 0,
+            period: 'monthly'
+          };
+        }
+      });
+
+      // Transform goals: state uses {current}, DB expects {saved}
+      dashboardPayload.goals = (this.state.goals || []).map(g => ({
+        ...g,
+        saved: g.saved !== undefined ? g.saved : (g.current || 0)
+      }));
+
       const endpoint = `${settings.url}/rest/v1/rpc/save_user_dashboard`;
 
-      fetch(endpoint, {
+      return fetch(endpoint, {
         method: 'POST',
         headers: {
           'apikey': settings.anonKey,
@@ -398,12 +422,11 @@ document.addEventListener('DOMContentLoaded', () => {
         })
       })
       .then(res => {
-        if (!res.ok) throw new Error('Supabase response status: ' + res.status);
-        this.showToast('Workspace backup saved to Database.', 'success');
+        if (!res.ok) return res.text().then(t => { throw new Error(`Supabase ${res.status}: ${t}`); });
+        console.log('Dashboard state pushed to Supabase successfully.');
       })
       .catch(err => {
         console.error('Supabase dashboard push error:', err);
-        this.showToast('Database sync request failed.', 'error');
       });
     },
 
@@ -468,7 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'moodLogs', 'medicineReminders', 'nutritionLogs', 'workoutLogs', 'contacts', 
             'trips', 'vehicleLogs', 'mediaItems', 'shoppingList', 'skills', 
             'jobApplications', 'notifications',
-            'categories', 'budgets', 'goals', 'subscriptions', 'loans', 'transactions', 'habits', 'vaultItems'
+            'categories', 'subscriptions', 'loans', 'transactions', 'habits', 'vaultItems'
           ];
           keys.forEach(k => {
             if (dashboardObj[k] !== undefined) {
@@ -478,6 +501,30 @@ document.addEventListener('DOMContentLoaded', () => {
               this.state[k] = dashboardObj[k];
             }
           });
+
+          // Map budgets back from DB format {limit, spent, period} to flat numbers {food: 15000}
+          if (dashboardObj.budgets && Object.keys(dashboardObj.budgets).length > 0) {
+            const flatBudgets = {};
+            Object.keys(dashboardObj.budgets).forEach(catId => {
+              const val = dashboardObj.budgets[catId];
+              if (val !== null && typeof val === 'object' && val.limit !== undefined) {
+                flatBudgets[catId] = Number(val.limit) || 0;
+              } else {
+                flatBudgets[catId] = Number(val) || 0;
+              }
+            });
+            this.state.budgets = flatBudgets;
+          }
+
+          // Map goals back: DB returns {saved}, state expects {current}
+          if (dashboardObj.goals && dashboardObj.goals.length > 0) {
+            this.state.goals = dashboardObj.goals.map(g => ({
+              ...g,
+              current: g.current !== undefined ? g.current : (g.saved || 0),
+              saved: g.saved !== undefined ? g.saved : (g.current || 0)
+            }));
+          }
+
           mergedAny = true;
         }
 
@@ -525,8 +572,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
 
     pushGlobalStateToGoogleSheet() {
-      this.pushSecurityStateToSupabase();
-      this.pushAllStateToSupabase();
+      return Promise.all([
+        this.pushSecurityStateToSupabase(),
+        this.pushAllStateToSupabase()
+      ]);
     },
 
     // Load rich startup mock data

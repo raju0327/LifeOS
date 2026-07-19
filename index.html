@@ -556,21 +556,21 @@
                             <label>Current Password</label>
                             <div style="position: relative;">
                               <input type="password" id="my-pass-current" required style="width: 100%; box-sizing: border-box; padding: 8px 30px 8px 8px;">
-                              <i class="fas fa-eye-slash pass-toggle" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); font-size: 0.75rem;" onclick="const input = document.getElementById('my-pass-current'); if(input.type==='password'){input.type='text'; this.className='fas fa-eye';}else{input.type='password'; this.className='fas fa-eye-slash';}"></i>
+                              <i class="fas fa-eye-slash pass-toggle" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); font-size: 0.75rem;" onclick="(function(btn){const input = document.getElementById('my-pass-current'); if(input.type==='password'){input.type='text'; btn.className='fas fa-eye';}else{input.type='password'; btn.className='fas fa-eye-slash';}})(this)"></i>
                             </div>
                           </div>
                           <div class="input-group">
                             <label>New Password</label>
                             <div style="position: relative;">
                               <input type="password" id="my-pass-new" required style="width: 100%; box-sizing: border-box; padding: 8px 30px 8px 8px;" oninput="window.checkPasswordStrength(this.value)">
-                              <i class="fas fa-eye-slash pass-toggle" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); font-size: 0.75rem;" onclick="const input = document.getElementById('my-pass-new'); if(input.type==='password'){input.type='text'; this.className='fas fa-eye';}else{input.type='password'; this.className='fas fa-eye-slash';}"></i>
+                              <i class="fas fa-eye-slash pass-toggle" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); font-size: 0.75rem;" onclick="(function(btn){const input = document.getElementById('my-pass-new'); if(input.type==='password'){input.type='text'; btn.className='fas fa-eye';}else{input.type='password'; btn.className='fas fa-eye-slash';}})(this)"></i>
                             </div>
                           </div>
                           <div class="input-group">
                             <label>Confirm New Password</label>
                             <div style="position: relative;">
                               <input type="password" id="my-pass-confirm" required style="width: 100%; box-sizing: border-box; padding: 8px 30px 8px 8px;">
-                              <i class="fas fa-eye-slash pass-toggle" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); font-size: 0.75rem;" onclick="const input = document.getElementById('my-pass-confirm'); if(input.type==='password'){input.type='text'; this.className='fas fa-eye';}else{input.type='password'; this.className='fas fa-eye-slash';}"></i>
+                              <i class="fas fa-eye-slash pass-toggle" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); font-size: 0.75rem;" onclick="(function(btn){const input = document.getElementById('my-pass-confirm'); if(input.type==='password'){input.type='text'; btn.className='fas fa-eye';}else{input.type='password'; btn.className='fas fa-eye-slash';}})(this)"></i>
                             </div>
                           </div>
                           <button type="submit" class="btn-primary-glow" style="border: none; padding: 10px; font-weight: 700; color: #fff; cursor: pointer; width: 100%; margin-top: 5px;">Change Password</button>
@@ -2163,7 +2163,7 @@
               <h2>Personal Vault</h2>
               <p class="subtitle">Store, organize and protect your important personal information.</p>
             </div>
-            <button id="btn-add-vault-item" class="btn-primary-glow" onclick="const el = document.getElementById('add-vault-item-container'); if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none';" style="padding: 10px 20px; font-size: 0.85rem; border: none; cursor: pointer; color: #fff; display: flex; align-items: center; gap: 8px;">
+            <button id="btn-add-vault-item" class="btn-primary-glow" onclick="(function(){const el = document.getElementById('add-vault-item-container'); if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none';})()" style="padding: 10px 20px; font-size: 0.85rem; border: none; cursor: pointer; color: #fff; display: flex; align-items: center; gap: 8px;">
               <i class="fas fa-plus"></i> Add New Item
             </button>
           </div>
@@ -2199,7 +2199,7 @@
               </div>
 
               <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button type="button" id="btn-cancel-vault-item" onclick="const el = document.getElementById('add-vault-item-container'); if(el) el.style.display = 'none'; document.getElementById('new-vault-item-form').reset();" class="btn-primary-glow" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 8px 16px; cursor: pointer; color: #fff;">Cancel</button>
+                <button type="button" id="btn-cancel-vault-item" onclick="(function(){const el = document.getElementById('add-vault-item-container'); if(el) el.style.display = 'none'; document.getElementById('new-vault-item-form').reset();})()" class="btn-primary-glow" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 8px 16px; cursor: pointer; color: #fff;">Cancel</button>
                 <button type="submit" class="btn-primary-glow" style="padding: 8px 16px; border: none; cursor: pointer; color: #fff;">Save Secure Item</button>
               </div>
             </form>

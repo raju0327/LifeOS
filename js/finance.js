@@ -1588,6 +1588,7 @@ const FinanceModule = {
     const goal = this.app.state.goals.find(g => g.id === goalId);
     if (goal) {
       goal.current += amount;
+      goal.saved = goal.current; // Keep DB-compatible field in sync
 
       const newTx = {
         id: 'tx-' + Date.now(),
@@ -2561,6 +2562,7 @@ const FinanceModule = {
       goal.name = name;
       goal.target = target;
       goal.current = current;
+      goal.saved = current; // Keep DB-compatible field in sync
       goal.color = color;
 
       this.app.saveState();

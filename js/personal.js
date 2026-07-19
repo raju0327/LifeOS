@@ -69,10 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('submit', (e) => {
           e.preventDefault();
           try {
+            console.log('Vault item form submit triggered.');
             const name = document.getElementById('vault-item-name').value.trim();
             const category = document.getElementById('vault-item-category').value;
             const description = document.getElementById('vault-item-desc').value.trim();
             const secureData = document.getElementById('vault-item-secure').value.trim();
+
+            console.log('Read form inputs:', { name, category, description, secureData });
 
             const now = new Date();
             const options = { day: 'numeric', month: 'short', year: 'numeric' };
@@ -93,8 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
               this.app.state.vaultItems = [];
             }
 
+            console.log('Prior vaultItems count:', this.app.state.vaultItems.length);
             this.app.state.vaultItems.push(newItem);
+            console.log('Calling app.saveState()...');
             this.app.saveState();
+            console.log('app.saveState() call finished. New count:', this.app.state.vaultItems.length);
             this.app.showToast(`Secure ${category} item added.`, 'success');
 
             form.reset();
