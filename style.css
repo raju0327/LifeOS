@@ -2706,4 +2706,50 @@ body.session-locked .main-content {
   .focus-input-container button {
     width: 100%;
   }
+
+  /* Prevent elements overflowing and horizontal scroll on mobile */
+  .clock-widget {
+    display: none !important;
+  }
+  .profile-details {
+    display: none !important;
+  }
+  .profile-card {
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .avatar-glow {
+    box-shadow: 0 0 10px var(--primary-glow) !important;
+  }
+  .top-bar {
+    justify-content: space-between !important;
+    gap: 12px !important;
+    flex-wrap: nowrap !important;
+  }
+  .header-widgets {
+    gap: 8px !important;
+  }
+}
+
+/* Prevent horizontal scrolling globally */
+html, body {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.app-container {
+  overflow-x: hidden !important;
+  width: 100% !important;
+}
+.main-content {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+.glass-card {
+  box-sizing: border-box !important;
+  max-width: 100% !important;
 }
