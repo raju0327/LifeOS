@@ -567,7 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
               if (isSched) {
                 if (status === 'done') {
-                  dotStyle = `background: ${h.color}; border: none; color: #fff; box-shadow: 0 0 6px ${h.color}40;`;
+                  dotStyle = 'background: var(--green); border: none; color: #fff; box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);';
                   dotContent = '<i class="fas fa-check" style="font-size: 0.55rem;"></i>';
                 } else if (status === 'partial') {
                   dotStyle = 'background: var(--yellow); border: none; color: #fff;';
@@ -657,7 +657,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                   <!-- Progress Bar -->
                   <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; margin-top: 2px;">
-                    <div style="width: ${weeklyPct}%; height: 100%; background: ${h.color}; border-radius: 2px; transition: width 0.3s ease;"></div>
+                    <div style="width: ${weeklyPct}%; height: 100%; background: var(--green); border-radius: 2px; transition: width 0.3s ease;"></div>
                   </div>
                 </div>
 
