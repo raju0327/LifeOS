@@ -22,31 +22,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Skill Competency Stars ---
     setupSkillControls() {
       const form = document.getElementById('skill-form');
+      if (!form) return;
       const nameInput = document.getElementById('skill-name');
       const lvlSelect = document.getElementById('skill-level');
 
       form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const name = nameInput.value.trim();
+        const name = nameInput ? nameInput.value.trim() : '';
         if (!name) return;
 
         this.app.state.skills.push({
           id: Date.now(),
           name: name,
-          level: lvlSelect.value
+          level: lvlSelect ? lvlSelect.value : '3'
         });
 
         this.app.saveState();
         this.app.showToast(`Skill competency "${name}" saved!`, 'success');
         
-        nameInput.value = '';
+        if (nameInput) nameInput.value = '';
         this.renderSkills();
       });
     },
 
     renderSkills() {
       const container = document.getElementById('skills-list-container');
-      const skills = this.app.state.skills;
+      if (!container) return;
+      const skills = this.app.state.skills || [];
 
       if (skills.length === 0) {
         container.innerHTML = `<div class="empty-state" style="grid-column:1/-1; font-size:0.75rem;">No skills indexed. Track your competency!</div>`;
@@ -90,20 +92,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Job Submissions Tracker ---
     setupJobControls() {
       const form = document.getElementById('job-form');
+      if (!form) return;
       const titleInput = document.getElementById('job-title-input');
       const statusSelect = document.getElementById('job-status');
       const notesInput = document.getElementById('job-notes');
 
       form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const title = titleInput.value.trim();
+        const title = titleInput ? titleInput.value.trim() : '';
         if (!title) return;
 
         this.app.state.jobApplications.push({
           id: Date.now(),
           title: title,
-          status: statusSelect.value,
-          notes: notesInput.value.trim() || 'No follow-up logged.'
+          status: statusSelect ? statusSelect.value : 'Applied',
+          notes: notesInput ? (notesInput.value.trim() || 'No follow-up logged.') : 'No follow-up logged.'
         });
 
         this.app.saveState();

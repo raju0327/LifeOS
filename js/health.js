@@ -28,14 +28,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const addBtn = document.getElementById('add-water-btn');
       const resetBtn = document.getElementById('reset-water-btn');
 
-      addBtn.addEventListener('click', () => {
-        this.app.state.waterIntake = Math.min(this.app.state.waterIntake + 1, 12);
+      addBtn?.addEventListener('click', () => {
+        this.app.state.waterIntake = Math.min((this.app.state.waterIntake || 0) + 1, 12);
         this.app.saveState();
         this.app.showToast('Cup of water logged', 'success');
         this.renderWater();
       });
 
-      resetBtn.addEventListener('click', () => {
+      resetBtn?.addEventListener('click', () => {
         this.app.state.waterIntake = 0;
         this.app.saveState();
         this.app.showToast('Water counter reset', 'info');
@@ -46,30 +46,32 @@ document.addEventListener('DOMContentLoaded', () => {
     renderWater() {
       const fill = document.getElementById('water-fill-level');
       const text = document.getElementById('water-fraction');
-      const cups = this.app.state.waterIntake;
+      const cups = this.app.state.waterIntake || 0;
 
-      text.textContent = `${cups} / 8 cups`;
+      if (text) text.textContent = `${cups} / 8 cups`;
       const pct = Math.min(Math.round((cups / 8) * 100), 100);
-      fill.style.height = `${pct}%`;
+      if (fill) fill.style.height = `${pct}%`;
     },
 
     // --- Sleep Monitor ---
     setupSleepTracker() {
       const form = document.getElementById('sleep-form');
+      if (!form) return;
       const hrsInput = document.getElementById('sleep-hours');
       const qualSelect = document.getElementById('sleep-quality');
 
       form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const hrs = parseFloat(hrsInput.value);
+        const hrs = parseFloat(hrsInput ? hrsInput.value : '');
         if (isNaN(hrs) || hrs <= 0) return;
 
         const dateStr = new Date().toDateString();
+        if (!this.app.state.sleepLogs) this.app.state.sleepLogs = [];
         const existingIdx = this.app.state.sleepLogs.findIndex(sl => sl.date === dateStr);
         const log = {
           date: dateStr,
           hours: hrs,
-          quality: qualSelect.value
+          quality: qualSelect ? qualSelect.value : 'Good'
         };
 
         if (existingIdx !== -1) {
@@ -88,7 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderSleepHistory() {
       const container = document.getElementById('sleep-history-list');
-      const logs = this.app.state.sleepLogs;
+      if (!container) return;
+      const logs = this.app.state.sleepLogs || [];
 
       if (logs.length === 0) {
         container.innerHTML = `<li class="empty-state" style="font-size:0.75rem;">No sleep logs.</li>`;

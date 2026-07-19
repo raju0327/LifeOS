@@ -23,18 +23,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Sync dates in header
     renderDateHeaders() {
-      const todayDateStr = new Date().toDateString();
       const todayDateEl = document.getElementById('journal-today-date');
       const writerTitle = document.getElementById('journal-writer-title');
 
       const now = new Date();
       const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      todayDateEl.textContent = now.toLocaleDateString('en-US', options);
+      if (todayDateEl) todayDateEl.textContent = now.toLocaleDateString('en-US', options);
 
-      if (this.editingEntryDate) {
-        writerTitle.textContent = `Reviewing Entry: ${this.editingEntryDate}`;
-      } else {
-        writerTitle.textContent = "Write Today's Reflections";
+      if (writerTitle) {
+        if (this.editingEntryDate) {
+          writerTitle.textContent = `Reviewing Entry: ${this.editingEntryDate}`;
+        } else {
+          writerTitle.textContent = "Write Today's Reflections";
+        }
       }
     },
 
@@ -42,7 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
     renderHistory(filterQuery = '') {
       const container = document.getElementById('journal-entries-list');
       const emptyState = document.getElementById('journal-empty-state');
-      const entries = this.app.state.journalEntries;
+      if (!container) return;
+      const entries = this.app.state.journalEntries || [];
 
       // Filter entries by query
       let filteredEntries = entries;
@@ -51,8 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
         filteredEntries = entries.filter(entry => {
           const inTitle = entry.title.toLowerCase().includes(query);
           const inContent = entry.content.toLowerCase().includes(query);
-          const inGratitude = entry.gratitude.some(g => g.toLowerCase().includes(query));
-          const inWins = entry.wins.some(w => w.toLowerCase().includes(query));
+          const inGratitude = (entry.gratitude || []).some(g => g.toLowerCase().includes(query));
+          const inWins = (entry.wins || []).some(w => w.toLowerCase().includes(query));
           
           return inTitle || inContent || inGratitude || inWins;
         });
@@ -60,11 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (filteredEntries.length === 0) {
         container.innerHTML = '';
-        emptyState.classList.remove('hidden');
+        if (emptyState) emptyState.classList.remove('hidden');
         return;
       }
 
-      emptyState.classList.add('hidden');
+      if (emptyState) emptyState.classList.add('hidden');
 
       let html = '';
       filteredEntries.forEach(entry => {
@@ -92,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Configure form submission (Insert or Update)
     setupForm() {
       const form = document.getElementById('journal-form');
+      if (!form) return;
       const titleInput = document.getElementById('journal-title');
       const contentInput = document.getElementById('journal-content');
       const grat1 = document.getElementById('journal-gratitude-1');

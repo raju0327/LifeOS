@@ -1647,6 +1647,27 @@ body.fullscreen-focus .main-content {
   display: none !important;
 }
 
+.btn-glass-subtle {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+.btn-glass-subtle:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--primary);
+  color: var(--text-main);
+}
+
 /* Responsive grid overrides for Travel module */
 @media (max-width: 1024px) {
   .travel-metrics-grid {

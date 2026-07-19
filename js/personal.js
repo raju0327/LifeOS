@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     init() {
       try {
-        console.log('PersonalModule init starting...');
         this.initDefaultVaultItems();
         this.setupVaultEventListeners();
         this.setupContactsForm();
@@ -17,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
         this.setupInsuranceForm();
         this.setupMedicalForm();
         this.render();
-        console.log('PersonalModule init successful!');
       } catch (err) {
         console.error('Error in PersonalModule.init:', err);
         alert('Personal Vault Init Error: ' + err.message);
@@ -47,11 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const addContainer = document.getElementById('add-vault-item-container');
       const btnCancel = document.getElementById('btn-cancel-vault-item');
 
-      console.log('setupVaultEventListeners checking elements:', { btnAdd, addContainer, btnCancel });
-
       if (btnAdd && addContainer) {
         btnAdd.addEventListener('click', () => {
-          console.log('Add vault item button clicked. Current display:', addContainer.style.display);
           addContainer.style.display = addContainer.style.display === 'none' ? 'block' : 'none';
         });
       }
@@ -59,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (btnCancel && addContainer) {
         btnCancel.addEventListener('click', () => {
           addContainer.style.display = 'none';
-          document.getElementById('new-vault-item-form').reset();
+          document.getElementById('new-vault-item-form')?.reset();
         });
       }
 
@@ -69,13 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('submit', (e) => {
           e.preventDefault();
           try {
-            console.log('Vault item form submit triggered.');
             const name = document.getElementById('vault-item-name').value.trim();
             const category = document.getElementById('vault-item-category').value;
             const description = document.getElementById('vault-item-desc').value.trim();
             const secureData = document.getElementById('vault-item-secure').value.trim();
-
-            console.log('Read form inputs:', { name, category, description, secureData });
 
             const now = new Date();
             const options = { day: 'numeric', month: 'short', year: 'numeric' };
@@ -96,11 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
               this.app.state.vaultItems = [];
             }
 
-            console.log('Prior vaultItems count:', this.app.state.vaultItems.length);
             this.app.state.vaultItems.push(newItem);
-            console.log('Calling app.saveState()...');
             this.app.saveState();
-            console.log('app.saveState() call finished. New count:', this.app.state.vaultItems.length);
             this.app.showToast(`Secure ${category} item added.`, 'success');
 
             form.reset();
