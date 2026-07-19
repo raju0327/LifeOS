@@ -1946,27 +1946,43 @@
           <div id="add-habit-container" class="glass-card" style="display: none; padding: 20px; margin-bottom: 24px; border: 1px solid var(--glass-border);">
             <h3 style="margin: 0 0 16px 0; font-size: 1rem; color: var(--text-main);">Add New Habit</h3>
             <form id="new-habit-form">
+              <input type="hidden" id="habit-edit-id" value="">
               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px;">
                 <div class="input-group">
                   <label>Habit Name</label>
                   <input type="text" id="habit-name-input" placeholder="e.g. Read Book" required style="width:100%; box-sizing:border-box; padding:8px;">
                 </div>
                 <div class="input-group">
-                  <label>Target / Goal (daily)</label>
+                  <label>Category</label>
+                  <select id="habit-category-input" style="width:100%; padding:8px; border-radius:var(--radius-sm); background:var(--bg-sidebar); border:1px solid var(--glass-border); color:var(--text-main);">
+                    <option value="Exercise">🏋️‍♂️ Exercise</option>
+                    <option value="Nutrition">🍏 Nutrition</option>
+                    <option value="Mindfulness">🧘 Mindfulness</option>
+                    <option value="Health">🌙 Health</option>
+                    <option value="Learning">📖 Learning</option>
+                    <option value="General">💡 General</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label>Daily Target / Goal</label>
                   <input type="text" id="habit-target-input" placeholder="e.g. 20 pages" required style="width:100%; box-sizing:border-box; padding:8px;">
+                </div>
+                <div class="input-group">
+                  <label>Target Time</label>
+                  <input type="text" id="habit-time-input" placeholder="e.g. Anytime or 07:00 AM" required style="width:100%; box-sizing:border-box; padding:8px;">
                 </div>
                 <div class="input-group">
                   <label>Icon</label>
                   <select id="habit-icon-input" style="width:100%; padding:8px; border-radius:var(--radius-sm); background:var(--bg-sidebar); border:1px solid var(--glass-border); color:var(--text-main);">
-                    <option value="🏃‍♂️">🏃‍♂️ Activity/Walk</option>
-                    <option value="📖">📖 Read/Study</option>
-                    <option value="🧘">🧘 Meditation</option>
-                    <option value="💧">💧 Water</option>
-                    <option value="🏋️‍♂️">🏋️‍♂️ Workout</option>
-                    <option value="🍏">🍏 Eat Healthy</option>
-                    <option value="📝">📝 Write/Journal</option>
-                    <option value="🌙">🌙 Sleep Early</option>
-                    <option value="💡">💡 General Habit</option>
+                    <option value="🏃‍♂️">🏃‍♂️ Runner</option>
+                    <option value="📖">📖 Book</option>
+                    <option value="🧘">🧘 Yoga/Meditation</option>
+                    <option value="💧">💧 Water Drop</option>
+                    <option value="🏋️‍♂️">🏋️‍♂️ Weightlifter</option>
+                    <option value="🍏">🍏 Apple</option>
+                    <option value="📝">📝 Notepad</option>
+                    <option value="🌙">🌙 Moon</option>
+                    <option value="💡">💡 Bulb</option>
                   </select>
                 </div>
                 <div class="input-group">
@@ -2005,45 +2021,39 @@
           </div>
 
           <!-- Stats Grid -->
-          <div class="user-stats-grid" style="margin-bottom: 24px;">
+          <div class="user-stats-grid" style="margin-bottom: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
             <div class="glass-card" style="padding: 15px; display: flex; align-items: center; gap: 12px; background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.1);">
-              <div style="width: 36px; height: 36px; border-radius: var(--radius-sm); background: rgba(168, 85, 247, 0.1); display: flex; align-items: center; justify-content: center; color: var(--primary);"><i class="fas fa-bullseye"></i></div>
+              <div style="position: relative; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
+                <svg width="42" height="42" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                  <circle cx="18" cy="18" r="16" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="3"/>
+                  <circle id="stat-habits-circle-progress" cx="18" cy="18" r="16" fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round" style="transition: stroke-dashoffset 0.35s;"/>
+                </svg>
+                <span id="stat-habits-pct-label" style="position: absolute; font-size: 0.65rem; font-weight: bold; color: var(--text-main);">0%</span>
+              </div>
               <div>
-                <span style="font-size: 0.65rem; color: var(--text-muted); display: block; text-transform: uppercase;">Total Habits</span>
-                <strong style="font-size: 1.2rem; color: var(--text-main);" id="stat-habits-total">0</strong>
-                <span style="font-size: 0.58rem; color: var(--text-muted); display: block;">Active habits</span>
+                <strong style="font-size: 1.1rem; color: var(--text-main);" id="stat-habits-completed-today">0/0</strong>
+                <span style="font-size: 0.6rem; color: var(--text-muted); display: block;">Completed Today</span>
               </div>
             </div>
             <div class="glass-card" style="padding: 15px; display: flex; align-items: center; gap: 12px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1);">
-              <div style="width: 36px; height: 36px; border-radius: var(--radius-sm); background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center; color: var(--green);"><i class="fas fa-check-circle"></i></div>
+              <div style="width: 40px; height: 40px; border-radius: var(--radius-sm); background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center; color: var(--green); font-size: 1.2rem;"><i class="fas fa-fire"></i></div>
               <div>
-                <span style="font-size: 0.65rem; color: var(--text-muted); display: block; text-transform: uppercase;">Completed Today</span>
-                <strong style="font-size: 1.2rem; color: var(--text-main);" id="stat-habits-completed">0</strong>
-                <span style="font-size: 0.58rem; color: var(--text-muted); display: block;" id="stat-habits-completed-pct">0% completed</span>
-              </div>
-            </div>
-            <div class="glass-card" style="padding: 15px; display: flex; align-items: center; gap: 12px; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.1);">
-              <div style="width: 36px; height: 36px; border-radius: var(--radius-sm); background: rgba(245, 158, 11, 0.1); display: flex; align-items: center; justify-content: center; color: var(--yellow);"><i class="fas fa-fire"></i></div>
-              <div>
-                <span style="font-size: 0.65rem; color: var(--text-muted); display: block; text-transform: uppercase;">Current Streak</span>
-                <strong style="font-size: 1.2rem; color: var(--text-main);" id="stat-habits-streak">0 days</strong>
-                <span style="font-size: 0.58rem; color: var(--text-muted); display: block;">Keep it going!</span>
+                <strong style="font-size: 1.1rem; color: var(--text-main);" id="stat-habits-streak-flame">0</strong>
+                <span style="font-size: 0.6rem; color: var(--text-muted); display: block;">Day Streak! Keep it up!</span>
               </div>
             </div>
             <div class="glass-card" style="padding: 15px; display: flex; align-items: center; gap: 12px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.1);">
-              <div style="width: 36px; height: 36px; border-radius: var(--radius-sm); background: rgba(59, 130, 246, 0.1); display: flex; align-items: center; justify-content: center; color: var(--blue);"><i class="fas fa-chart-line"></i></div>
+              <div style="width: 40px; height: 40px; border-radius: var(--radius-sm); background: rgba(59, 130, 246, 0.1); display: flex; align-items: center; justify-content: center; color: var(--blue); font-size: 1.2rem;"><i class="fas fa-chart-line"></i></div>
               <div>
-                <span style="font-size: 0.65rem; color: var(--text-muted); display: block; text-transform: uppercase;">Success Rate</span>
-                <strong style="font-size: 1.2rem; color: var(--text-main);" id="stat-habits-rate">0%</strong>
-                <span style="font-size: 0.58rem; color: var(--text-muted); display: block;">This week</span>
+                <strong style="font-size: 1.1rem; color: var(--text-main);" id="stat-habits-best-streak-num">0</strong>
+                <span style="font-size: 0.6rem; color: var(--text-muted); display: block;">Best Streak Days</span>
               </div>
             </div>
-            <div class="glass-card" style="padding: 15px; display: flex; align-items: center; gap: 12px; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.1);">
-              <div style="width: 36px; height: 36px; border-radius: var(--radius-sm); background: rgba(239, 68, 68, 0.1); display: flex; align-items: center; justify-content: center; color: var(--red);"><i class="fas fa-trophy"></i></div>
+            <div class="glass-card" style="padding: 15px; display: flex; align-items: center; gap: 12px; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.1);">
+              <div style="width: 40px; height: 40px; border-radius: var(--radius-sm); background: rgba(245, 158, 11, 0.1); display: flex; align-items: center; justify-content: center; color: var(--yellow); font-size: 1.2rem;"><i class="fas fa-bullseye"></i></div>
               <div>
-                <span style="font-size: 0.65rem; color: var(--text-muted); display: block; text-transform: uppercase;">Best Streak</span>
-                <strong style="font-size: 1.2rem; color: var(--text-main);" id="stat-habits-best-streak">0 days</strong>
-                <span style="font-size: 0.58rem; color: var(--text-muted); display: block;" id="stat-habits-best-name">N/A</span>
+                <strong style="font-size: 1.1rem; color: var(--text-main);" id="stat-habits-active-count">0</strong>
+                <span style="font-size: 0.6rem; color: var(--text-muted); display: block;">Active Habits</span>
               </div>
             </div>
           </div>
@@ -2052,12 +2062,39 @@
           <div class="user-dashboard-grid" style="align-items: start; margin-bottom: 24px;">
             <!-- Left Side: Today's Habits List -->
             <div class="glass-card" style="padding: 20px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Today's Habits</h3>
-                <span style="font-size: 0.8rem; color: var(--text-muted);" id="habits-today-date-label">July 17, 2026</span>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Habit List</h3>
+                <span style="font-size: 0.8rem; color: var(--text-muted);" id="habits-today-date-label">July 19, 2026</span>
               </div>
-              <div style="display: flex; flex-direction: column; gap: 12px;" id="habits-today-list">
+
+              <!-- Controls Row: Search & Filters -->
+              <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 20px; flex-wrap: wrap;">
+                <div style="position: relative; flex-grow: 1; min-width: 180px;">
+                  <i class="fas fa-search" style="position: absolute; left: 10px; top: 9px; color: var(--text-muted); font-size: 0.8rem;"></i>
+                  <input type="text" id="habit-search-input" placeholder="Search habits..." style="width: 100%; box-sizing: border-box; padding: 6px 12px 6px 30px; font-size: 0.8rem; border-radius: var(--radius-sm); background: var(--bg-sidebar); border: 1px solid var(--glass-border); color: var(--text-main);">
+                </div>
+                
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="habit-filter-buttons">
+                  <button type="button" class="btn-primary-glow active" data-filter="all" style="padding: 4px 12px; font-size: 0.72rem; border-radius: var(--radius-sm); border: none; cursor: pointer; color: #fff;">All</button>
+                  <button type="button" class="btn-primary-glow" data-filter="active" style="padding: 4px 12px; font-size: 0.72rem; border-radius: var(--radius-sm); border: none; cursor: pointer; color: #fff;">Active</button>
+                  <button type="button" class="btn-primary-glow" data-filter="completed" style="padding: 4px 12px; font-size: 0.72rem; border-radius: var(--radius-sm); border: none; cursor: pointer; color: #fff;">Completed</button>
+                  <button type="button" class="btn-primary-glow" data-filter="missed" style="padding: 4px 12px; font-size: 0.72rem; border-radius: var(--radius-sm); border: none; cursor: pointer; color: #fff;">Missed</button>
+                </div>
+
+                <div style="display: flex; gap: 6px;">
+                  <button type="button" id="btn-toggle-manage-mode" class="btn-primary-glow" style="padding: 4px 12px; font-size: 0.72rem; border-radius: var(--radius-sm); border: none; cursor: pointer; color: #fff; background: rgba(168, 85, 247, 0.1); border: 1px solid var(--primary);"><i class="fas fa-cog"></i> Manage Mode</button>
+                  <button type="button" id="btn-done-manage-mode" class="btn-primary-glow hidden" style="padding: 4px 12px; font-size: 0.72rem; border-radius: var(--radius-sm); border: none; cursor: pointer; color: #fff; background: var(--green);"><i class="fas fa-check"></i> Done</button>
+                </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 16px;" id="habits-today-list">
                 <!-- Dynamically filled -->
+              </div>
+
+              <!-- Legend (visible only in Manage Mode) -->
+              <div id="habits-manage-legend" class="hidden" style="margin-top: 20px; padding: 12px; border: 1px dashed var(--glass-border); border-radius: var(--radius-sm); display: flex; gap: 15px; justify-content: flex-end; font-size: 0.72rem; color: var(--text-muted);">
+                <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: rgba(59, 130, 246, 0.1); border: 1.5px solid var(--blue); display: flex; align-items: center; justify-content: center; color: var(--blue);"><i class="fas fa-pencil-alt" style="font-size: 0.65rem;"></i></span> Edit Habit</span>
+                <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: rgba(239, 68, 68, 0.1); border: 1.5px solid var(--red); display: flex; align-items: center; justify-content: center; color: var(--red);"><i class="fas fa-trash-alt" style="font-size: 0.65rem;"></i></span> Delete Habit</span>
               </div>
             </div>
 

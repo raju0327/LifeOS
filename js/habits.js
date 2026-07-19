@@ -5,6 +5,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   const HabitsModule = {
     currentCalDate: new Date(),
+    manageMode: false,
+    currentFilter: 'all',
 
     init() {
       this.initDefaultHabits();
@@ -64,7 +66,9 @@ document.addEventListener('DOMContentLoaded', () => {
           {
             id: 'h-1',
             name: 'Morning Walk',
+            category: 'Exercise',
             target: '30 minutes',
+            time: '07:00 AM',
             icon: '🏃‍♂️',
             color: 'var(--green)',
             history: history1,
@@ -75,7 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
           {
             id: 'h-2',
             name: 'Read Book',
+            category: 'Learning',
             target: '20 pages',
+            time: 'Anytime',
             icon: '📖',
             color: 'var(--blue)',
             history: history2,
@@ -86,7 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
           {
             id: 'h-3',
             name: 'Meditation',
+            category: 'Mindfulness',
             target: '10 minutes',
+            time: '09:00 PM',
             icon: '🧘',
             color: 'var(--yellow)',
             history: history3,
@@ -97,7 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
           {
             id: 'h-4',
             name: 'Drink Water',
+            category: 'Health',
             target: '3 Liters',
+            time: 'Anytime',
             icon: '💧',
             color: 'var(--primary)',
             history: history4,
@@ -108,7 +118,9 @@ document.addEventListener('DOMContentLoaded', () => {
           {
             id: 'h-5',
             name: 'Workout',
+            category: 'Exercise',
             target: '45 minutes',
+            time: '07:00 AM',
             icon: '🏋️‍♂️',
             color: 'var(--red)',
             history: history5,
@@ -119,7 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
           {
             id: 'h-6',
             name: 'Eat Healthy',
+            category: 'Nutrition',
             target: 'No Junk Food',
+            time: 'Anytime',
             icon: '🍏',
             color: '#06b6d4', // Cyan
             history: history6,
@@ -130,7 +144,9 @@ document.addEventListener('DOMContentLoaded', () => {
           {
             id: 'h-7',
             name: 'Write Journal',
+            category: 'Mindfulness',
             target: '5 minutes',
+            time: '09:00 PM',
             icon: '📝',
             color: '#f43f5e', // Rose
             history: history7,
@@ -141,7 +157,9 @@ document.addEventListener('DOMContentLoaded', () => {
           {
             id: 'h-8',
             name: 'Sleep Early',
+            category: 'Health',
             target: 'Before 11:00 PM',
+            time: 'Before 11:00 PM',
             icon: '🌙',
             color: 'var(--yellow)',
             history: history8,
@@ -163,6 +181,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (btnAdd && addContainer) {
         btnAdd.addEventListener('click', () => {
+          const formTitle = document.getElementById('habit-form-title');
+          if (formTitle) formTitle.innerText = 'Add New Habit';
+          const editIdInput = document.getElementById('habit-edit-id');
+          if (editIdInput) editIdInput.value = '';
+          const form = document.getElementById('new-habit-form');
+          if (form) form.reset();
           addContainer.style.display = addContainer.style.display === 'none' ? 'block' : 'none';
         });
       }
@@ -170,43 +194,109 @@ document.addEventListener('DOMContentLoaded', () => {
       if (btnCancel && addContainer) {
         btnCancel.addEventListener('click', () => {
           addContainer.style.display = 'none';
-          document.getElementById('new-habit-form').reset();
+          const form = document.getElementById('new-habit-form');
+          if (form) form.reset();
         });
       }
 
-      // Add Habit Form Submit
+      // Add/Edit Habit Form Submit
       const form = document.getElementById('new-habit-form');
       if (form) {
         form.addEventListener('submit', (e) => {
           e.preventDefault();
+          const editId = document.getElementById('habit-edit-id').value;
           const name = document.getElementById('habit-name-input').value.trim();
+          const category = document.getElementById('habit-category-input').value;
           const target = document.getElementById('habit-target-input').value.trim();
+          const time = document.getElementById('habit-time-input').value.trim() || 'Anytime';
           const icon = document.getElementById('habit-icon-input').value;
           const color = document.getElementById('habit-color-input').value;
 
           const days = [];
-          document.querySelectorAll('.habit-day-check').forEach(chk => {
+          form.querySelectorAll('.habit-day-check').forEach(chk => {
             days.push(chk.checked);
           });
 
-          const newHabit = {
-            id: 'h-' + Date.now(),
-            name,
-            target,
-            icon,
-            color,
-            history: {},
-            streak: 0,
-            bestStreak: 0,
-            weeklySchedule: days
-          };
+          if (editId) {
+            // Edit existing habit
+            const habit = this.app.state.habits.find(h => h.id === editId);
+            if (habit) {
+              habit.name = name;
+              habit.category = category;
+              habit.target = target;
+              habit.time = time;
+              habit.icon = icon;
+              habit.color = color;
+              habit.weeklySchedule = days;
+              this.app.showToast('Habit updated successfully!', 'success');
+            }
+          } else {
+            // Create new habit
+            const newHabit = {
+              id: 'h-' + Date.now(),
+              name,
+              category,
+              target,
+              time,
+              icon,
+              color,
+              history: {},
+              streak: 0,
+              bestStreak: 0,
+              weeklySchedule: days
+            };
+            this.app.state.habits.push(newHabit);
+            this.app.showToast('New habit added successfully!', 'success');
+          }
 
-          this.app.state.habits.push(newHabit);
           this.app.saveState();
-          this.app.showToast('New habit added successfully!', 'success');
-
           form.reset();
           if (addContainer) addContainer.style.display = 'none';
+          this.render();
+        });
+      }
+
+      // Search input
+      const searchInput = document.getElementById('habit-search-input');
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          this.render();
+        });
+      }
+
+      // Filter buttons
+      const filterContainer = document.getElementById('habit-filter-buttons');
+      if (filterContainer) {
+        filterContainer.addEventListener('click', (e) => {
+          const btn = e.target.closest('button');
+          if (!btn) return;
+          filterContainer.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          this.currentFilter = btn.dataset.filter;
+          this.render();
+        });
+      }
+
+      // Toggle Manage Mode
+      const btnToggle = document.getElementById('btn-toggle-manage-mode');
+      const btnDone = document.getElementById('btn-done-manage-mode');
+      const legend = document.getElementById('habits-manage-legend');
+
+      if (btnToggle) {
+        btnToggle.addEventListener('click', () => {
+          this.manageMode = true;
+          btnToggle.classList.add('hidden');
+          if (btnDone) btnDone.classList.remove('hidden');
+          if (legend) legend.classList.remove('hidden');
+          this.render();
+        });
+      }
+      if (btnDone) {
+        btnDone.addEventListener('click', () => {
+          this.manageMode = false;
+          if (btnToggle) btnToggle.classList.remove('hidden');
+          btnDone.classList.add('hidden');
+          if (legend) legend.classList.add('hidden');
           this.render();
         });
       }
@@ -312,6 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
     render() {
       const habits = this.app.state.habits || [];
       const todayStr = new Date().toLocaleDateString('sv').substring(0, 10);
+      const todayDayOfWeek = new Date().getDay();
 
       // Date Label
       const dateLabel = document.getElementById('habits-today-date-label');
@@ -324,7 +415,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const totalHabits = habits.length;
       let completedToday = 0;
       let scheduledToday = 0;
-      const todayDayOfWeek = new Date().getDay();
 
       habits.forEach(h => {
         if (h.weeklySchedule[todayDayOfWeek]) {
@@ -339,34 +429,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Find best streak
       let bestStreak = 0;
-      let bestName = 'N/A';
       let overallCurrentStreakSum = 0;
 
       habits.forEach(h => {
         if (h.bestStreak > bestStreak) {
           bestStreak = h.bestStreak;
-          bestName = h.name;
         }
         overallCurrentStreakSum = Math.max(overallCurrentStreakSum, h.streak || 0);
       });
 
-      // Render stats elements
-      const sTotal = document.getElementById('stat-habits-total');
-      const sCompleted = document.getElementById('stat-habits-completed');
-      const sCompletedPct = document.getElementById('stat-habits-completed-pct');
-      const sStreak = document.getElementById('stat-habits-streak');
+      // Render premium stats elements
+      const sCompletedToday = document.getElementById('stat-habits-completed-today');
+      const sPctLabel = document.getElementById('stat-habits-pct-label');
+      const sCircleProgress = document.getElementById('stat-habits-circle-progress');
+      const sStreakFlame = document.getElementById('stat-habits-streak-flame');
+      const sBestStreakNum = document.getElementById('stat-habits-best-streak-num');
+      const sActiveCount = document.getElementById('stat-habits-active-count');
+
+      if (sCompletedToday) sCompletedToday.innerText = `${completedToday}/${scheduledToday}`;
+      if (sPctLabel) sPctLabel.innerText = `${completionPct}%`;
+      if (sCircleProgress) {
+        const strokeDashOffset = 100 - completionPct;
+        sCircleProgress.setAttribute('stroke-dashoffset', strokeDashOffset);
+        sCircleProgress.setAttribute('stroke-dasharray', '100');
+      }
+      if (sStreakFlame) sStreakFlame.innerText = overallCurrentStreakSum;
+      if (sBestStreakNum) sBestStreakNum.innerText = bestStreak;
+      if (sActiveCount) sActiveCount.innerText = totalHabits;
+
+      // Calculate weekly average completion rate for Success Rate (needed by right side charts if any)
       const sRate = document.getElementById('stat-habits-rate');
-      const sBestStreak = document.getElementById('stat-habits-best-streak');
-      const sBestName = document.getElementById('stat-habits-best-name');
-
-      if (sTotal) sTotal.innerText = totalHabits;
-      if (sCompleted) sCompleted.innerText = completedToday;
-      if (sCompletedPct) sCompletedPct.innerText = `${completionPct}% completed`;
-      if (sStreak) sStreak.innerText = `${overallCurrentStreakSum} days`;
-      if (sBestStreak) sBestStreak.innerText = `${bestStreak} days`;
-      if (sBestName) sBestName.innerText = bestName;
-
-      // Calculate weekly average completion rate for Success Rate
       let weeklyCompletionRates = [];
       for (let i = 0; i < 7; i++) {
         const d = new Date();
@@ -391,70 +483,91 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (sRate) sRate.innerText = `${successRate}%`;
 
-      // 2. Render Today's Habits List
+      // 2. Filter & Search Habits
+      const searchInput = document.getElementById('habit-search-input');
+      const searchVal = (searchInput?.value || '').toLowerCase().trim();
+      const filterVal = this.currentFilter || 'all';
+
+      let filteredHabits = habits.filter(h => {
+        // Search filter
+        if (searchVal && !h.name.toLowerCase().includes(searchVal) && !(h.category || '').toLowerCase().includes(searchVal)) {
+          return false;
+        }
+
+        // Status filters:
+        const status = h.history[todayStr];
+        const isScheduled = h.weeklySchedule[todayDayOfWeek];
+
+        if (filterVal === 'active') {
+          return isScheduled && status !== 'done';
+        } else if (filterVal === 'completed') {
+          return status === 'done';
+        } else if (filterVal === 'missed') {
+          return isScheduled && status === 'missed';
+        }
+        return true;
+      });
+
+      // 3. Render Today's Habits List
       const todayListContainer = document.getElementById('habits-today-list');
       if (todayListContainer) {
-        if (habits.length === 0) {
-          todayListContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 20px;">No habits added yet. Add a habit to get started!</div>`;
+        if (filteredHabits.length === 0) {
+          todayListContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 30px;">No habits match the search or filter query.</div>`;
         } else {
-          // Render today's weekdays header matching S M T W T F S bubbles
           // Find start of week (Sunday)
           const startOfWeek = new Date();
           const dayOffset = startOfWeek.getDay();
           startOfWeek.setDate(startOfWeek.getDate() - dayOffset);
 
-          const daysAbbr = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-          let weekHeadersHtml = '';
-          daysAbbr.forEach((abbr, idx) => {
-            const currentWeekDate = new Date(startOfWeek);
-            currentWeekDate.setDate(startOfWeek.getDate() + idx);
-            const isToday = currentWeekDate.toLocaleDateString('sv').substring(0, 10) === todayStr;
-            const highlight = isToday ? 'color: var(--text-main); font-weight: bold; text-decoration: underline;' : 'color: var(--text-muted);';
-            weekHeadersHtml += `<span style="font-size: 0.65rem; width: 22px; text-align: center; display: inline-block; ${highlight}">${abbr}</span>`;
-          });
+          let listHtml = '';
 
-          let listHtml = `
-            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px; margin-bottom: 4px;">
-              <span style="font-size: 0.75rem; color: var(--text-muted);">Habit</span>
-              <div style="display: flex; gap: 4px; padding-right: 48px;">
-                ${weekHeadersHtml}
-              </div>
-            </div>
-          `;
-
-          habits.forEach(h => {
+          filteredHabits.forEach(h => {
             const currentStatus = h.history[todayStr];
+            const isCompletedToday = currentStatus === 'done';
             
-            // Build action button indicator based on status
-            let actionHtml = '';
-            if (currentStatus === 'done') {
-              actionHtml = `<div onclick="window.LifeOS.modules.habits.cycleHabitStatus('${h.id}')" style="width: 22px; height: 22px; border-radius: 50%; background: var(--green); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.7rem; cursor: pointer;"><i class="fas fa-check"></i></div>`;
-            } else if (currentStatus === 'partial') {
-              actionHtml = `
-                <div onclick="window.LifeOS.modules.habits.cycleHabitStatus('${h.id}')" style="width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, var(--yellow) 50%, rgba(255,255,255,0.05) 50%); border: 1.5px solid var(--yellow); display: flex; align-items: center; justify-content: center; cursor: pointer;"></div>
-              `;
-            } else if (currentStatus === 'missed') {
-              actionHtml = `<div onclick="window.LifeOS.modules.habits.cycleHabitStatus('${h.id}')" style="width: 20px; height: 20px; border-radius: 50%; border: 2.2px solid var(--red); display: flex; align-items: center; justify-content: center; cursor: pointer;"></div>`;
-            } else {
-              actionHtml = `<div onclick="window.LifeOS.modules.habits.cycleHabitStatus('${h.id}')" style="width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--glass-border); display: flex; align-items: center; justify-content: center; cursor: pointer; background: rgba(255,255,255,0.02);"></div>`;
-            }
-
-            // Build historical day dots for current week
-            let historyDotsHtml = '';
+            // Weekly completion calculation
+            let weeklySchedCount = 0;
+            let weeklyDoneCount = 0;
             for (let idx = 0; idx < 7; idx++) {
               const weekDate = new Date(startOfWeek);
               weekDate.setDate(startOfWeek.getDate() + idx);
               const weekDateStr = weekDate.toLocaleDateString('sv').substring(0, 10);
               
               const isSched = h.weeklySchedule[idx];
+              if (isSched) {
+                weeklySchedCount++;
+                if (h.history[weekDateStr] === 'done') {
+                  weeklyDoneCount++;
+                }
+              }
+            }
+            const weeklyPct = weeklySchedCount > 0 ? Math.round((weeklyDoneCount / weeklySchedCount) * 100) : 0;
+
+            // Day dots and headers aligned above them
+            const daysAbbr = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+            let headersHtml = '';
+            daysAbbr.forEach((abbr, idx) => {
+              const currentWeekDate = new Date(startOfWeek);
+              currentWeekDate.setDate(startOfWeek.getDate() + idx);
+              const isToday = currentWeekDate.toLocaleDateString('sv').substring(0, 10) === todayStr;
+              const highlight = isToday ? 'color: var(--text-main); font-weight: bold;' : 'color: var(--text-muted);';
+              headersHtml += `<span style="font-size: 0.6rem; width: 22px; text-align: center; display: inline-block; ${highlight}">${abbr}</span>`;
+            });
+
+            let historyDotsHtml = '';
+            for (let idx = 0; idx < 7; idx++) {
+              const weekDate = new Date(startOfWeek);
+              weekDate.setDate(startOfWeek.getDate() + idx);
+              const weekDateStr = weekDate.toLocaleDateString('sv').substring(0, 10);
+              const isSched = h.weeklySchedule[idx];
               const status = h.history[weekDateStr];
 
-              let dotStyle = 'background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);';
+              let dotStyle = 'background: rgba(255,255,255,0.03); border: 1.5px dashed rgba(255,255,255,0.15);';
               let dotContent = '';
 
               if (isSched) {
                 if (status === 'done') {
-                  dotStyle = 'background: var(--green); border: none; color: #fff;';
+                  dotStyle = `background: ${h.color}; border: none; color: #fff; box-shadow: 0 0 6px ${h.color}40;`;
                   dotContent = '<i class="fas fa-check" style="font-size: 0.55rem;"></i>';
                 } else if (status === 'partial') {
                   dotStyle = 'background: var(--yellow); border: none; color: #fff;';
@@ -463,61 +576,98 @@ document.addEventListener('DOMContentLoaded', () => {
                   dotStyle = 'background: var(--red); border: none; color: #fff;';
                   dotContent = '<i class="fas fa-times" style="font-size: 0.55rem;"></i>';
                 } else {
-                  // Scheduled but not done/unlogged
-                  dotStyle = 'background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.15);';
+                  dotStyle = 'background: rgba(255,255,255,0.02); border: 1.5px solid rgba(255,255,255,0.2);';
                 }
               } else {
-                // Not scheduled for this day
-                dotStyle = 'opacity: 0.15; pointer-events: none; border: 1px dashed rgba(255,255,255,0.2);';
+                dotStyle = 'opacity: 0.15; pointer-events: none; border: 1.5px dashed rgba(255,255,255,0.1);';
               }
 
               historyDotsHtml += `
-                <div style="width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; ${dotStyle}">
+                <div style="width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; ${dotStyle}">
                   ${dotContent}
                 </div>
               `;
             }
 
+            // Build action buttons (Complete, Edit, Delete)
+            let actionButtonsHtml = '';
+            if (this.manageMode) {
+              actionButtonsHtml = `
+                <div style="display: flex; gap: 8px;">
+                  <button onclick="window.LifeOS.modules.habits.cycleHabitStatus('${h.id}')" class="btn-primary-glow" style="background: ${isCompletedToday ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255,255,255,0.05)'}; border: 1px solid ${isCompletedToday ? 'var(--green)' : 'var(--glass-border)'}; color: ${isCompletedToday ? 'var(--green)' : '#fff'}; padding: 6px 12px; font-size: 0.72rem; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: bold;"><i class="fas fa-check"></i> ${isCompletedToday ? 'Completed' : 'Complete'}</button>
+                  <button onclick="window.LifeOS.modules.habits.editHabit('${h.id}')" style="width: 28px; height: 28px; border-radius: var(--radius-sm); background: rgba(59, 130, 246, 0.1); border: 1.5px solid var(--blue); color: var(--blue); display: flex; align-items: center; justify-content: center; cursor: pointer;" title="Edit Habit"><i class="fas fa-pencil-alt" style="font-size: 0.72rem;"></i></button>
+                  <button onclick="window.LifeOS.modules.habits.deleteHabit('${h.id}')" style="width: 28px; height: 28px; border-radius: var(--radius-sm); background: rgba(239, 68, 68, 0.1); border: 1.5px solid var(--red); color: var(--red); display: flex; align-items: center; justify-content: center; cursor: pointer;" title="Delete Habit"><i class="fas fa-trash-alt" style="font-size: 0.72rem;"></i></button>
+                </div>
+              `;
+            } else {
+              actionButtonsHtml = `
+                <button onclick="window.LifeOS.modules.habits.cycleHabitStatus('${h.id}')" class="btn-primary-glow" style="background: ${isCompletedToday ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255,255,255,0.05)'}; border: 1px solid ${isCompletedToday ? 'var(--green)' : 'var(--glass-border)'}; color: ${isCompletedToday ? 'var(--green)' : '#fff'}; padding: 6px 12px; font-size: 0.72rem; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: bold;"><i class="fas fa-check"></i> ${isCompletedToday ? 'Completed' : 'Complete'}</button>
+              `;
+            }
+
+            // Build status tag
+            let statusTagHtml = '';
+            if (isCompletedToday) {
+              statusTagHtml = `<span style="font-size: 0.58rem; font-weight: bold; background: rgba(16, 185, 129, 0.1); color: var(--green); padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-left: 6px;">Completed</span>`;
+            } else if (currentStatus === 'missed') {
+              statusTagHtml = `<span style="font-size: 0.58rem; font-weight: bold; background: rgba(239, 68, 68, 0.1); color: var(--red); padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-left: 6px;">Missed</span>`;
+            } else {
+              statusTagHtml = `<span style="font-size: 0.58rem; font-weight: bold; background: rgba(168, 85, 247, 0.1); color: var(--primary); padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-left: 6px;">Active</span>`;
+            }
+
             listHtml += `
-              <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 0;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <div style="width: 32px; height: 32px; border-radius: 50%; background: ${h.color}15; border: 1.5px solid ${h.color}; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+              <!-- Habit Item Card -->
+              <div class="glass-card" style="padding: 16px; display: grid; grid-template-columns: 1.25fr 1fr auto; align-items: center; gap: 16px; border: 1px solid var(--glass-border); transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.borderColor='${h.color}33'" onmouseout="this.style.borderColor='var(--glass-border)'">
+                <!-- Left Details -->
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background: ${h.color}15; border: 2px solid ${h.color}; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; box-shadow: 0 0 10px ${h.color}20;">
                     ${h.icon}
                   </div>
                   <div>
-                    <h5 style="margin: 0; font-size: 0.8rem; font-weight: 700; color: var(--text-main);">${h.name}</h5>
-                    <span style="font-size: 0.65rem; color: var(--text-muted);">${h.target}</span>
+                    <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                      <h4 style="margin: 0; font-size: 0.88rem; font-weight: 700; color: var(--text-main);">${h.name}</h4>
+                      ${statusTagHtml}
+                    </div>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: 2px;">
+                      <i class="fas fa-tag" style="font-size: 0.6rem; margin-right: 3px;"></i> ${h.category || 'General'}
+                    </span>
+                    <span style="font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: 1px;">
+                      <i class="far fa-clock" style="font-size: 0.6rem; margin-right: 3px;"></i> ${h.target} • ${h.time || 'Anytime'}
+                    </span>
                   </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 6px;">
-                  <div style="display: flex; gap: 6px; margin-right: 12px;">
-                    ${historyDotsHtml}
+
+                <!-- Middle Tracker & Streak -->
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">
+                      <i class="fas fa-fire" style="color: var(--yellow); margin-right: 4px;"></i> ${h.streak || 0} Day Streak
+                    </span>
+                    <span style="font-size: 0.65rem; color: var(--text-muted);">${weeklyPct}% this week</span>
                   </div>
-                  <div style="width: 30px; display: flex; justify-content: center;">
-                    ${actionHtml}
+                  
+                  <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <div style="display: flex; gap: 6px; line-height: 1;">
+                      ${headersHtml}
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                      ${historyDotsHtml}
+                    </div>
                   </div>
+
+                  <!-- Progress Bar -->
+                  <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; margin-top: 2px;">
+                    <div style="width: ${weeklyPct}%; height: 100%; background: ${h.color}; border-radius: 2px; transition: width 0.3s ease;"></div>
+                  </div>
+                </div>
+
+                <!-- Right Actions -->
+                <div style="display: flex; justify-content: flex-end;">
+                  ${actionButtonsHtml}
                 </div>
               </div>
             `;
           });
-
-          // Add delete buttons inside a View All Habits panel or toggle mode
-          listHtml += `
-            <div style="text-align: center; margin-top: 16px; border-top: 1px solid var(--glass-border); padding-top: 12px;">
-              <a href="javascript:void(0)" onclick="window.LifeOS.modules.habits.toggleDeleteMode()" class="small-link" style="color: var(--text-muted); font-size: 0.72rem; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
-                <i class="fas fa-trash-alt"></i> Manage / Delete Habits
-              </a>
-            </div>
-            <div id="habits-delete-list" style="display: none; flex-direction: column; gap: 8px; margin-top: 12px; padding: 10px; background: rgba(239, 68, 68, 0.02); border: 1px solid rgba(239, 68, 68, 0.1); border-radius: 4px;">
-              <h5 style="margin: 0 0 8px 0; font-size: 0.75rem; color: var(--red); font-weight: bold;">Select Habit to Remove:</h5>
-              ${habits.map(h => `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
-                  <span style="font-size: 0.75rem; color: var(--text-main);">${h.icon} ${h.name}</span>
-                  <button onclick="window.LifeOS.modules.habits.deleteHabit('${h.id}')" style="background: rgba(239, 68, 68, 0.1); border: 1px solid var(--red); color: var(--red); padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; cursor: pointer; font-weight: bold;">Delete</button>
-                </div>
-              `).join('')}
-            </div>
-          `;
 
           todayListContainer.innerHTML = listHtml;
         }
@@ -530,19 +680,42 @@ document.addEventListener('DOMContentLoaded', () => {
       this.renderProgressCircles();
     },
 
-    toggleDeleteMode() {
-      const panel = document.getElementById('habits-delete-list');
-      if (panel) {
-        panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
-      }
-    },
-
     deleteHabit(id) {
       if (confirm('Are you sure you want to permanently delete this habit?')) {
         this.app.state.habits = this.app.state.habits.filter(h => h.id !== id);
         this.app.saveState();
         this.app.showToast('Habit deleted successfully.', 'info');
         this.render();
+      }
+    },
+
+    editHabit(id) {
+      const habit = this.app.state.habits.find(h => h.id === id);
+      if (!habit) return;
+
+      const addContainer = document.getElementById('add-habit-container');
+      if (addContainer) {
+        addContainer.style.display = 'block';
+        
+        const formTitle = document.getElementById('habit-form-title');
+        if (formTitle) formTitle.innerText = 'Edit Habit';
+        const editIdInput = document.getElementById('habit-edit-id');
+        if (editIdInput) editIdInput.value = habit.id;
+        document.getElementById('habit-name-input').value = habit.name;
+        document.getElementById('habit-category-input').value = habit.category || 'General';
+        document.getElementById('habit-target-input').value = habit.target;
+        document.getElementById('habit-time-input').value = habit.time || 'Anytime';
+        document.getElementById('habit-icon-input').value = habit.icon;
+        document.getElementById('habit-color-input').value = habit.color;
+
+        // Set weekly schedule checkmarks
+        const daysChecks = addContainer.querySelectorAll('.habit-day-check');
+        daysChecks.forEach((chk, idx) => {
+          chk.checked = !!habit.weeklySchedule[idx];
+        });
+
+        // Scroll to container
+        addContainer.scrollIntoView({ behavior: 'smooth' });
       }
     },
 
