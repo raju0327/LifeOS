@@ -787,6 +787,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
           }
 
+          if (targetView !== 'user') {
+            localStorage.setItem('life_os_active_view', targetView);
+          }
+
           navItems.forEach(n => n.classList.remove('active'));
           item.classList.add('active');
 
@@ -816,8 +820,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-      // Initial routing force check if logged out
-      if (!this.state.user.isLoggedIn) {
+      // Restore active view tab on page load/refresh or fallback to lock screen if logged out
+      if (this.state.user.isLoggedIn) {
+        const savedView = localStorage.getItem('life_os_active_view');
+        if (savedView) {
+          setTimeout(() => {
+            const savedNav = document.querySelector(`.nav-item[data-view="${savedView}"]`);
+            if (savedNav) {
+              savedNav.click();
+            }
+          }, 150);
+        }
+      } else {
         setTimeout(() => {
           const userNav = document.querySelector('.nav-item[data-view="user"]');
           if (userNav) userNav.click();

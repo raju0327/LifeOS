@@ -278,6 +278,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (userField) userField.value = '';
       if (passField) passField.value = '';
       this.render();
+
+      // Redirect to saved active view or default to dashboard upon login
+      const savedView = localStorage.getItem('life_os_active_view') || 'dashboard';
+      const navBtn = document.querySelector(`.nav-item[data-view="${savedView}"]`);
+      if (navBtn) {
+        navBtn.click();
+      }
     },
 
     setupLockPortal() {
@@ -534,6 +541,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         btnModeLogin.click();
         this.render();
+
+        // Redirect to dashboard on new account registration
+        const navBtn = document.querySelector('.nav-item[data-view="dashboard"]');
+        if (navBtn) navBtn.click();
       });
     },
 
