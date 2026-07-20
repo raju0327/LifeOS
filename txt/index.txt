@@ -4481,30 +4481,20 @@
     </div>
   </div>
 
-  <!-- Core & Services Layer -->
-  <script src="core/config.js?v=13"></script>
-  <script src="core/router.js?v=13"></script>
-  <script src="services/authService.js?v=13"></script>
-  <script src="services/supabaseService.js?v=13"></script>
-  <script src="services/storageService.js?v=13"></script>
-  <script src="services/syncService.js?v=13"></script>
-  <script src="services/notificationService.js?v=13"></script>
-  <script src="services/validationService.js?v=13"></script>
-
   <!-- Script Modules -->
-  <script src="js/app.js?v=13"></script>
-  <script src="js/user.js?v=13"></script>
-  <script src="js/productivity.js?v=13"></script>
-  <script src="js/notes.js?v=13"></script>
-  <script src="js/finance.js?v=13"></script>
-  <script src="js/health.js?v=13"></script>
-  <script src="js/medicine.js?v=13"></script>
-  <script src="js/habits.js?v=13"></script>
-  <script src="js/personal.js?v=13"></script>
-  <script src="js/lifestyle.js?v=13"></script>
-  <script src="js/career.js?v=13"></script>
-  <script src="js/ai.js?v=13"></script>
-  <script src="js/analytics.js?v=13"></script>
+  <script src="js/app.js?v=12"></script>
+  <script src="js/user.js?v=12"></script>
+  <script src="js/productivity.js?v=12"></script>
+  <script src="js/notes.js?v=12"></script>
+  <script src="js/finance.js?v=12"></script>
+  <script src="js/health.js?v=12"></script>
+  <script src="js/medicine.js?v=12"></script>
+  <script src="js/habits.js?v=12"></script>
+  <script src="js/personal.js?v=12"></script>
+  <script src="js/lifestyle.js?v=12"></script>
+  <script src="js/career.js?v=12"></script>
+  <script src="js/ai.js?v=12"></script>
+  <script src="js/analytics.js?v=12"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator) {

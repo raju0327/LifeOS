@@ -1,7 +1,15 @@
-const CACHE_NAME = 'lifeos-cache-v12';
+const CACHE_NAME = 'lifeos-cache-v13';
 const ASSETS = [
   './index.html',
   './style.css',
+  './core/config.js',
+  './core/router.js',
+  './services/authService.js',
+  './services/supabaseService.js',
+  './services/storageService.js',
+  './services/syncService.js',
+  './services/notificationService.js',
+  './services/validationService.js',
   './js/app.js',
   './js/user.js',
   './js/productivity.js',
