@@ -21,11 +21,11 @@
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
   <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <!-- FontAwesome Icons CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="style.css">
 </head>
@@ -199,7 +199,7 @@
           <div class="logo-icon" style="width: 28px; height: 28px; border-radius: 50%; font-size: 0.8rem; box-shadow: none; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--primary), var(--primary-dark));">
             <i class="fas fa-infinity" style="font-size: 0.85rem; color: #fff;"></i>
           </div>
-          <span class="brand-text" style="font-size: 1rem; font-weight: 800; letter-spacing: -0.3px; background: linear-gradient(135deg, var(--text-main), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Life OS</span>
+          <span class="brand-text" style="font-size: 1rem; font-weight: 800; letter-spacing: -0.3px; background: linear-gradient(135deg, var(--text-main), var(--primary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Life OS</span>
         </div>
         <div class="greeting-section">
           <h1 id="greeting-text">Good morning, Explorer</h1>
@@ -4814,35 +4814,35 @@
   </div>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=19"></script>
-  <script src="core/router.js?v=19"></script>
-  <script src="services/authService.js?v=19"></script>
-  <script src="services/supabaseService.js?v=19"></script>
-  <script src="services/storageService.js?v=19"></script>
-  <script src="services/syncService.js?v=19"></script>
-  <script src="services/notificationService.js?v=19"></script>
-  <script src="services/validationService.js?v=19"></script>
-  <script src="services/budgetService.js?v=19"></script>
-  <script src="services/financeService.js?v=19"></script>
-  <script src="services/chartService.js?v=19"></script>
+  <script src="core/config.js?v=20"></script>
+  <script src="core/router.js?v=20"></script>
+  <script src="services/authService.js?v=20"></script>
+  <script src="services/supabaseService.js?v=20"></script>
+  <script src="services/storageService.js?v=20"></script>
+  <script src="services/syncService.js?v=20"></script>
+  <script src="services/notificationService.js?v=20"></script>
+  <script src="services/validationService.js?v=20"></script>
+  <script src="services/budgetService.js?v=20"></script>
+  <script src="services/financeService.js?v=20"></script>
+  <script src="services/chartService.js?v=20"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=19"></script>
-  <script src="js/user.js?v=19"></script>
-  <script src="js/productivity.js?v=19"></script>
-  <script src="js/notes.js?v=19"></script>
-  <script src="js/finance.js?v=19"></script>
-  <script src="js/health.js?v=19"></script>
-  <script src="js/medicine.js?v=19"></script>
-  <script src="js/habits.js?v=19"></script>
-  <script src="js/personal.js?v=19"></script>
-  <script src="js/lifestyle.js?v=19"></script>
-  <script src="js/career.js?v=19"></script>
-  <script src="js/ai.js?v=19"></script>
-  <script src="js/analytics.js?v=19"></script>
+  <script src="js/app.js?v=20"></script>
+  <script src="js/user.js?v=20"></script>
+  <script src="js/productivity.js?v=20"></script>
+  <script src="js/notes.js?v=20"></script>
+  <script src="js/finance.js?v=20"></script>
+  <script src="js/health.js?v=20"></script>
+  <script src="js/medicine.js?v=20"></script>
+  <script src="js/habits.js?v=20"></script>
+  <script src="js/personal.js?v=20"></script>
+  <script src="js/lifestyle.js?v=20"></script>
+  <script src="js/career.js?v=20"></script>
+  <script src="js/ai.js?v=20"></script>
+  <script src="js/analytics.js?v=20"></script>
   <!-- PWA Service Worker Registration -->
   <script>
-    if ('serviceWorker' in navigator) {
+    if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
           .then(reg => console.log('PWA Service Worker registered successfully', reg.scope))

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lifeos-cache-v19';
+const CACHE_NAME = 'lifeos-cache-v20';
 const ASSETS = [
   './index.html',
   './style.css',
