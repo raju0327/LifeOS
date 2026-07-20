@@ -1526,6 +1526,9 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
               <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin: 0;">Budget Limit Overview</h3>
               <div style="display: flex; gap: 8px; align-items: center;">
+                <button id="btn-manage-categories" onclick="window.openManageCategoriesModal()" class="btn-glass-subtle" style="font-size: 0.75rem; padding: 6px 12px; cursor: pointer;">
+                  <i class="fas fa-tags"></i> Manage Categories
+                </button>
                 <button id="btn-export-budget-reports" onclick="window.openReportsModal()" class="btn-glass-subtle" style="font-size: 0.75rem; padding: 6px 12px; cursor: pointer;">
                   <i class="fas fa-file-export"></i> Reports & Export
                 </button>
@@ -1630,9 +1633,9 @@
                   </table>
                 </div>
 
-                <!-- Add Category Button -->
-                <button id="btn-add-budget-category" onclick="window.openAddCategoryModal()" style="width: 100%; margin-top: 14px; padding: 10px; background: rgba(163, 112, 247, 0.08); border: 1px dashed rgba(163, 112, 247, 0.4); color: #a370f7; font-size: 0.8rem; font-weight: 700; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
-                  <i class="fas fa-plus"></i> Add Budget Category
+                <!-- Plan Budget Button -->
+                <button id="btn-plan-budget-bottom" onclick="window.openPlanBudgetModal()" class="btn-primary-glow" style="width: 100%; margin-top: 14px; padding: 10px; font-size: 0.82rem; font-weight: 700; border: none; cursor: pointer; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+                  <i class="fas fa-calendar-plus"></i> Plan Budget
                 </button>
               </div>
 
@@ -4646,22 +4649,35 @@
         </div>
         <button type="submit" class="btn-primary-glow btn-full" style="width: 100%; padding: 12px; border: none; font-weight: 700; cursor: pointer; color: #fff;">Register & Log In</button>
       </form>
-  <!-- Modal Overlay: Add Budget Category -->
-  <div class="modal-overlay" id="budget-add-category-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); z-index: 2000; align-items: center; justify-content: center;">
-    <div class="glass-card" style="width: 90%; max-width: 420px; padding: 22px; border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 14px; background: var(--bg-sidebar); border: 1px solid var(--glass-border);">
+  <!-- Modal Overlay: Manage Categories -->
+  <div class="modal-overlay" id="budget-manage-categories-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); z-index: 2000; align-items: center; justify-content: center;">
+    <div class="glass-card" style="width: 90%; max-width: 480px; max-height: 85vh; overflow-y: auto; padding: 22px; border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 14px; background: var(--bg-sidebar); border: 1px solid var(--glass-border);">
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">
-        <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-main); margin: 0;">🏷️ Add Budget Category</h3>
-        <button id="btn-close-add-budget-category" onclick="window.closeAddCategoryModal()" style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--text-muted);"><i class="fas fa-times"></i></button>
+        <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-main); margin: 0;">🏷️ Manage Budget Categories</h3>
+        <button onclick="window.closeManageCategoriesModal()" style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--text-muted);"><i class="fas fa-times"></i></button>
       </div>
-      <form id="form-add-budget-category" onsubmit="window.handleSaveBudgetCategorySubmit(event)" style="display: flex; flex-direction: column; gap: 12px;">
+      
+      <!-- Existing Categories List -->
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted);">Configured Categories</span>
+        <div id="manage-categories-list-container" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 4px;">
+          <!-- Dynamically populated category chips/rows -->
+        </div>
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 4px 0;">
+
+      <!-- Add New Custom Category Form -->
+      <form id="form-manage-add-category" onsubmit="window.handleCreateCustomCategorySubmit(event)" style="display: flex; flex-direction: column; gap: 10px;">
+        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-main);">Add New Custom Category</span>
         <div class="input-group">
-          <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Category Name</label>
-          <input type="text" id="input-budget-cat-name" required placeholder="e.g. Grocery, Rent, Fuel" style="width: 100%; box-sizing: border-box; padding: 8px 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main);">
+          <label style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted);">Category Name</label>
+          <input type="text" id="input-manage-cat-name" required placeholder="e.g. Subscriptions, Travel" style="width: 100%; box-sizing: border-box; padding: 8px 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main);">
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div class="input-group">
-            <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Category Type</label>
-            <select id="input-budget-cat-type" style="width: 100%; box-sizing: border-box; padding: 8px 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main);">
+            <label style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted);">Category Type</label>
+            <select id="input-manage-cat-type" style="width: 100%; box-sizing: border-box; padding: 8px 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main);">
               <option value="expense">Expense Budget</option>
               <option value="income">Income Budget</option>
               <option value="savings">Savings Target</option>
@@ -4669,76 +4685,101 @@
             </select>
           </div>
           <div class="input-group">
-            <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Monthly Limit (₹)</label>
-            <input type="number" id="input-budget-cat-limit" required placeholder="10000" min="0" style="width: 100%; box-sizing: border-box; padding: 8px 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main);">
+            <label style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted);">Theme Color</label>
+            <input type="color" id="input-manage-cat-color" value="#a370f7" style="width: 100%; height: 36px; padding: 0; background: none; border: none; cursor: pointer;">
           </div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div class="input-group">
-            <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Icon (FontAwesome)</label>
-            <select id="input-budget-cat-icon" style="width: 100%; box-sizing: border-box; padding: 8px 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main);">
-              <option value="fa-shopping-basket">🛒 Food & Grocery</option>
-              <option value="fa-home">🏠 House Rent</option>
-              <option value="fa-bolt">⚡ Utilities</option>
-              <option value="fa-car">🚗 Transportation</option>
-              <option value="fa-heartbeat">💖 Health & Medical</option>
-              <option value="fa-gamepad">🎮 Entertainment</option>
-              <option value="fa-graduation-cap">📚 Education</option>
-              <option value="fa-piggy-bank">🪙 Savings & Invest</option>
-              <option value="fa-tag">🏷️ General / Other</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Theme Color</label>
-            <input type="color" id="input-budget-cat-color" value="#a370f7" style="width: 100%; height: 36px; padding: 0; background: none; border: none; cursor: pointer;">
-          </div>
-        </div>
-        <button type="submit" class="btn-primary-glow" style="margin-top: 6px; padding: 10px; width: 100%; border: none; cursor: pointer; color: #fff; font-weight: 700;">Save Category Limit</button>
+        <button type="submit" class="btn-primary-glow" style="margin-top: 4px; padding: 9px; width: 100%; border: none; cursor: pointer; color: #fff; font-weight: 700;">Create Category</button>
       </form>
     </div>
   </div>
 
   <!-- Modal Overlay: Plan Budget -->
   <div class="modal-overlay" id="budget-plan-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); z-index: 2000; align-items: center; justify-content: center;">
-    <div class="glass-card" style="width: 90%; max-width: 450px; padding: 22px; border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 14px; background: var(--bg-sidebar); border: 1px solid var(--glass-border);">
+    <div class="glass-card" style="width: 92%; max-width: 520px; max-height: 88vh; overflow-y: auto; padding: 22px; border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 14px; background: var(--bg-sidebar); border: 1px solid var(--glass-border);">
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">
-        <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-main); margin: 0;">📊 Plan New Budget Period</h3>
+        <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin: 0;">📊 Plan Budget</h3>
         <button id="btn-close-plan-budget" onclick="window.closePlanBudgetModal()" style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--text-muted);"><i class="fas fa-times"></i></button>
       </div>
-      <form id="form-plan-budget" onsubmit="window.handleSaveBudgetPlanSubmit(event)" style="display: flex; flex-direction: column; gap: 12px;">
-        <div class="input-group">
-          <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Budget Title</label>
-          <input type="text" id="input-budget-plan-title" required placeholder="e.g. May 2025 Budget Plan" style="width: 100%; box-sizing: border-box; padding: 8px 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main);">
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+      
+      <form id="form-plan-budget" onsubmit="window.handleSaveBudgetPlanSubmit(event)" style="display: flex; flex-direction: column; gap: 14px;">
+        <!-- 1. Budget Information -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="font-size: 0.75rem; font-weight: 700; color: #a370f7; text-transform: uppercase; letter-spacing: 0.5px;">1. Budget Information</span>
           <div class="input-group">
-            <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Timeframe</label>
-            <select id="input-budget-plan-period" style="width: 100%; box-sizing: border-box; padding: 8px 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main);">
-              <option value="Monthly">Monthly</option>
-              <option value="Yearly">Yearly</option>
-              <option value="Custom">Custom Period</option>
-            </select>
+            <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted);">Budget Name</label>
+            <input type="text" id="input-budget-plan-title" required placeholder="e.g. Monthly Household Budget Plan" style="width: 100%; box-sizing: border-box; padding: 8px 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main);">
           </div>
-          <div class="input-group">
-            <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Total Target (₹)</label>
-            <input type="number" id="input-budget-plan-target" required placeholder="80000" min="0" style="width: 100%; box-sizing: border-box; padding: 8px 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main);">
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+            <div class="input-group">
+              <label style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted);">Period</label>
+              <select id="input-budget-plan-period" onchange="window.handleBudgetPeriodChange()" style="width: 100%; box-sizing: border-box; padding: 7px 10px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main);">
+                <option value="Monthly">Monthly</option>
+                <option value="Yearly">Yearly</option>
+                <option value="Custom">Custom</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted);">Start Date</label>
+              <input type="date" id="input-budget-plan-start" required style="width: 100%; box-sizing: border-box; padding: 7px 10px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main);">
+            </div>
+            <div class="input-group">
+              <label style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted);">End Date</label>
+              <input type="date" id="input-budget-plan-end" required style="width: 100%; box-sizing: border-box; padding: 7px 10px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main);">
+            </div>
           </div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div class="input-group">
-            <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Start Date</label>
-            <input type="date" id="input-budget-plan-start" required style="width: 100%; box-sizing: border-box; padding: 8px 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main);">
+
+        <!-- 2. Budget Category Allocation -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.75rem; font-weight: 700; color: #a370f7; text-transform: uppercase; letter-spacing: 0.5px;">2. Budget Allocation</span>
+            <span style="font-size: 0.78rem; font-weight: 800; color: #10b981;">Total Budget: ₹<span id="plan-budget-calculated-total">0</span></span>
           </div>
-          <div class="input-group">
-            <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">End Date</label>
-            <input type="date" id="input-budget-plan-end" required style="width: 100%; box-sizing: border-box; padding: 8px 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main);">
+          
+          <div id="plan-budget-categories-container" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px; border: 1px solid var(--glass-border); border-radius: var(--radius-sm); padding: 10px; background: rgba(0,0,0,0.2);">
+            <!-- Populated dynamically with all categories -->
           </div>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <input type="checkbox" id="input-budget-plan-carry" style="width: 16px; height: 16px; cursor: pointer;">
-          <label for="input-budget-plan-carry" style="font-size: 0.75rem; color: var(--text-main); cursor: pointer;">Enable Budget Carry Forward from previous period</label>
+
+        <!-- 3. Additional Options -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="font-size: 0.75rem; font-weight: 700; color: #a370f7; text-transform: uppercase; letter-spacing: 0.5px;">3. Additional Options</span>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.74rem;">
+            <label style="display: flex; align-items: center; gap: 6px; color: var(--text-main); cursor: pointer;">
+              <input type="checkbox" id="input-budget-plan-carry" checked style="width: 15px; height: 15px;"> Carry Forward Remaining Budget
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; color: var(--text-main); cursor: pointer;">
+              <input type="checkbox" id="input-budget-plan-alerts-enabled" checked style="width: 15px; height: 15px;"> Enable Budget Alerts
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; color: var(--text-main); cursor: pointer;">
+              <input type="checkbox" id="input-budget-plan-allow-overspending" style="width: 15px; height: 15px;"> Allow Overspending
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; color: var(--text-main); cursor: pointer;">
+              <input type="checkbox" id="input-budget-plan-auto-allocate" style="width: 15px; height: 15px;"> Auto Allocate Income
+            </label>
+          </div>
         </div>
-        <button type="submit" class="btn-primary-glow" style="margin-top: 6px; padding: 10px; width: 100%; border: none; cursor: pointer; color: #fff; font-weight: 700;">Save & Activate Budget</button>
+
+        <!-- 4. Alerts Configuration -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="font-size: 0.75rem; font-weight: 700; color: #a370f7; text-transform: uppercase; letter-spacing: 0.5px;">4. Alerts Configuration</span>
+          <div style="display: flex; gap: 12px; font-size: 0.72rem; align-items: center;">
+            <span style="color: var(--text-muted); font-weight: 600;">Thresholds:</span>
+            <label style="display: flex; align-items: center; gap: 4px; color: var(--text-main); cursor: pointer;"><input type="checkbox" id="alert-thresh-80" checked> 80%</label>
+            <label style="display: flex; align-items: center; gap: 4px; color: var(--text-main); cursor: pointer;"><input type="checkbox" id="alert-thresh-90" checked> 90%</label>
+            <label style="display: flex; align-items: center; gap: 4px; color: var(--text-main); cursor: pointer;"><input type="checkbox" id="alert-thresh-100" checked> 100%</label>
+          </div>
+          <div style="display: flex; gap: 10px; font-size: 0.72rem; align-items: center; flex-wrap: wrap;">
+            <span style="color: var(--text-muted); font-weight: 600;">Channels:</span>
+            <label style="display: flex; align-items: center; gap: 4px; color: var(--text-main); cursor: pointer;"><input type="checkbox" id="alert-chan-dash" checked> Dashboard</label>
+            <label style="display: flex; align-items: center; gap: 4px; color: var(--text-main); cursor: pointer;"><input type="checkbox" id="alert-chan-push" checked> Push</label>
+            <label style="display: flex; align-items: center; gap: 4px; color: var(--text-main); cursor: pointer;"><input type="checkbox" id="alert-chan-email" checked> Email</label>
+            <label style="display: flex; align-items: center; gap: 4px; color: var(--text-main); cursor: pointer;"><input type="checkbox" id="alert-chan-db" checked> Database</label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary-glow" style="margin-top: 4px; padding: 11px; width: 100%; border: none; cursor: pointer; color: #fff; font-weight: 700; font-size: 0.88rem;">Save & Activate Budget Plan</button>
       </form>
     </div>
   </div>
@@ -4773,32 +4814,32 @@
   </div>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=18"></script>
-  <script src="core/router.js?v=18"></script>
-  <script src="services/authService.js?v=18"></script>
-  <script src="services/supabaseService.js?v=18"></script>
-  <script src="services/storageService.js?v=18"></script>
-  <script src="services/syncService.js?v=18"></script>
-  <script src="services/notificationService.js?v=18"></script>
-  <script src="services/validationService.js?v=18"></script>
-  <script src="services/budgetService.js?v=18"></script>
-  <script src="services/financeService.js?v=18"></script>
-  <script src="services/chartService.js?v=18"></script>
+  <script src="core/config.js?v=19"></script>
+  <script src="core/router.js?v=19"></script>
+  <script src="services/authService.js?v=19"></script>
+  <script src="services/supabaseService.js?v=19"></script>
+  <script src="services/storageService.js?v=19"></script>
+  <script src="services/syncService.js?v=19"></script>
+  <script src="services/notificationService.js?v=19"></script>
+  <script src="services/validationService.js?v=19"></script>
+  <script src="services/budgetService.js?v=19"></script>
+  <script src="services/financeService.js?v=19"></script>
+  <script src="services/chartService.js?v=19"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=18"></script>
-  <script src="js/user.js?v=18"></script>
-  <script src="js/productivity.js?v=18"></script>
-  <script src="js/notes.js?v=18"></script>
-  <script src="js/finance.js?v=18"></script>
-  <script src="js/health.js?v=18"></script>
-  <script src="js/medicine.js?v=18"></script>
-  <script src="js/habits.js?v=18"></script>
-  <script src="js/personal.js?v=18"></script>
-  <script src="js/lifestyle.js?v=18"></script>
-  <script src="js/career.js?v=18"></script>
-  <script src="js/ai.js?v=18"></script>
-  <script src="js/analytics.js?v=18"></script>
+  <script src="js/app.js?v=19"></script>
+  <script src="js/user.js?v=19"></script>
+  <script src="js/productivity.js?v=19"></script>
+  <script src="js/notes.js?v=19"></script>
+  <script src="js/finance.js?v=19"></script>
+  <script src="js/health.js?v=19"></script>
+  <script src="js/medicine.js?v=19"></script>
+  <script src="js/habits.js?v=19"></script>
+  <script src="js/personal.js?v=19"></script>
+  <script src="js/lifestyle.js?v=19"></script>
+  <script src="js/career.js?v=19"></script>
+  <script src="js/ai.js?v=19"></script>
+  <script src="js/analytics.js?v=19"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator) {

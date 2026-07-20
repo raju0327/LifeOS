@@ -1408,18 +1408,30 @@ const FinanceModule = {
 
   openPlanBudgetModal() {
     this.toggleModal('budget-plan-modal-overlay', true);
+
+    const now = new Date();
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+    
+    const startEl = document.getElementById('input-budget-plan-start');
+    const endEl = document.getElementById('input-budget-plan-end');
+    if (startEl && !startEl.value) startEl.value = firstDay;
+    if (endEl && !endEl.value) endEl.value = lastDay;
+
+    this.renderPlanBudgetCategoryInputs();
   },
 
   closePlanBudgetModal() {
     this.toggleModal('budget-plan-modal-overlay', false);
   },
 
-  openAddCategoryModal() {
-    this.toggleModal('budget-add-category-modal-overlay', true);
+  openManageCategoriesModal() {
+    this.toggleModal('budget-manage-categories-modal-overlay', true);
+    this.renderManageCategoriesList();
   },
 
-  closeAddCategoryModal() {
-    this.toggleModal('budget-add-category-modal-overlay', false);
+  closeManageCategoriesModal() {
+    this.toggleModal('budget-manage-categories-modal-overlay', false);
   },
 
   openReportsModal() {
@@ -1430,33 +1442,57 @@ const FinanceModule = {
     this.toggleModal('budget-reports-modal-overlay', false);
   },
 
-  async handleSaveBudgetCategorySubmit(e) {
+  async renderManageCategoriesList() {
+    const container = document.getElementById('manage-categories-list-container');
+    if (!container) return;
+
+    let categories = [];
+    if (window.LifeOSBudgetService) {
+      categories = await window.LifeOSBudgetService.fetchBudgetCategories();
+    } else {
+      categories = this.app.state.budgetCategories || [];
+    }
+
+    if (!categories || !categories.length) {
+      container.innerHTML = `<div style="font-size: 0.75rem; color: var(--text-muted); padding: 8px;">No custom categories configured yet.</div>`;
+      return;
+    }
+
+    let html = '';
+    categories.forEach(cat => {
+      html += `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: var(--radius-sm);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fas ${cat.icon || 'fa-tag'}" style="color: ${cat.color || '#a370f7'}; font-size: 0.85rem; width: 16px;"></i>
+            <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-main);">${cat.name}</span>
+            <span class="badge" style="font-size: 0.6rem; padding: 2px 6px; text-transform: capitalize;">${cat.type || 'expense'}</span>
+          </div>
+          <button onclick="window.deleteBudgetCategory('${cat.id}')" style="background: none; border: none; color: #ef4444; font-size: 0.8rem; cursor: pointer;" title="Delete Category"><i class="fas fa-trash"></i></button>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  },
+
+  async handleCreateCustomCategorySubmit(e) {
     if (e && e.preventDefault) e.preventDefault();
     const self = (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) ? window.LifeOS.modules.finance : this;
 
-    const nameEl = document.getElementById('input-budget-cat-name');
-    const typeEl = document.getElementById('input-budget-cat-type');
-    const limitEl = document.getElementById('input-budget-cat-limit');
-    const iconEl = document.getElementById('input-budget-cat-icon');
-    const colorEl = document.getElementById('input-budget-cat-color');
+    const nameEl = document.getElementById('input-manage-cat-name');
+    const typeEl = document.getElementById('input-manage-cat-type');
+    const colorEl = document.getElementById('input-manage-cat-color');
 
-    if (!nameEl || !limitEl) return;
+    if (!nameEl || !nameEl.value.trim()) return;
     const name = nameEl.value.trim();
     const type = typeEl ? typeEl.value : 'expense';
-    const limit = parseFloat(limitEl.value) || 0;
-    const icon = iconEl ? iconEl.value : 'fa-tag';
     const color = colorEl ? colorEl.value : '#a370f7';
-
-    if (!name || limit <= 0) return;
 
     const newCat = {
       id: 'bcat_' + Date.now(),
       name,
       type,
-      limit,
-      monthly_limit: limit,
-      spent: 0,
-      icon,
+      monthly_limit: 0,
+      icon: 'fa-tag',
       color
     };
 
@@ -1472,23 +1508,73 @@ const FinanceModule = {
         await window.LifeOSFinanceService.createCategoryRecord({
           name,
           type,
-          limit,
-          icon,
+          limit: 0,
+          icon: 'fa-tag',
           color
         });
       }
     } catch (err) {
-      console.warn('DB category insert notice:', err);
+      console.warn('Create custom category notice:', err);
     }
 
     if (app && typeof app.showToast === 'function') {
-      app.showToast(`Budget category "${name}" saved!`, 'success');
+      app.showToast(`Custom Category "${name}" added!`, 'success');
     }
 
-    self.toggleModal('budget-add-category-modal-overlay', false);
-    const form = document.getElementById('form-add-budget-category');
+    const form = document.getElementById('form-manage-add-category');
     if (form) form.reset();
+    await self.renderManageCategoriesList();
     await self.renderBudgetsList();
+  },
+
+  async renderPlanBudgetCategoryInputs() {
+    const container = document.getElementById('plan-budget-categories-container');
+    if (!container) return;
+
+    let categories = [];
+    if (window.LifeOSBudgetService) {
+      categories = await window.LifeOSBudgetService.fetchBudgetCategories();
+    } else {
+      categories = this.app.state.budgetCategories || [];
+    }
+
+    if (!categories || categories.length === 0) {
+      if (window.LifeOSBudgetService && window.LifeOSBudgetService.getDefaultCategories) {
+        categories = window.LifeOSBudgetService.getDefaultCategories();
+      }
+    }
+
+    let html = '';
+    categories.forEach(cat => {
+      const limitVal = Number(cat.monthly_limit || cat.limit || 0);
+      html += `
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 0.76rem;">
+          <div style="display: flex; align-items: center; gap: 6px; flex: 1;">
+            <i class="fas ${cat.icon || 'fa-tag'}" style="color: ${cat.color || '#a370f7'}; font-size: 0.82rem; width: 16px;"></i>
+            <span style="font-weight: 700; color: var(--text-main); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${cat.name}</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 4px; flex-shrink: 0;">
+            <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">₹</span>
+            <input type="number" class="plan-budget-cat-input" data-cat-id="${cat.id}" data-cat-name="${cat.name}" value="${limitVal > 0 ? limitVal : ''}" placeholder="0" min="0" oninput="window.recalculatePlanBudgetTotal()" style="width: 85px; padding: 4px 8px; font-size: 0.75rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main); font-weight: 700; text-align: right;">
+          </div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+    this.recalculatePlanBudgetTotal();
+  },
+
+  recalculatePlanBudgetTotal() {
+    const inputs = document.querySelectorAll('.plan-budget-cat-input');
+    let total = 0;
+    inputs.forEach(inp => {
+      const val = parseFloat(inp.value) || 0;
+      total += val;
+    });
+
+    const displayEl = document.getElementById('plan-budget-calculated-total');
+    if (displayEl) displayEl.innerText = total.toLocaleString();
   },
 
   async handleSaveBudgetPlanSubmit(e) {
@@ -1497,60 +1583,89 @@ const FinanceModule = {
 
     const titleEl = document.getElementById('input-budget-plan-title');
     const periodEl = document.getElementById('input-budget-plan-period');
-    const targetEl = document.getElementById('input-budget-plan-target');
     const startEl = document.getElementById('input-budget-plan-start');
     const endEl = document.getElementById('input-budget-plan-end');
     const carryEl = document.getElementById('input-budget-plan-carry');
+    const alertsEl = document.getElementById('input-budget-plan-alerts-enabled');
+    const overspendEl = document.getElementById('input-budget-plan-allow-overspending');
+    const autoAllocEl = document.getElementById('input-budget-plan-auto-allocate');
 
-    if (!titleEl || !targetEl) return;
+    if (!titleEl) return;
     const title = titleEl.value.trim();
     const period = periodEl ? periodEl.value : 'Monthly';
-    const target = parseFloat(targetEl.value) || 0;
     const start = startEl ? startEl.value : new Date().toISOString().split('T')[0];
     const end = endEl ? endEl.value : new Date().toISOString().split('T')[0];
-    const carry = carryEl ? carryEl.checked : false;
+    const carry = carryEl ? carryEl.checked : true;
+    const enable_alerts = alertsEl ? alertsEl.checked : true;
+    const allow_overspending = overspendEl ? overspendEl.checked : false;
+    const auto_allocate = autoAllocEl ? autoAllocEl.checked : false;
 
-    if (!title || target <= 0) return;
+    // Calculate total & collect category allocations
+    const inputs = document.querySelectorAll('.plan-budget-cat-input');
+    let target = 0;
+    const allocations = [];
+    inputs.forEach(inp => {
+      const val = parseFloat(inp.value) || 0;
+      target += val;
+      const catId = inp.getAttribute('data-cat-id');
+      const catName = inp.getAttribute('data-cat-name');
+      if (val > 0) {
+        allocations.push({
+          category_id: catId,
+          name: catName,
+          amount: val
+        });
+      }
+    });
 
+    if (!title || target <= 0) {
+      if (window.LifeOS && typeof window.LifeOS.showToast === 'function') {
+        window.LifeOS.showToast('Please enter budget target amounts for your categories!', 'warning');
+      }
+      return;
+    }
+
+    const budgetId = 'plan_' + Date.now();
     const newPlan = {
-      id: 'plan_' + Date.now(),
+      id: budgetId,
       title,
       period_type: period,
       total_budget: target,
       start_date: start,
       end_date: end,
       carry_forward: carry,
+      enable_alerts,
+      allow_overspending,
+      auto_allocate,
       status: 'Active'
     };
 
     const app = window.LifeOS;
     if (app && app.state) {
       app.state.activeBudgetPlan = newPlan;
+      if (app.state.budgetCategories) {
+        allocations.forEach(alloc => {
+          const cat = app.state.budgetCategories.find(c => c.id === alloc.category_id || c.name === alloc.name);
+          if (cat) cat.monthly_limit = alloc.amount;
+        });
+      }
       if (typeof app.saveState === 'function') app.saveState();
     }
 
     try {
       if (window.LifeOSFinanceService) {
-        await window.LifeOSFinanceService.createBudgetPlanRecord({
-          title,
-          period,
-          target,
-          start,
-          end,
-          carry
-        });
+        await window.LifeOSFinanceService.createBudgetPlanRecord(newPlan);
+        await window.LifeOSFinanceService.saveBudgetAllocations(budgetId, allocations);
       }
     } catch (err) {
       console.warn('DB budget plan insert notice:', err);
     }
 
     if (app && typeof app.showToast === 'function') {
-      app.showToast(`Budget plan "${title}" activated!`, 'success');
+      app.showToast(`Budget Plan "${title}" activated! Total Budget: ₹${target.toLocaleString()}`, 'success');
     }
 
     self.toggleModal('budget-plan-modal-overlay', false);
-    const form = document.getElementById('form-plan-budget');
-    if (form) form.reset();
     await self.renderBudgetsList();
   },
 
@@ -3231,18 +3346,18 @@ window.closePlanBudgetModal = () => {
     FinanceModule.closePlanBudgetModal();
   }
 };
-window.openAddCategoryModal = () => {
+window.openManageCategoriesModal = () => {
   if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
-    window.LifeOS.modules.finance.openAddCategoryModal();
+    window.LifeOS.modules.finance.openManageCategoriesModal();
   } else if (typeof FinanceModule !== 'undefined') {
-    FinanceModule.openAddCategoryModal();
+    FinanceModule.openManageCategoriesModal();
   }
 };
-window.closeAddCategoryModal = () => {
+window.closeManageCategoriesModal = () => {
   if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
-    window.LifeOS.modules.finance.closeAddCategoryModal();
+    window.LifeOS.modules.finance.closeManageCategoriesModal();
   } else if (typeof FinanceModule !== 'undefined') {
-    FinanceModule.closeAddCategoryModal();
+    FinanceModule.closeManageCategoriesModal();
   }
 };
 window.openReportsModal = () => {
@@ -3259,11 +3374,18 @@ window.closeReportsModal = () => {
     FinanceModule.closeReportsModal();
   }
 };
-window.handleSaveBudgetCategorySubmit = (e) => {
+window.recalculatePlanBudgetTotal = () => {
   if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
-    window.LifeOS.modules.finance.handleSaveBudgetCategorySubmit(e);
+    window.LifeOS.modules.finance.recalculatePlanBudgetTotal();
   } else if (typeof FinanceModule !== 'undefined') {
-    FinanceModule.handleSaveBudgetCategorySubmit(e);
+    FinanceModule.recalculatePlanBudgetTotal();
+  }
+};
+window.handleCreateCustomCategorySubmit = (e) => {
+  if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
+    window.LifeOS.modules.finance.handleCreateCustomCategorySubmit(e);
+  } else if (typeof FinanceModule !== 'undefined') {
+    FinanceModule.handleCreateCustomCategorySubmit(e);
   }
 };
 window.handleSaveBudgetPlanSubmit = (e) => {
@@ -3271,5 +3393,21 @@ window.handleSaveBudgetPlanSubmit = (e) => {
     window.LifeOS.modules.finance.handleSaveBudgetPlanSubmit(e);
   } else if (typeof FinanceModule !== 'undefined') {
     FinanceModule.handleSaveBudgetPlanSubmit(e);
+  }
+};
+window.deleteBudgetCategory = async (id) => {
+  if (window.LifeOSFinanceService) {
+    await window.LifeOSFinanceService.deleteCategoryRecord(id);
+  }
+  if (window.LifeOS && window.LifeOS.state && window.LifeOS.state.budgetCategories) {
+    window.LifeOS.state.budgetCategories = window.LifeOS.state.budgetCategories.filter(c => c.id !== id);
+    window.LifeOS.saveState();
+  }
+  if (window.LifeOS && window.LifeOS.showToast) {
+    window.LifeOS.showToast('Budget category removed', 'info');
+  }
+  if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
+    await window.LifeOS.modules.finance.renderManageCategoriesList();
+    await window.LifeOS.modules.finance.renderBudgetsList();
   }
 };

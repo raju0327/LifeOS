@@ -84,7 +84,7 @@ window.LifeOSFinanceService = {
 
     const userId = this.getResolvedUserId();
     const payload = {
-      id: 'plan_' + Date.now(),
+      id: planData.id || ('plan_' + Date.now()),
       user_id: userId,
       title: planData.title,
       period_type: planData.period || 'Monthly',
@@ -92,7 +92,10 @@ window.LifeOSFinanceService = {
       end_date: planData.end,
       total_budget: planData.target || 0,
       status: 'Active',
-      carry_forward: !!planData.carry
+      carry_forward: !!planData.carry,
+      enable_alerts: planData.enable_alerts !== undefined ? !!planData.enable_alerts : true,
+      allow_overspending: !!planData.allow_overspending,
+      auto_allocate: !!planData.auto_allocate
     };
 
     try {
@@ -112,6 +115,104 @@ window.LifeOSFinanceService = {
     } catch (e) {
       console.warn('Failed creating budget plan on Supabase:', e);
       return payload;
+    }
+  },
+
+  // Save category allocations for a budget plan
+  async saveBudgetAllocations(budgetId, allocations = []) {
+    const settings = this.getSettings();
+    if (!settings || !settings.url || !settings.anonKey || !allocations.length) return [];
+
+    const userId = this.getResolvedUserId();
+    const rows = allocations.map((alloc, idx) => ({
+      id: `alloc_${Date.now()}_${idx}`,
+      budget_id: budgetId,
+      category_id: alloc.category_id || alloc.id,
+      allocated_amount: Number(alloc.amount || alloc.limit || 0),
+      user_id: userId
+    }));
+
+    try {
+      const res = await fetch(`${settings.url}/rest/v1/budget_allocations`, {
+        method: 'POST',
+        headers: {
+          'apikey': settings.anonKey,
+          'Authorization': `Bearer ${settings.anonKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify(rows)
+      });
+      if (!res.ok) throw new Error('Insert allocations failed');
+      return rows;
+    } catch (e) {
+      console.warn('Failed saving budget allocations on Supabase:', e);
+      return rows;
+    }
+  },
+
+  // Delete budget plan from Supabase
+  async deleteBudgetRecord(budgetId) {
+    const settings = this.getSettings();
+    if (!settings || !settings.url || !settings.anonKey) return false;
+
+    const userId = this.getResolvedUserId();
+    try {
+      await fetch(`${settings.url}/rest/v1/budgets?id=eq.${budgetId}&user_id=eq.${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'apikey': settings.anonKey,
+          'Authorization': `Bearer ${settings.anonKey}`
+        }
+      });
+      return true;
+    } catch (e) {
+      console.warn('Failed deleting budget on Supabase:', e);
+      return false;
+    }
+  },
+
+  // Archive budget plan on Supabase
+  async archiveBudgetRecord(budgetId) {
+    const settings = this.getSettings();
+    if (!settings || !settings.url || !settings.anonKey) return false;
+
+    const userId = this.getResolvedUserId();
+    try {
+      await fetch(`${settings.url}/rest/v1/budgets?id=eq.${budgetId}&user_id=eq.${userId}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': settings.anonKey,
+          'Authorization': `Bearer ${settings.anonKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: 'Archived' })
+      });
+      return true;
+    } catch (e) {
+      console.warn('Failed archiving budget on Supabase:', e);
+      return false;
+    }
+  },
+
+  // Delete category from Supabase
+  async deleteCategoryRecord(categoryId) {
+    const settings = this.getSettings();
+    if (!settings || !settings.url || !settings.anonKey) return false;
+
+    const userId = this.getResolvedUserId();
+    try {
+      await fetch(`${settings.url}/rest/v1/budget_categories?id=eq.${categoryId}&user_id=eq.${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'apikey': settings.anonKey,
+          'Authorization': `Bearer ${settings.anonKey}`
+        }
+      });
+      return true;
+    } catch (e) {
+      console.warn('Failed deleting category on Supabase:', e);
+      return false;
     }
   }
 };

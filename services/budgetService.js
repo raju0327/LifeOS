@@ -20,10 +20,32 @@ window.LifeOSBudgetService = {
     return (this.app && this.app.userUuidMap) ? (this.app.userUuidMap[username.toLowerCase()] || defaultAdminUuid) : defaultAdminUuid;
   },
 
+  getDefaultCategories() {
+    return [
+      { id: 'bcat_food', name: 'Food & Grocery', icon: 'fa-shopping-basket', color: '#10b981', monthly_limit: 15000, type: 'expense' },
+      { id: 'bcat_rent', name: 'House Rent', icon: 'fa-home', color: '#3b82f6', monthly_limit: 25000, type: 'expense' },
+      { id: 'bcat_util', name: 'Utilities', icon: 'fa-bolt', color: '#f59e0b', monthly_limit: 6000, type: 'expense' },
+      { id: 'bcat_trans', name: 'Transportation', icon: 'fa-car', color: '#a370f7', monthly_limit: 5000, type: 'expense' },
+      { id: 'bcat_fuel', name: 'Fuel', icon: 'fa-gas-pump', color: '#ef4444', monthly_limit: 4000, type: 'expense' },
+      { id: 'bcat_shop', name: 'Shopping', icon: 'fa-shopping-bag', color: '#ec4899', monthly_limit: 8000, type: 'expense' },
+      { id: 'bcat_health', name: 'Healthcare', icon: 'fa-heartbeat', color: '#14b8a6', monthly_limit: 5000, type: 'expense' },
+      { id: 'bcat_edu', name: 'Education', icon: 'fa-graduation-cap', color: '#6366f1', monthly_limit: 7000, type: 'expense' },
+      { id: 'bcat_ent', name: 'Entertainment', icon: 'fa-gamepad', color: '#8b5cf6', monthly_limit: 4000, type: 'expense' },
+      { id: 'bcat_invest', name: 'Investments', icon: 'fa-chart-line', color: '#10b981', monthly_limit: 10000, type: 'savings' },
+      { id: 'bcat_sav', name: 'Savings', icon: 'fa-piggy-bank', color: '#f59e0b', monthly_limit: 10000, type: 'savings' },
+      { id: 'bcat_ins', name: 'Insurance', icon: 'fa-shield-alt', color: '#06b6d4', monthly_limit: 3000, type: 'expense' },
+      { id: 'bcat_emi', name: 'EMI', icon: 'fa-university', color: '#64748b', monthly_limit: 12000, type: 'expense' },
+      { id: 'bcat_misc', name: 'Miscellaneous', icon: 'fa-tag', color: '#94a3b8', monthly_limit: 3000, type: 'expense' }
+    ];
+  },
+
   // Fetch active budget categories & allocations from Supabase (merged with local state)
   async fetchBudgetCategories() {
     const app = this.app || window.LifeOS;
-    const localCategories = (app && app.state && app.state.budgetCategories) ? app.state.budgetCategories : [];
+    let localCategories = (app && app.state && app.state.budgetCategories) ? app.state.budgetCategories : [];
+    if (!localCategories || !localCategories.length) {
+      localCategories = this.getDefaultCategories();
+    }
 
     const settings = this.getSettings();
     if (!settings || !settings.url || !settings.anonKey) return localCategories;
@@ -70,7 +92,8 @@ window.LifeOSBudgetService = {
         }
       });
 
-      return Object.values(combinedMap);
+      const list = Object.values(combinedMap);
+      return list.length > 0 ? list : localCategories;
     } catch (e) {
       console.warn('Failed fetching budget categories from Supabase:', e);
       return localCategories;
