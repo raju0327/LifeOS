@@ -16,7 +16,8 @@ DECLARE
         'medicines', 'habits', 'vault_items', 'travel_trips', 'travel_itinerary',
         'travel_expenses', 'travel_gallery', 'travel_documents', 'packing_checklist',
         'bucket_list', 'travel_notes', 'visited_places', 'travel_statistics', 'skills',
-        'job_applications', 'notifications'
+        'job_applications', 'notifications', 'budget_categories', 'budgets',
+        'budget_allocations', 'budget_transactions', 'budget_alerts', 'budget_history'
     ];
 BEGIN
     FOREACH tbl IN ARRAY tables LOOP

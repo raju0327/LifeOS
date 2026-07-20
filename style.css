@@ -2966,3 +2966,20 @@ html, body {
 .pull-to-refresh-indicator.hidden {
   display: none !important;
 }
+
+/* ==========================================================================
+   BUDGET MANAGEMENT MODULE STYLES & RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .budget-overview-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .budget-middle-split {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media (max-width: 640px) {
+  .budget-overview-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

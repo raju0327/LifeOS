@@ -295,6 +295,83 @@ CREATE TABLE IF NOT EXISTS public.finance_loans (
     PRIMARY KEY (id, user_id)
 );
 
+CREATE TABLE IF NOT EXISTS public.budget_categories (
+    id text NOT NULL,
+    user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    name text NOT NULL,
+    icon text DEFAULT 'fa-tag',
+    color text DEFAULT '#a370f7',
+    type text DEFAULT 'expense', -- 'income', 'expense', 'savings', 'emergency'
+    monthly_limit numeric DEFAULT 0,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    PRIMARY KEY (id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS public.budgets (
+    id text NOT NULL,
+    user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    title text NOT NULL,
+    period_type text DEFAULT 'Monthly', -- 'Monthly', 'Yearly', 'Custom'
+    start_date text NOT NULL,
+    end_date text NOT NULL,
+    total_budget numeric DEFAULT 0,
+    total_spent numeric DEFAULT 0,
+    status text DEFAULT 'Active', -- 'Active', 'Completed', 'Archived'
+    notes text,
+    carry_forward boolean DEFAULT false,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    PRIMARY KEY (id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS public.budget_allocations (
+    id text NOT NULL,
+    user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    budget_id text NOT NULL,
+    category_id text NOT NULL,
+    allocated_limit numeric DEFAULT 0,
+    spent_amount numeric DEFAULT 0,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    PRIMARY KEY (id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS public.budget_transactions (
+    id text NOT NULL,
+    user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    budget_id text NOT NULL,
+    transaction_id text NOT NULL,
+    category_id text NOT NULL,
+    amount numeric NOT NULL,
+    impact_percentage numeric DEFAULT 0,
+    created_at timestamp with time zone DEFAULT now(),
+    PRIMARY KEY (id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS public.budget_alerts (
+    id text NOT NULL,
+    user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    budget_id text NOT NULL,
+    category_id text,
+    threshold_percentage numeric NOT NULL, -- 80, 90, 100
+    message text NOT NULL,
+    read boolean DEFAULT false,
+    created_at timestamp with time zone DEFAULT now(),
+    PRIMARY KEY (id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS public.budget_history (
+    id text NOT NULL,
+    user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    period text NOT NULL,
+    total_budget numeric DEFAULT 0,
+    total_spent numeric DEFAULT 0,
+    utilization_rate numeric DEFAULT 0,
+    archived_at timestamp with time zone DEFAULT now(),
+    PRIMARY KEY (id, user_id)
+);
+
 -- ----------------------------------------------------------------------------
 -- 9. HEALTH & FITNESS & MEDICINE
 -- ----------------------------------------------------------------------------
