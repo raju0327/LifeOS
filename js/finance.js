@@ -1271,247 +1271,103 @@ const FinanceModule = {
     }
   },
 
-  renderBudgetsList() {
+  async renderBudgetsList() {
     const currency = (this.app.state.financeSettings && this.app.state.financeSettings.currencySymbol) || '₹';
-    const txs = this.app.state.transactions || [];
-    const filterId = this.activeMemberFilter;
 
-    // Default reference categories if state is unseeded
-    const defaultCategories = [
-      { id: 'cat_food', name: 'Food & Grocery', icon: 'fa-shopping-basket', color: '#10b981', limit: 10000, spent: 7250 },
-      { id: 'cat_rent', name: 'House Rent', icon: 'fa-home', color: '#ef4444', limit: 15000, spent: 15000 },
-      { id: 'cat_utilities', name: 'Utilities', icon: 'fa-bolt', color: '#3b82f6', limit: 5000, spent: 3200 },
-      { id: 'cat_transport', name: 'Transportation', icon: 'fa-car', color: '#f97316', limit: 7000, spent: 4800 },
-      { id: 'cat_health', name: 'Health & Medical', icon: 'fa-heartbeat', color: '#ec4899', limit: 5000, spent: 2600 },
-      { id: 'cat_entertainment', name: 'Entertainment', icon: 'fa-gamepad', color: '#a370f7', limit: 3000, spent: 1800 },
-      { id: 'cat_education', name: 'Education', icon: 'fa-graduation-cap', color: '#84cc16', limit: 5000, spent: 1500 },
-      { id: 'cat_savings', name: 'Savings & Invest.', icon: 'fa-piggy-bank', color: '#06b6d4', limit: 20000, spent: 12100 }
-    ];
+    // Fetch dynamic database metrics & calculations from LifeOSBudgetService
+    const metrics = await window.LifeOSBudgetService.computeBudgetMetrics();
 
-    if (!this.app.state.budgetCategories || this.app.state.budgetCategories.length === 0) {
-      this.app.state.budgetCategories = defaultCategories;
-    }
-
-    const categoriesList = this.app.state.budgetCategories;
-
-    // Calculate real-time transaction spending per category
-    const categorySpentMap = {};
-    txs.forEach(t => {
-      if (filterId !== 'all' && t.memberId !== filterId) return;
-      if (t.type !== 'expense') return;
-      const catName = (t.category || t.categoryId || '').toLowerCase();
-      
-      categoriesList.forEach(c => {
-        if (c.name.toLowerCase().includes(catName) || catName.includes(c.name.toLowerCase())) {
-          categorySpentMap[c.id] = (categorySpentMap[c.id] || 0) + (parseFloat(t.amount) || 0);
-        }
-      });
-    });
-
-    let totalBudget = 0;
-    let totalSpent = 0;
-    let alertBadgesHtml = '';
-    let categoryRowsHtml = '';
-
-    categoriesList.forEach(c => {
-      const limit = Number(c.limit || c.monthly_limit || 0);
-      const spent = categorySpentMap[c.id] !== undefined ? categorySpentMap[c.id] : Number(c.spent || 0);
-
-      totalBudget += limit;
-      totalSpent += spent;
-
-      const pct = limit > 0 ? (spent / limit) * 100 : 0;
-      const formattedPct = pct.toFixed(pct % 1 === 0 ? 0 : 1);
-
-      let barColor = c.color || '#a370f7';
-      if (pct >= 100) barColor = '#ef4444';
-      else if (pct >= 80) barColor = '#f97316';
-
-      // Generate threshold alerts if spending is high
-      if (pct >= 80) {
-        const alertType = pct >= 100 ? 'error' : 'warning';
-        const alertTitle = pct >= 100 ? 'Budget Limit Exceeded!' : 'Budget Threshold Reached';
-        alertBadgesHtml += `
-          <div class="glass-card" style="padding: 10px 14px; border-radius: var(--radius-sm); border-left: 4px solid ${barColor}; background: rgba(255,255,255,0.02); display: flex; align-items: center; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <i class="fas fa-exclamation-triangle" style="color: ${barColor}; font-size: 1rem;"></i>
-              <div>
-                <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-main);">${alertTitle}: ${c.name}</span>
-                <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">Spending has reached ${formattedPct}% (${currency}${spent.toLocaleString()} of ${currency}${limit.toLocaleString()})</span>
-              </div>
-            </div>
-            <span class="btn-glass-subtle" style="font-size: 0.68rem; padding: 2px 8px;" onclick="this.parentElement.remove()">Dismiss</span>
-          </div>
-        `;
-      }
-
-      categoryRowsHtml += `
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
-          <td style="padding: 10px 6px;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <div style="width: 24px; height: 24px; border-radius: 6px; background: ${c.color}22; color: ${c.color}; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;">
-                <i class="fas ${c.icon}"></i>
-              </div>
-              <span style="font-weight: 600; color: var(--text-main);">${c.name}</span>
-            </div>
-          </td>
-          <td style="padding: 10px 6px; font-weight: 700; color: var(--text-main);">${currency}${spent.toLocaleString()}</td>
-          <td style="padding: 10px 6px; font-weight: 600; color: var(--text-muted);">${currency}${limit.toLocaleString()}</td>
-          <td style="padding: 10px 6px;">
-            <div style="display: flex; flex-direction: column; gap: 4px; min-width: 90px;">
-              <span style="font-size: 0.7rem; font-weight: 700; color: ${barColor};">${formattedPct}%</span>
-              <div style="height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;">
-                <div style="width: ${Math.min(pct, 100)}%; height: 100%; background: ${barColor}; border-radius: 2px; transition: width 0.3s ease;"></div>
-              </div>
-            </div>
-          </td>
-        </tr>
-      `;
-    });
-
-    const remainingBudget = totalBudget - totalSpent;
-    const overallUtilization = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
-    const formattedUtilization = overallUtilization.toFixed(2);
-
-    // Update Overview Stats Cards
+    // 1. Update Overview Metric Cards
     const totalEl = document.getElementById('budget-stat-total-amount');
     const spentEl = document.getElementById('budget-stat-total-spent');
     const remainEl = document.getElementById('budget-stat-remaining');
     const utilEl = document.getElementById('budget-stat-utilization');
     const utilBarEl = document.getElementById('budget-stat-utilization-bar');
 
-    if (totalEl) totalEl.textContent = `${currency}${totalBudget.toLocaleString()}`;
-    if (spentEl) spentEl.textContent = `${currency}${totalSpent.toLocaleString()}`;
-    if (remainEl) remainEl.textContent = `${currency}${remainingBudget.toLocaleString()}`;
-    if (utilEl) utilEl.textContent = `${formattedUtilization}%`;
-    if (utilBarEl) utilBarEl.style.width = `${Math.min(overallUtilization, 100)}%`;
+    if (totalEl) totalEl.textContent = `${currency}${metrics.totalBudget.toLocaleString()}`;
+    if (spentEl) spentEl.textContent = `${currency}${metrics.totalSpent.toLocaleString()}`;
+    if (remainEl) remainEl.textContent = `${currency}${metrics.remainingBudget.toLocaleString()}`;
+    if (utilEl) utilEl.textContent = `${metrics.formattedUtilization}%`;
+    if (utilBarEl) utilBarEl.style.width = `${Math.min(metrics.utilizationRate, 100)}%`;
 
-    // Render Alerts
+    // 2. Render Alert Badges
     const alertsContainer = document.getElementById('budget-alerts-container');
-    if (alertsContainer) alertsContainer.innerHTML = alertBadgesHtml;
-
-    // Render Category Table Rows
-    const rowsContainer = document.getElementById('budget-category-rows-container');
-    if (rowsContainer) rowsContainer.innerHTML = categoryRowsHtml;
-
-    // Render Charts
-    this.renderBudgetCharts(categoriesList, categorySpentMap, currency);
-
-    // Render Recent Transactions Impact Table
-    this.renderBudgetTransactionsImpact(txs, totalBudget, currency);
-  },
-
-  renderBudgetCharts(categoriesList, categorySpentMap, currency) {
-    // 1. Budget vs Actual Bar Chart (SVG)
-    const vsActualContainer = document.getElementById('budget-vs-actual-chart-container');
-    if (vsActualContainer) {
-      const topCategories = categoriesList.slice(0, 6);
-      let barsSvgHtml = `<svg width="100%" height="100%" viewBox="0 0 400 140" preserveAspectRatio="none">`;
-      
-      const barWidth = 16;
-      const groupWidth = 400 / topCategories.length;
-
-      topCategories.forEach((cat, idx) => {
-        const limit = Number(cat.limit || cat.monthly_limit || 1);
-        const spent = categorySpentMap[cat.id] !== undefined ? categorySpentMap[cat.id] : Number(cat.spent || 0);
-
-        const maxVal = Math.max(...topCategories.map(c => Number(c.limit || 10000)));
-        const budgetHeight = Math.min(Math.round((limit / maxVal) * 90), 90);
-        const actualHeight = Math.min(Math.round((spent / maxVal) * 90), 90);
-
-        const xBase = idx * groupWidth + (groupWidth - 36) / 2;
-
-        barsSvgHtml += `
-          <!-- Budget Bar -->
-          <rect x="${xBase}" y="${110 - budgetHeight}" width="${barWidth}" height="${budgetHeight}" fill="#a370f7" rx="3" />
-          <!-- Actual Bar -->
-          <rect x="${xBase + 18}" y="${110 - actualHeight}" width="${barWidth}" height="${actualHeight}" fill="#10b981" rx="3" />
-          <!-- Label -->
-          <text x="${xBase + 17}" y="130" font-size="9" fill="#94a3b8" text-anchor="middle">${cat.name.split(' ')[0]}</text>
-        `;
-      });
-      barsSvgHtml += `</svg>`;
-      vsActualContainer.innerHTML = barsSvgHtml;
-    }
-
-    // 2. Spending Donut Chart SVG
-    const donutContainer = document.getElementById('budget-donut-chart-container');
-    const legendContainer = document.getElementById('budget-donut-legend-container');
-    if (donutContainer && legendContainer) {
-      let donutSvgHtml = `
-        <svg width="110" height="110" viewBox="0 0 110 110">
-          <circle cx="55" cy="55" r="40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="14" />
-      `;
-
-      let strokeDashOffset = 0;
-      const circumference = 2 * Math.PI * 40;
-      let legendHtml = '';
-
-      const totalSpentSum = categoriesList.reduce((acc, c) => acc + (categorySpentMap[c.id] !== undefined ? categorySpentMap[c.id] : Number(c.spent || 0)), 0);
-
-      categoriesList.forEach((cat) => {
-        const spent = categorySpentMap[cat.id] !== undefined ? categorySpentMap[cat.id] : Number(cat.spent || 0);
-        const pct = totalSpentSum > 0 ? (spent / totalSpentSum) * 100 : 0;
-        const dashArray = (pct / 100) * circumference;
-
-        if (pct > 0) {
-          donutSvgHtml += `
-            <circle cx="55" cy="55" r="40" fill="none" stroke="${cat.color}" stroke-width="14"
-              stroke-dasharray="${dashArray} ${circumference - dashArray}"
-              stroke-dashoffset="-${strokeDashOffset}"
-              transform="rotate(-90 55 55)" />
+    if (alertsContainer) {
+      if (metrics.alerts.length === 0) {
+        alertsContainer.innerHTML = '';
+      } else {
+        let alertBadgesHtml = '';
+        metrics.alerts.forEach(a => {
+          alertBadgesHtml += `
+            <div class="glass-card" style="padding: 10px 14px; border-radius: var(--radius-sm); border-left: 4px solid ${a.color}; background: rgba(255,255,255,0.02); display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-exclamation-triangle" style="color: ${a.color}; font-size: 1rem;"></i>
+                <div>
+                  <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-main);">${a.message}</span>
+                </div>
+              </div>
+              <span class="btn-glass-subtle" style="font-size: 0.68rem; padding: 2px 8px;" onclick="this.parentElement.remove()">Dismiss</span>
+            </div>
           `;
-          strokeDashOffset += dashArray;
-        }
-
-        legendHtml += `
-          <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
-            <span style="display: flex; align-items: center; gap: 4px; color: var(--text-muted); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-              <span style="width: 6px; height: 6px; border-radius: 50%; background: ${cat.color}; flex-shrink: 0;"></span> ${cat.name}
-            </span>
-            <span style="font-weight: 700; color: var(--text-main);">${pct.toFixed(0)}%</span>
-          </div>
-        `;
-      });
-
-      donutSvgHtml += `
-        <text x="55" y="52" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">${currency}${Math.round(totalSpentSum / 1000)}k</text>
-        <text x="55" y="64" font-size="7" fill="#94a3b8" text-anchor="middle">Total Spent</text>
-        </svg>
-      `;
-
-      donutContainer.innerHTML = donutSvgHtml;
-      legendContainer.innerHTML = legendHtml;
+        });
+        alertsContainer.innerHTML = alertBadgesHtml;
+      }
     }
 
-    // 3. Budget Utilization Trend Area Chart (SVG)
-    const trendContainer = document.getElementById('budget-trend-chart-container');
-    if (trendContainer) {
-      trendContainer.innerHTML = `
-        <svg width="100%" height="100%" viewBox="0 0 200 80" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#a370f7" stop-opacity="0.4"/>
-              <stop offset="100%" stop-color="#a370f7" stop-opacity="0"/>
-            </linearGradient>
-          </defs>
-          <path d="M 10,50 L 45,45 L 80,40 L 115,32 L 150,28 L 185,22 L 185,75 L 10,75 Z" fill="url(#trendGrad)" />
-          <path d="M 10,50 L 45,45 L 80,40 L 115,32 L 150,28 L 185,22" fill="none" stroke="#a370f7" stroke-width="2.5" />
-          <circle cx="10" cy="50" r="3" fill="#a370f7" />
-          <circle cx="45" cy="45" r="3" fill="#a370f7" />
-          <circle cx="80" cy="40" r="3" fill="#a370f7" />
-          <circle cx="115" cy="32" r="3" fill="#a370f7" />
-          <circle cx="150" cy="28" r="3" fill="#a370f7" />
-          <circle cx="185" cy="22" r="4" fill="#10b981" />
-          <text x="185" y="14" font-size="7" font-weight="700" fill="#10b981" text-anchor="middle">60.3%</text>
-          <text x="10" y="76" font-size="7" fill="#94a3b8" text-anchor="middle">Dec</text>
-          <text x="45" y="76" font-size="7" fill="#94a3b8" text-anchor="middle">Jan</text>
-          <text x="80" y="76" font-size="7" fill="#94a3b8" text-anchor="middle">Feb</text>
-          <text x="115" y="76" font-size="7" fill="#94a3b8" text-anchor="middle">Mar</text>
-          <text x="150" y="76" font-size="7" fill="#94a3b8" text-anchor="middle">Apr</text>
-          <text x="185" y="76" font-size="7" fill="#94a3b8" text-anchor="middle">May</text>
-        </svg>
-      `;
+    // 3. Render Category Table Rows
+    const rowsContainer = document.getElementById('budget-category-rows-container');
+    if (rowsContainer) {
+      if (metrics.categories.length === 0) {
+        rowsContainer.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 20px; color: var(--text-muted);">No budget categories configured in database. Click "+ Add Budget Category" to begin.</td></tr>`;
+      } else {
+        let categoryRowsHtml = '';
+        metrics.categories.forEach(c => {
+          let barColor = c.color || '#a370f7';
+          if (c.pct >= 100) barColor = '#ef4444';
+          else if (c.pct >= 80) barColor = '#f97316';
+
+          categoryRowsHtml += `
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+              <td style="padding: 10px 6px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 24px; height: 24px; border-radius: 6px; background: ${barColor}22; color: ${barColor}; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;">
+                    <i class="fas ${c.icon || 'fa-tag'}"></i>
+                  </div>
+                  <span style="font-weight: 600; color: var(--text-main);">${c.name}</span>
+                </div>
+              </td>
+              <td style="padding: 10px 6px; font-weight: 700; color: var(--text-main);">${currency}${c.spent.toLocaleString()}</td>
+              <td style="padding: 10px 6px; font-weight: 600; color: var(--text-muted);">${currency}${c.limit.toLocaleString()}</td>
+              <td style="padding: 10px 6px;">
+                <div style="display: flex; flex-direction: column; gap: 4px; min-width: 90px;">
+                  <span style="font-size: 0.7rem; font-weight: 700; color: ${barColor};">${c.formattedPct}%</span>
+                  <div style="height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;">
+                    <div style="width: ${Math.min(c.pct, 100)}%; height: 100%; background: ${barColor}; border-radius: 2px; transition: width 0.3s ease;"></div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+        rowsContainer.innerHTML = categoryRowsHtml;
+      }
+    }
+
+    // 4. Render SVG Analytics Charts via LifeOSChartService
+    window.LifeOSChartService.renderBudgetVsActualBarChart('budget-vs-actual-chart-container', metrics.categories);
+    window.LifeOSChartService.renderCategoryDonutChart('budget-donut-chart-container', 'budget-donut-legend-container', metrics.categories, metrics.totalSpent, currency);
+    window.LifeOSChartService.renderUtilizationTrendChart('budget-trend-chart-container', metrics.utilizationRate);
+
+    // 5. Render Live Transactions Impact
+    const liveTxs = await window.LifeOSFinanceService.fetchLiveTransactions(5);
+    this.renderBudgetTransactionsImpact(liveTxs, metrics.totalBudget, currency);
+
+    // 6. Setup Supabase Realtime WebSocket Listener (Auto updates without refresh)
+    if (!this.budgetRealtimeSubscribing) {
+      this.budgetRealtimeSubscribing = true;
+      window.LifeOSBudgetService.setupRealtimeListener(() => {
+        this.renderBudgetsList();
+      });
     }
   },
 
@@ -1519,64 +1375,38 @@ const FinanceModule = {
     const container = document.getElementById('budget-recent-txs-container');
     if (!container) return;
 
-    // Default reference mockup transactions if txs array is empty
-    const defaultMockTxs = [
-      { date: '24 May 2025', desc: 'BigBasket Shopping', category: 'Food & Grocery', catColor: '#10b981', account: 'HDFC Bank - 1234', amount: -1250, impact: '-12.5%' },
-      { date: '24 May 2025', desc: 'Uber Ride', category: 'Transportation', catColor: '#f97316', account: 'SBI Bank - 5678', amount: -380, impact: '-5.4%' },
-      { date: '23 May 2025', desc: 'Electricity Bill', category: 'Utilities', catColor: '#3b82f6', account: 'HDFC Bank - 1234', amount: -1150, impact: '-23%' },
-      { date: '22 May 2025', desc: 'Pharmacy', category: 'Health & Medical', catColor: '#ec4899', account: 'ICICI Bank - 9012', amount: -620, impact: '-12.4%' },
-      { date: '21 May 2025', desc: 'Salary Credit', category: 'Income', catColor: '#10b981', account: 'HDFC Bank - 1234', amount: 70000, impact: '--' }
-    ];
+    if (!txs || txs.length === 0) {
+      container.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px; color: var(--text-muted);">No financial transactions recorded in database.</td></tr>`;
+      return;
+    }
 
     let txRowsHtml = '';
+    txs.forEach(t => {
+      const amt = parseFloat(t.amount) || 0;
+      const isExpense = t.type === 'expense';
+      const impact = isExpense && totalBudget > 0 ? `-${((amt / totalBudget) * 100).toFixed(1)}%` : '--';
+      const amtColor = isExpense ? '#ef4444' : '#10b981';
 
-    if (!txs || txs.length === 0) {
-      defaultMockTxs.forEach(t => {
-        const amtColor = t.amount < 0 ? '#ef4444' : '#10b981';
-        txRowsHtml += `
-          <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
-            <td style="padding: 10px 10px; color: var(--text-muted);">${t.date}</td>
-            <td style="padding: 10px 10px; font-weight: 600; color: var(--text-main);">${t.desc}</td>
-            <td style="padding: 10px 10px;">
-              <span style="display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.68rem; font-weight: 700; background: ${t.catColor}20; color: ${t.catColor};">
-                ${t.category}
-              </span>
-            </td>
-            <td style="padding: 10px 10px; color: var(--text-muted);">${t.account}</td>
-            <td style="padding: 10px 10px; font-weight: 700; color: ${amtColor};">${t.amount < 0 ? '-' : ''}${currency}${Math.abs(t.amount).toLocaleString()}</td>
-            <td style="padding: 10px 10px; font-weight: 700; color: ${t.amount < 0 ? '#ef4444' : 'var(--text-muted)'};">${t.impact}</td>
-          </tr>
-        `;
-      });
-    } else {
-      const recentTxs = txs.slice(0, 5);
-      recentTxs.forEach(t => {
-        const amt = parseFloat(t.amount) || 0;
-        const isExpense = t.type === 'expense';
-        const impact = isExpense && totalBudget > 0 ? `-${((amt / totalBudget) * 100).toFixed(1)}%` : '--';
-        const amtColor = isExpense ? '#ef4444' : '#10b981';
-
-        txRowsHtml += `
-          <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
-            <td style="padding: 10px 10px; color: var(--text-muted);">${t.date || new Date().toLocaleDateString()}</td>
-            <td style="padding: 10px 10px; font-weight: 600; color: var(--text-main);">${t.description || 'Transaction'}</td>
-            <td style="padding: 10px 10px;">
-              <span style="display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.68rem; font-weight: 700; background: rgba(163, 112, 247, 0.15); color: #a370f7;">
-                ${t.category || 'General'}
-              </span>
-            </td>
-            <td style="padding: 10px 10px; color: var(--text-muted);">${t.account || 'Default Account'}</td>
-            <td style="padding: 10px 10px; font-weight: 700; color: ${amtColor};">${isExpense ? '-' : ''}${currency}${amt.toLocaleString()}</td>
-            <td style="padding: 10px 10px; font-weight: 700; color: ${isExpense ? '#ef4444' : 'var(--text-muted)'};">${impact}</td>
-          </tr>
-        `;
-      });
-    }
+      txRowsHtml += `
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+          <td style="padding: 10px 10px; color: var(--text-muted);">${t.date || new Date().toLocaleDateString()}</td>
+          <td style="padding: 10px 10px; font-weight: 600; color: var(--text-main);">${t.description || 'Transaction'}</td>
+          <td style="padding: 10px 10px;">
+            <span style="display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.68rem; font-weight: 700; background: rgba(163, 112, 247, 0.15); color: #a370f7;">
+              ${t.category || 'General'}
+            </span>
+          </td>
+          <td style="padding: 10px 10px; color: var(--text-muted);">${t.account || 'Account'}</td>
+          <td style="padding: 10px 10px; font-weight: 700; color: ${amtColor};">${isExpense ? '-' : ''}${currency}${amt.toLocaleString()}</td>
+          <td style="padding: 10px 10px; font-weight: 700; color: ${isExpense ? '#ef4444' : 'var(--text-muted)'};">${impact}</td>
+        </tr>
+      `;
+    });
 
     container.innerHTML = txRowsHtml;
   },
 
-  handleSaveBudgetCategorySubmit() {
+  async handleSaveBudgetCategorySubmit() {
     const name = document.getElementById('input-budget-cat-name').value.trim();
     const type = document.getElementById('input-budget-cat-type').value;
     const limit = parseFloat(document.getElementById('input-budget-cat-limit').value) || 0;
@@ -1585,28 +1415,21 @@ const FinanceModule = {
 
     if (!name || limit <= 0) return;
 
-    if (!this.app.state.budgetCategories) this.app.state.budgetCategories = [];
-
-    const newCat = {
-      id: 'bcat_' + Date.now(),
+    await window.LifeOSFinanceService.createCategoryRecord({
       name,
       type,
       limit,
-      spent: 0,
       icon,
       color
-    };
+    });
 
-    this.app.state.budgetCategories.push(newCat);
-    this.app.saveState();
-    this.app.showToast(`Budget category "${name}" added successfully!`, 'success');
-
+    this.app.showToast(`Budget category "${name}" saved to database!`, 'success');
     this.toggleModal('budget-add-category-modal-overlay', false);
     document.getElementById('form-add-budget-category').reset();
-    this.render();
+    this.renderBudgetsList();
   },
 
-  handleSaveBudgetPlanSubmit() {
+  async handleSaveBudgetPlanSubmit() {
     const title = document.getElementById('input-budget-plan-title').value.trim();
     const period = document.getElementById('input-budget-plan-period').value;
     const target = parseFloat(document.getElementById('input-budget-plan-target').value) || 0;
@@ -1616,25 +1439,19 @@ const FinanceModule = {
 
     if (!title || target <= 0) return;
 
-    const newPlan = {
-      id: 'plan_' + Date.now(),
+    await window.LifeOSFinanceService.createBudgetPlanRecord({
       title,
       period,
       target,
       start,
       end,
-      carry,
-      status: 'Active'
-    };
+      carry
+    });
 
-    if (!this.app.state.budgetPlans) this.app.state.budgetPlans = [];
-    this.app.state.budgetPlans.push(newPlan);
-    this.app.saveState();
-    this.app.showToast(`Budget plan "${title}" activated!`, 'success');
-
+    this.app.showToast(`Budget plan "${title}" activated in database!`, 'success');
     this.toggleModal('budget-plan-modal-overlay', false);
     document.getElementById('form-plan-budget').reset();
-    this.render();
+    this.renderBudgetsList();
   },
 
   exportBudgetCSV() {

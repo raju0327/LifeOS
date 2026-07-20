@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lifeos-cache-v14';
+const CACHE_NAME = 'lifeos-cache-v15';
 const ASSETS = [
   './index.html',
   './style.css',
@@ -10,6 +10,9 @@ const ASSETS = [
   './services/syncService.js',
   './services/notificationService.js',
   './services/validationService.js',
+  './services/budgetService.js',
+  './services/financeService.js',
+  './services/chartService.js',
   './js/app.js',
   './js/user.js',
   './js/productivity.js',
