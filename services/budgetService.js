@@ -20,10 +20,13 @@ window.LifeOSBudgetService = {
     return (this.app && this.app.userUuidMap) ? (this.app.userUuidMap[username.toLowerCase()] || defaultAdminUuid) : defaultAdminUuid;
   },
 
-  // Fetch active budget categories & allocations from Supabase
+  // Fetch active budget categories & allocations from Supabase (merged with local state)
   async fetchBudgetCategories() {
+    const app = this.app || window.LifeOS;
+    const localCategories = (app && app.state && app.state.budgetCategories) ? app.state.budgetCategories : [];
+
     const settings = this.getSettings();
-    if (!settings || !settings.url || !settings.anonKey) return [];
+    if (!settings || !settings.url || !settings.anonKey) return localCategories;
 
     const userId = this.getResolvedUserId();
     const url = `${settings.url}/rest/v1/budget_categories?user_id=eq.${userId}&select=*`;
@@ -35,18 +38,52 @@ window.LifeOSBudgetService = {
           'Authorization': `Bearer ${settings.anonKey}`
         }
       });
-      if (!res.ok) return [];
-      return await res.json();
+      let remoteData = [];
+      if (res.ok) {
+        remoteData = await res.json();
+      }
+
+      const combinedMap = {};
+      localCategories.forEach(c => {
+        if (c.name) {
+          combinedMap[c.name.toLowerCase()] = {
+            id: c.id || 'cat_' + Date.now(),
+            name: c.name,
+            type: c.type || 'expense',
+            monthly_limit: Number(c.limit || c.monthly_limit || 0),
+            icon: c.icon || 'fa-tag',
+            color: c.color || '#a370f7'
+          };
+        }
+      });
+
+      remoteData.forEach(c => {
+        if (c.name) {
+          combinedMap[c.name.toLowerCase()] = {
+            id: c.id,
+            name: c.name,
+            type: c.type || 'expense',
+            monthly_limit: Number(c.monthly_limit || c.limit || 0),
+            icon: c.icon || 'fa-tag',
+            color: c.color || '#a370f7'
+          };
+        }
+      });
+
+      return Object.values(combinedMap);
     } catch (e) {
       console.warn('Failed fetching budget categories from Supabase:', e);
-      return [];
+      return localCategories;
     }
   },
 
-  // Fetch active budget plan from Supabase
+  // Fetch active budget plan from Supabase (merged with local state)
   async fetchActiveBudgetPlan() {
+    const app = this.app || window.LifeOS;
+    const localPlan = (app && app.state && app.state.activeBudgetPlan) ? app.state.activeBudgetPlan : null;
+
     const settings = this.getSettings();
-    if (!settings || !settings.url || !settings.anonKey) return null;
+    if (!settings || !settings.url || !settings.anonKey) return localPlan;
 
     const userId = this.getResolvedUserId();
     const url = `${settings.url}/rest/v1/budgets?user_id=eq.${userId}&status=eq.Active&select=*&limit=1`;
@@ -58,12 +95,12 @@ window.LifeOSBudgetService = {
           'Authorization': `Bearer ${settings.anonKey}`
         }
       });
-      if (!res.ok) return null;
+      if (!res.ok) return localPlan;
       const data = await res.json();
-      return data && data.length > 0 ? data[0] : null;
+      return data && data.length > 0 ? data[0] : localPlan;
     } catch (e) {
       console.warn('Failed fetching active budget plan from Supabase:', e);
-      return null;
+      return localPlan;
     }
   },
 

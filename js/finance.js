@@ -1406,52 +1406,144 @@ const FinanceModule = {
     container.innerHTML = txRowsHtml;
   },
 
-  async handleSaveBudgetCategorySubmit() {
-    const name = document.getElementById('input-budget-cat-name').value.trim();
-    const type = document.getElementById('input-budget-cat-type').value;
-    const limit = parseFloat(document.getElementById('input-budget-cat-limit').value) || 0;
-    const icon = document.getElementById('input-budget-cat-icon').value;
-    const color = document.getElementById('input-budget-cat-color').value;
+  openPlanBudgetModal() {
+    this.toggleModal('budget-plan-modal-overlay', true);
+  },
+
+  closePlanBudgetModal() {
+    this.toggleModal('budget-plan-modal-overlay', false);
+  },
+
+  openAddCategoryModal() {
+    this.toggleModal('budget-add-category-modal-overlay', true);
+  },
+
+  closeAddCategoryModal() {
+    this.toggleModal('budget-add-category-modal-overlay', false);
+  },
+
+  openReportsModal() {
+    this.toggleModal('budget-reports-modal-overlay', true);
+  },
+
+  closeReportsModal() {
+    this.toggleModal('budget-reports-modal-overlay', false);
+  },
+
+  async handleSaveBudgetCategorySubmit(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const nameEl = document.getElementById('input-budget-cat-name');
+    const typeEl = document.getElementById('input-budget-cat-type');
+    const limitEl = document.getElementById('input-budget-cat-limit');
+    const iconEl = document.getElementById('input-budget-cat-icon');
+    const colorEl = document.getElementById('input-budget-cat-color');
+
+    if (!nameEl || !limitEl) return;
+    const name = nameEl.value.trim();
+    const type = typeEl ? typeEl.value : 'expense';
+    const limit = parseFloat(limitEl.value) || 0;
+    const icon = iconEl ? iconEl.value : 'fa-tag';
+    const color = colorEl ? colorEl.value : '#a370f7';
 
     if (!name || limit <= 0) return;
 
-    await window.LifeOSFinanceService.createCategoryRecord({
+    const newCat = {
+      id: 'bcat_' + Date.now(),
       name,
       type,
       limit,
+      monthly_limit: limit,
+      spent: 0,
       icon,
       color
-    });
+    };
 
-    this.app.showToast(`Budget category "${name}" saved to database!`, 'success');
+    const app = this.app || window.LifeOS;
+    if (app && app.state) {
+      if (!app.state.budgetCategories) app.state.budgetCategories = [];
+      app.state.budgetCategories.push(newCat);
+      if (typeof app.saveState === 'function') app.saveState();
+    }
+
+    try {
+      await window.LifeOSFinanceService.createCategoryRecord({
+        name,
+        type,
+        limit,
+        icon,
+        color
+      });
+    } catch (err) {
+      console.warn('DB category insert notice:', err);
+    }
+
+    if (app && typeof app.showToast === 'function') {
+      app.showToast(`Budget category "${name}" saved!`, 'success');
+    }
+
     this.toggleModal('budget-add-category-modal-overlay', false);
-    document.getElementById('form-add-budget-category').reset();
-    this.renderBudgetsList();
+    const form = document.getElementById('form-add-budget-category');
+    if (form) form.reset();
+    await this.renderBudgetsList();
   },
 
-  async handleSaveBudgetPlanSubmit() {
-    const title = document.getElementById('input-budget-plan-title').value.trim();
-    const period = document.getElementById('input-budget-plan-period').value;
-    const target = parseFloat(document.getElementById('input-budget-plan-target').value) || 0;
-    const start = document.getElementById('input-budget-plan-start').value;
-    const end = document.getElementById('input-budget-plan-end').value;
-    const carry = document.getElementById('input-budget-plan-carry').checked;
+  async handleSaveBudgetPlanSubmit(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const titleEl = document.getElementById('input-budget-plan-title');
+    const periodEl = document.getElementById('input-budget-plan-period');
+    const targetEl = document.getElementById('input-budget-plan-target');
+    const startEl = document.getElementById('input-budget-plan-start');
+    const endEl = document.getElementById('input-budget-plan-end');
+    const carryEl = document.getElementById('input-budget-plan-carry');
+
+    if (!titleEl || !targetEl) return;
+    const title = titleEl.value.trim();
+    const period = periodEl ? periodEl.value : 'Monthly';
+    const target = parseFloat(targetEl.value) || 0;
+    const start = startEl ? startEl.value : new Date().toISOString().split('T')[0];
+    const end = endEl ? endEl.value : new Date().toISOString().split('T')[0];
+    const carry = carryEl ? carryEl.checked : false;
 
     if (!title || target <= 0) return;
 
-    await window.LifeOSFinanceService.createBudgetPlanRecord({
+    const newPlan = {
+      id: 'plan_' + Date.now(),
       title,
-      period,
-      target,
-      start,
-      end,
-      carry
-    });
+      period_type: period,
+      total_budget: target,
+      start_date: start,
+      end_date: end,
+      carry_forward: carry,
+      status: 'Active'
+    };
 
-    this.app.showToast(`Budget plan "${title}" activated in database!`, 'success');
+    const app = this.app || window.LifeOS;
+    if (app && app.state) {
+      app.state.activeBudgetPlan = newPlan;
+      if (typeof app.saveState === 'function') app.saveState();
+    }
+
+    try {
+      await window.LifeOSFinanceService.createBudgetPlanRecord({
+        title,
+        period,
+        target,
+        start,
+        end,
+        carry
+      });
+    } catch (err) {
+      console.warn('DB budget plan insert notice:', err);
+    }
+
+    if (app && typeof app.showToast === 'function') {
+      app.showToast(`Budget plan "${title}" activated!`, 'success');
+    }
+
     this.toggleModal('budget-plan-modal-overlay', false);
-    document.getElementById('form-plan-budget').reset();
-    this.renderBudgetsList();
+    const form = document.getElementById('form-plan-budget');
+    if (form) form.reset();
+    await this.renderBudgetsList();
   },
 
   exportBudgetCSV() {
