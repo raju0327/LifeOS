@@ -758,6 +758,7 @@ const FinanceModule = {
     if (!el) return;
     
     if (isVisible) {
+      el.style.zIndex = '999999';
       el.style.display = 'flex';
       
       // Auto configure specific forms inside modals on load
