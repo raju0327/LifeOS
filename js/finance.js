@@ -730,6 +730,9 @@ const FinanceModule = {
   },
 
   switchSubview(subviewName) {
+    if (subviewName === 'transactions') subviewName = 'ledger';
+    if (subviewName === 'budget') subviewName = 'budgets';
+    if (subviewName === 'tools') subviewName = 'hub';
     this.activeSubview = subviewName;
     
     // Reset Navigation Classes

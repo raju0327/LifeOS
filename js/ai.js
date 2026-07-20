@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const sendBtn = document.getElementById('ai-send-btn');
       const queryInput = document.getElementById('ai-user-query');
 
-      sendBtn.addEventListener('click', () => this.handleUserQuery());
-      queryInput.addEventListener('keyup', (e) => {
+      sendBtn?.addEventListener('click', () => this.handleUserQuery());
+      queryInput?.addEventListener('keyup', (e) => {
         if (e.key === 'Enter') {
           this.handleUserQuery();
         }

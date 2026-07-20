@@ -130,8 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const excelBtn = document.getElementById('export-excel-btn');
       const pdfBtn = document.getElementById('print-pdf-btn');
 
-      // Excel mock download (CSV format)
-      excelBtn.addEventListener('click', () => {
+      // Excel download (CSV format)
+      excelBtn?.addEventListener('click', () => {
         const txs = this.app.state.transactions;
         if (txs.length === 0) {
           this.app.showToast('No transaction data to export!', 'error');
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       // PDF print
-      pdfBtn.addEventListener('click', () => {
+      pdfBtn?.addEventListener('click', () => {
         this.app.showToast('Generating overall system report...', 'info');
         this.generateOverallReport();
         setTimeout(() => {
@@ -613,7 +613,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const clearDbBtn = document.getElementById('clear-local-db-btn');
 
       // Export
-      exportDbBtn.addEventListener('click', () => {
+      exportDbBtn?.addEventListener('click', () => {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.app.state, null, 2));
         const link = document.createElement('a');
         link.setAttribute("href", dataStr);
@@ -623,7 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       // Import / Restore
-      uploaderInput.addEventListener('change', (e) => {
+      uploaderInput?.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
@@ -652,7 +652,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       // Clear / Reset
-      clearDbBtn.addEventListener('click', () => {
+      clearDbBtn?.addEventListener('click', () => {
         const confirmClear = confirm("Are you absolutely sure you want to wipe the Life OS database? All local progress, tasks, files metadata, and transactions will be lost.");
         if (confirmClear) {
           localStorage.removeItem(this.app.STORAGE_KEY);
