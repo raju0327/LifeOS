@@ -144,14 +144,10 @@
         <!-- GROUP 5: CAREER & AI -->
         <div class="nav-group">
           <div class="nav-group-header">
-            <span>LEARNING & Career</span>
+            <span>AI & ANALYTICS</span>
             <i data-lucide="chevron-down"></i>
           </div>
           <div class="nav-group-items">
-            <a href="#career" class="nav-item" data-view="career">
-              <i data-lucide="graduation-cap"></i>
-              <span>Career Portfolio</span>
-            </a>
             <a href="#ai" class="nav-item" data-view="ai">
               <i data-lucide="sparkles"></i>
               <span>AI Chat Assistant</span>
@@ -3417,68 +3413,6 @@
 
         </section>
 
-        <!-- 13. CAREER PORTFOLIO VIEW -->
-        <section id="career-view" class="view-panel">
-          <div class="view-header">
-            <h2>Career & Skills Portfolio</h2>
-            <p class="subtitle">Track skill development progress, resume submissions, and job application logs</p>
-          </div>
-
-          <div class="career-layout">
-            <div class="career-col">
-              <!-- Skill matrix -->
-              <div class="glass-card skill-matrix-card">
-                <h3>Skills Competency Index</h3>
-                <form id="skill-form" class="form-row" style="margin-bottom: 16px;">
-                  <input type="text" id="skill-name" placeholder="JavaScript, Python, Figma" required style="flex: 2;">
-                  <select id="skill-level" style="flex: 1;">
-                    <option value="1">⭐ Novice</option>
-                    <option value="3" selected>⭐⭐⭐ Mid-Level</option>
-                    <option value="5">⭐⭐⭐⭐⭐ Master</option>
-                  </select>
-                  <button type="submit" class="btn-primary-glow">Save Skill</button>
-                </form>
-                <div class="skills-grid" id="skills-list-container">
-                  <!-- Dynamic skills cards -->
-                </div>
-              </div>
-            </div>
-
-            <div class="career-col">
-              <!-- Job applications tracker -->
-              <div class="glass-card jobs-card">
-                <h3>Job Submissions Tracker</h3>
-                <form id="job-form">
-                  <div class="input-group">
-                    <label for="job-title-input">Job Title & Company</label>
-                    <input type="text" id="job-title-input" placeholder="Software Engineer @ Google" required>
-                  </div>
-                  <div class="form-row">
-                    <div class="input-group">
-                      <label for="job-status">Application Status</label>
-                      <select id="job-status">
-                        <option value="Applied">Applied</option>
-                        <option value="Interviewing">Interviewing</option>
-                        <option value="Offered">Offer Received</option>
-                        <option value="Rejected">Archived / Rejected</option>
-                      </select>
-                    </div>
-                    <div class="input-group">
-                      <label for="job-notes">Follow-up Notes</label>
-                      <input type="text" id="job-notes" placeholder="Interview on Tuesday">
-                    </div>
-                  </div>
-                  <button type="submit" class="btn-primary-glow btn-full">Log Application</button>
-                </form>
-
-                <div class="jobs-list" id="jobs-list-container" style="margin-top: 16px;">
-                  <!-- Dynamic applications list -->
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <!-- 14. AI ASSISTANT VIEW -->
         <section id="ai-view" class="view-panel">
           <div class="view-header">
@@ -4840,10 +4774,9 @@
   <script src="js/medicine.js?v=23"></script>
   <script src="js/habits.js?v=23"></script>
   <script src="js/personal.js?v=23"></script>
-  <script src="js/lifestyle.js?v=23"></script>
-  <script src="js/career.js?v=23"></script>
-  <script src="js/ai.js?v=23"></script>
-  <script src="js/analytics.js?v=23"></script>
+  <script src="js/lifestyle.js?v=24"></script>
+  <script src="js/ai.js?v=24"></script>
+  <script src="js/analytics.js?v=24"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lifeos-cache-v23';
+const CACHE_NAME = 'lifeos-cache-v24';
 const ASSETS = [
   './index.html',
   './style.css',
@@ -23,7 +23,6 @@ const ASSETS = [
   './js/habits.js',
   './js/personal.js',
   './js/lifestyle.js',
-  './js/career.js',
   './js/ai.js',
   './js/analytics.js',
   './icons/icon-192.png',
