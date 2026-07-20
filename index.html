@@ -1526,7 +1526,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
               <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin: 0;">Budget Limit Overview</h3>
               <div style="display: flex; gap: 8px; align-items: center;">
-                <button id="btn-export-budget-reports" onclick="if(window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) window.LifeOS.modules.finance.openReportsModal()" class="btn-glass-subtle" style="font-size: 0.75rem; padding: 6px 12px; cursor: pointer;">
+                <button id="btn-export-budget-reports" onclick="window.openReportsModal()" class="btn-glass-subtle" style="font-size: 0.75rem; padding: 6px 12px; cursor: pointer;">
                   <i class="fas fa-file-export"></i> Reports & Export
                 </button>
                 <select id="budget-period-filter" class="glass-widget" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 600; background: var(--bg-sidebar); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main); cursor: pointer;">
@@ -1608,7 +1608,7 @@
               <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); display: flex; flex-direction: column;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
                   <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin: 0;">Category Limit Progress</h4>
-                  <button id="btn-open-plan-budget" onclick="if(window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) window.LifeOS.modules.finance.openPlanBudgetModal()" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 4px 10px; cursor: pointer;">
+                  <button id="btn-open-plan-budget" onclick="window.openPlanBudgetModal()" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 4px 10px; cursor: pointer;">
                     <i class="fas fa-plus"></i> Plan Budget
                   </button>
                 </div>
@@ -1631,7 +1631,7 @@
                 </div>
 
                 <!-- Add Category Button -->
-                <button id="btn-add-budget-category" onclick="if(window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) window.LifeOS.modules.finance.openAddCategoryModal()" style="width: 100%; margin-top: 14px; padding: 10px; background: rgba(163, 112, 247, 0.08); border: 1px dashed rgba(163, 112, 247, 0.4); color: #a370f7; font-size: 0.8rem; font-weight: 700; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+                <button id="btn-add-budget-category" onclick="window.openAddCategoryModal()" style="width: 100%; margin-top: 14px; padding: 10px; background: rgba(163, 112, 247, 0.08); border: 1px dashed rgba(163, 112, 247, 0.4); color: #a370f7; font-size: 0.8rem; font-weight: 700; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
                   <i class="fas fa-plus"></i> Add Budget Category
                 </button>
               </div>
@@ -4651,9 +4651,9 @@
     <div class="glass-card" style="width: 90%; max-width: 420px; padding: 22px; border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 14px; background: var(--bg-sidebar); border: 1px solid var(--glass-border);">
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">
         <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-main); margin: 0;">🏷️ Add Budget Category</h3>
-        <button id="btn-close-add-budget-category" onclick="if(window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) window.LifeOS.modules.finance.closeAddCategoryModal()" style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--text-muted);"><i class="fas fa-times"></i></button>
+        <button id="btn-close-add-budget-category" onclick="window.closeAddCategoryModal()" style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--text-muted);"><i class="fas fa-times"></i></button>
       </div>
-      <form id="form-add-budget-category" onsubmit="if(window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) window.LifeOS.modules.finance.handleSaveBudgetCategorySubmit(event)" style="display: flex; flex-direction: column; gap: 12px;">
+      <form id="form-add-budget-category" onsubmit="window.handleSaveBudgetCategorySubmit(event)" style="display: flex; flex-direction: column; gap: 12px;">
         <div class="input-group">
           <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Category Name</label>
           <input type="text" id="input-budget-cat-name" required placeholder="e.g. Grocery, Rent, Fuel" style="width: 100%; box-sizing: border-box; padding: 8px 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main);">
@@ -4703,9 +4703,9 @@
     <div class="glass-card" style="width: 90%; max-width: 450px; padding: 22px; border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 14px; background: var(--bg-sidebar); border: 1px solid var(--glass-border);">
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">
         <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-main); margin: 0;">📊 Plan New Budget Period</h3>
-        <button id="btn-close-plan-budget" onclick="if(window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) window.LifeOS.modules.finance.closePlanBudgetModal()" style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--text-muted);"><i class="fas fa-times"></i></button>
+        <button id="btn-close-plan-budget" onclick="window.closePlanBudgetModal()" style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--text-muted);"><i class="fas fa-times"></i></button>
       </div>
-      <form id="form-plan-budget" onsubmit="if(window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) window.LifeOS.modules.finance.handleSaveBudgetPlanSubmit(event)" style="display: flex; flex-direction: column; gap: 12px;">
+      <form id="form-plan-budget" onsubmit="window.handleSaveBudgetPlanSubmit(event)" style="display: flex; flex-direction: column; gap: 12px;">
         <div class="input-group">
           <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Budget Title</label>
           <input type="text" id="input-budget-plan-title" required placeholder="e.g. May 2025 Budget Plan" style="width: 100%; box-sizing: border-box; padding: 8px 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main);">
@@ -4748,7 +4748,7 @@
     <div class="glass-card" style="width: 90%; max-width: 420px; padding: 22px; border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 14px; background: var(--bg-sidebar); border: 1px solid var(--glass-border);">
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">
         <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-main); margin: 0;">📑 Budget Reports & Export</h3>
-        <button id="btn-close-budget-reports" onclick="if(window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) window.LifeOS.modules.finance.closeReportsModal()" style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--text-muted);"><i class="fas fa-times"></i></button>
+        <button id="btn-close-budget-reports" onclick="window.closeReportsModal()" style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--text-muted);"><i class="fas fa-times"></i></button>
       </div>
       <div style="display: flex; flex-direction: column; gap: 12px;">
         <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">Generate reports and export your budget utilization, allocations, and transaction impacts.</p>
@@ -4773,32 +4773,32 @@
   </div>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=17"></script>
-  <script src="core/router.js?v=17"></script>
-  <script src="services/authService.js?v=17"></script>
-  <script src="services/supabaseService.js?v=17"></script>
-  <script src="services/storageService.js?v=17"></script>
-  <script src="services/syncService.js?v=17"></script>
-  <script src="services/notificationService.js?v=17"></script>
-  <script src="services/validationService.js?v=17"></script>
-  <script src="services/budgetService.js?v=17"></script>
-  <script src="services/financeService.js?v=17"></script>
-  <script src="services/chartService.js?v=17"></script>
+  <script src="core/config.js?v=18"></script>
+  <script src="core/router.js?v=18"></script>
+  <script src="services/authService.js?v=18"></script>
+  <script src="services/supabaseService.js?v=18"></script>
+  <script src="services/storageService.js?v=18"></script>
+  <script src="services/syncService.js?v=18"></script>
+  <script src="services/notificationService.js?v=18"></script>
+  <script src="services/validationService.js?v=18"></script>
+  <script src="services/budgetService.js?v=18"></script>
+  <script src="services/financeService.js?v=18"></script>
+  <script src="services/chartService.js?v=18"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=17"></script>
-  <script src="js/user.js?v=17"></script>
-  <script src="js/productivity.js?v=17"></script>
-  <script src="js/notes.js?v=17"></script>
-  <script src="js/finance.js?v=17"></script>
-  <script src="js/health.js?v=17"></script>
-  <script src="js/medicine.js?v=17"></script>
-  <script src="js/habits.js?v=17"></script>
-  <script src="js/personal.js?v=17"></script>
-  <script src="js/lifestyle.js?v=17"></script>
-  <script src="js/career.js?v=17"></script>
-  <script src="js/ai.js?v=17"></script>
-  <script src="js/analytics.js?v=17"></script>
+  <script src="js/app.js?v=18"></script>
+  <script src="js/user.js?v=18"></script>
+  <script src="js/productivity.js?v=18"></script>
+  <script src="js/notes.js?v=18"></script>
+  <script src="js/finance.js?v=18"></script>
+  <script src="js/health.js?v=18"></script>
+  <script src="js/medicine.js?v=18"></script>
+  <script src="js/habits.js?v=18"></script>
+  <script src="js/personal.js?v=18"></script>
+  <script src="js/lifestyle.js?v=18"></script>
+  <script src="js/career.js?v=18"></script>
+  <script src="js/ai.js?v=18"></script>
+  <script src="js/analytics.js?v=18"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator) {

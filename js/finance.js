@@ -1432,6 +1432,8 @@ const FinanceModule = {
 
   async handleSaveBudgetCategorySubmit(e) {
     if (e && e.preventDefault) e.preventDefault();
+    const self = (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) ? window.LifeOS.modules.finance : this;
+
     const nameEl = document.getElementById('input-budget-cat-name');
     const typeEl = document.getElementById('input-budget-cat-type');
     const limitEl = document.getElementById('input-budget-cat-limit');
@@ -1458,7 +1460,7 @@ const FinanceModule = {
       color
     };
 
-    const app = this.app || window.LifeOS;
+    const app = window.LifeOS;
     if (app && app.state) {
       if (!app.state.budgetCategories) app.state.budgetCategories = [];
       app.state.budgetCategories.push(newCat);
@@ -1466,13 +1468,15 @@ const FinanceModule = {
     }
 
     try {
-      await window.LifeOSFinanceService.createCategoryRecord({
-        name,
-        type,
-        limit,
-        icon,
-        color
-      });
+      if (window.LifeOSFinanceService) {
+        await window.LifeOSFinanceService.createCategoryRecord({
+          name,
+          type,
+          limit,
+          icon,
+          color
+        });
+      }
     } catch (err) {
       console.warn('DB category insert notice:', err);
     }
@@ -1481,14 +1485,16 @@ const FinanceModule = {
       app.showToast(`Budget category "${name}" saved!`, 'success');
     }
 
-    this.toggleModal('budget-add-category-modal-overlay', false);
+    self.toggleModal('budget-add-category-modal-overlay', false);
     const form = document.getElementById('form-add-budget-category');
     if (form) form.reset();
-    await this.renderBudgetsList();
+    await self.renderBudgetsList();
   },
 
   async handleSaveBudgetPlanSubmit(e) {
     if (e && e.preventDefault) e.preventDefault();
+    const self = (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) ? window.LifeOS.modules.finance : this;
+
     const titleEl = document.getElementById('input-budget-plan-title');
     const periodEl = document.getElementById('input-budget-plan-period');
     const targetEl = document.getElementById('input-budget-plan-target');
@@ -1517,21 +1523,23 @@ const FinanceModule = {
       status: 'Active'
     };
 
-    const app = this.app || window.LifeOS;
+    const app = window.LifeOS;
     if (app && app.state) {
       app.state.activeBudgetPlan = newPlan;
       if (typeof app.saveState === 'function') app.saveState();
     }
 
     try {
-      await window.LifeOSFinanceService.createBudgetPlanRecord({
-        title,
-        period,
-        target,
-        start,
-        end,
-        carry
-      });
+      if (window.LifeOSFinanceService) {
+        await window.LifeOSFinanceService.createBudgetPlanRecord({
+          title,
+          period,
+          target,
+          start,
+          end,
+          carry
+        });
+      }
     } catch (err) {
       console.warn('DB budget plan insert notice:', err);
     }
@@ -1540,10 +1548,10 @@ const FinanceModule = {
       app.showToast(`Budget plan "${title}" activated!`, 'success');
     }
 
-    this.toggleModal('budget-plan-modal-overlay', false);
+    self.toggleModal('budget-plan-modal-overlay', false);
     const form = document.getElementById('form-plan-budget');
     if (form) form.reset();
-    await this.renderBudgetsList();
+    await self.renderBudgetsList();
   },
 
   exportBudgetCSV() {
@@ -3207,3 +3215,61 @@ document.addEventListener('DOMContentLoaded', () => {
     window.LifeOS.registerModule('finance', FinanceModule);
   }
 });
+
+// Global fail-safe window helpers for Budget Modals
+window.openPlanBudgetModal = () => {
+  if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
+    window.LifeOS.modules.finance.openPlanBudgetModal();
+  } else if (typeof FinanceModule !== 'undefined') {
+    FinanceModule.openPlanBudgetModal();
+  }
+};
+window.closePlanBudgetModal = () => {
+  if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
+    window.LifeOS.modules.finance.closePlanBudgetModal();
+  } else if (typeof FinanceModule !== 'undefined') {
+    FinanceModule.closePlanBudgetModal();
+  }
+};
+window.openAddCategoryModal = () => {
+  if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
+    window.LifeOS.modules.finance.openAddCategoryModal();
+  } else if (typeof FinanceModule !== 'undefined') {
+    FinanceModule.openAddCategoryModal();
+  }
+};
+window.closeAddCategoryModal = () => {
+  if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
+    window.LifeOS.modules.finance.closeAddCategoryModal();
+  } else if (typeof FinanceModule !== 'undefined') {
+    FinanceModule.closeAddCategoryModal();
+  }
+};
+window.openReportsModal = () => {
+  if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
+    window.LifeOS.modules.finance.openReportsModal();
+  } else if (typeof FinanceModule !== 'undefined') {
+    FinanceModule.openReportsModal();
+  }
+};
+window.closeReportsModal = () => {
+  if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
+    window.LifeOS.modules.finance.closeReportsModal();
+  } else if (typeof FinanceModule !== 'undefined') {
+    FinanceModule.closeReportsModal();
+  }
+};
+window.handleSaveBudgetCategorySubmit = (e) => {
+  if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
+    window.LifeOS.modules.finance.handleSaveBudgetCategorySubmit(e);
+  } else if (typeof FinanceModule !== 'undefined') {
+    FinanceModule.handleSaveBudgetCategorySubmit(e);
+  }
+};
+window.handleSaveBudgetPlanSubmit = (e) => {
+  if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
+    window.LifeOS.modules.finance.handleSaveBudgetPlanSubmit(e);
+  } else if (typeof FinanceModule !== 'undefined') {
+    FinanceModule.handleSaveBudgetPlanSubmit(e);
+  }
+};
