@@ -108,33 +108,72 @@ window.LifeOSChartService = {
   },
 
   // Render Budget Utilization Trend Area Chart (SVG)
-  renderUtilizationTrendChart(containerId, currentUtilization = 60.31) {
+  renderUtilizationTrendChart(containerId, currentUtilization = 0) {
     const container = document.getElementById(containerId);
     if (!container) return;
+
+    const util = Number(currentUtilization) || 0;
+    const formattedUtil = util.toFixed(1);
+
+    // Dynamic month names for last 6 months
+    const months = [];
+    const now = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      months.push(d.toLocaleString('default', { month: 'short' }));
+    }
+
+    const xCoords = [10, 45, 80, 115, 150, 185];
+
+    // Clean baseline at Y=62 when utilization is 0%
+    let yCoords = [62, 62, 62, 62, 62, 62];
+    let strokeColor = '#94a3b8';
+    let badgeColor = '#94a3b8';
+
+    if (util > 0) {
+      const targetY = Math.max(18, 62 - Math.min((util / 100) * 44, 44));
+      yCoords = [
+        62,
+        62 - (62 - targetY) * 0.2,
+        62 - (62 - targetY) * 0.4,
+        62 - (62 - targetY) * 0.6,
+        62 - (62 - targetY) * 0.8,
+        targetY
+      ];
+      strokeColor = util >= 100 ? '#ef4444' : (util >= 80 ? '#f97316' : '#a370f7');
+      badgeColor = util >= 100 ? '#ef4444' : (util >= 80 ? '#f97316' : '#10b981');
+    }
+
+    const pathD = `M ${xCoords[0]},${yCoords[0].toFixed(1)} ` +
+      xCoords.slice(1).map((x, idx) => `L ${x},${yCoords[idx + 1].toFixed(1)}`).join(' ');
+
+    const areaD = `${pathD} L ${xCoords[5]},65 L ${xCoords[0]},65 Z`;
+
+    let dotsHtml = '';
+    xCoords.forEach((x, idx) => {
+      const y = yCoords[idx];
+      const isLast = idx === 5;
+      dotsHtml += `<circle cx="${x}" cy="${y.toFixed(1)}" r="${isLast ? 4 : 3}" fill="${isLast ? badgeColor : strokeColor}" />`;
+    });
+
+    let monthLabelsHtml = '';
+    xCoords.forEach((x, idx) => {
+      monthLabelsHtml += `<text x="${x}" y="76" font-size="7" fill="#94a3b8" text-anchor="middle">${months[idx]}</text>`;
+    });
 
     container.innerHTML = `
       <svg width="100%" height="100%" viewBox="0 0 200 80" preserveAspectRatio="none">
         <defs>
           <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#a370f7" stop-opacity="0.4"/>
-            <stop offset="100%" stop-color="#a370f7" stop-opacity="0"/>
+            <stop offset="0%" stop-color="${strokeColor}" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="${strokeColor}" stop-opacity="0"/>
           </linearGradient>
         </defs>
-        <path d="M 10,50 L 45,45 L 80,40 L 115,32 L 150,28 L 185,22 L 185,75 L 10,75 Z" fill="url(#trendGrad)" />
-        <path d="M 10,50 L 45,45 L 80,40 L 115,32 L 150,28 L 185,22" fill="none" stroke="#a370f7" stroke-width="2.5" />
-        <circle cx="10" cy="50" r="3" fill="#a370f7" />
-        <circle cx="45" cy="45" r="3" fill="#a370f7" />
-        <circle cx="80" cy="40" r="3" fill="#a370f7" />
-        <circle cx="115" cy="32" r="3" fill="#a370f7" />
-        <circle cx="150" cy="28" r="3" fill="#a370f7" />
-        <circle cx="185" cy="22" r="4" fill="#10b981" />
-        <text x="185" y="14" font-size="7" font-weight="700" fill="#10b981" text-anchor="middle">${Number(currentUtilization).toFixed(1)}%</text>
-        <text x="10" y="76" font-size="7" fill="#94a3b8" text-anchor="middle">Dec</text>
-        <text x="45" y="76" font-size="7" fill="#94a3b8" text-anchor="middle">Jan</text>
-        <text x="80" y="76" font-size="7" fill="#94a3b8" text-anchor="middle">Feb</text>
-        <text x="115" y="76" font-size="7" fill="#94a3b8" text-anchor="middle">Mar</text>
-        <text x="150" y="76" font-size="7" fill="#94a3b8" text-anchor="middle">Apr</text>
-        <text x="185" y="76" font-size="7" fill="#94a3b8" text-anchor="middle">May</text>
+        <path d="${areaD}" fill="url(#trendGrad)" />
+        <path d="${pathD}" fill="none" stroke="${strokeColor}" stroke-width="2.5" />
+        ${dotsHtml}
+        <text x="${xCoords[5]}" y="${Math.max(12, yCoords[5] - 8).toFixed(1)}" font-size="7" font-weight="700" fill="${badgeColor}" text-anchor="middle">${formattedUtil}%</text>
+        ${monthLabelsHtml}
       </svg>
     `;
   }
