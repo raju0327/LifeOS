@@ -1377,20 +1377,27 @@ const FinanceModule = {
     if (!container) return;
 
     if (!txs || txs.length === 0) {
-      container.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px; color: var(--text-muted);">No financial transactions recorded in database.</td></tr>`;
+      container.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 20px; color: var(--text-muted);">No financial transactions recorded in database.</td></tr>`;
       return;
     }
 
     let txRowsHtml = '';
-    txs.forEach(t => {
+    txs.forEach((t, idx) => {
       const amt = parseFloat(t.amount) || 0;
       const isExpense = t.type === 'expense';
       const impact = isExpense && totalBudget > 0 ? `-${((amt / totalBudget) * 100).toFixed(1)}%` : '--';
       const amtColor = isExpense ? '#ef4444' : '#10b981';
+      const rawId = t.id || `tx_${t.date || 'now'}_${idx}`;
+      const shortId = rawId.length > 12 ? rawId.substring(0, 10) + '...' : rawId;
 
       txRowsHtml += `
         <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
-          <td style="padding: 10px 10px; color: var(--text-muted);">${t.date || new Date().toLocaleDateString()}</td>
+          <td style="padding: 10px 10px; color: var(--text-muted);">${t.date || new Date().toISOString().split('T')[0]}</td>
+          <td style="padding: 10px 10px;">
+            <button onclick="window.viewLedgerTransaction('${rawId}')" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); color: #3b82f6; font-family: monospace; font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" title="View Ledger Record">
+              <i class="fas fa-link" style="font-size: 0.6rem;"></i> #${shortId}
+            </button>
+          </td>
           <td style="padding: 10px 10px; font-weight: 600; color: var(--text-main);">${t.description || 'Transaction'}</td>
           <td style="padding: 10px 10px;">
             <span style="display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.68rem; font-weight: 700; background: rgba(163, 112, 247, 0.15); color: #a370f7;">
@@ -3410,5 +3417,18 @@ window.deleteBudgetCategory = async (id) => {
   if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
     await window.LifeOS.modules.finance.renderManageCategoriesList();
     await window.LifeOS.modules.finance.renderBudgetsList();
+  }
+window.viewLedgerTransaction = (id) => {
+  if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
+    window.LifeOS.modules.finance.switchSubview('transactions');
+    if (id) {
+      setTimeout(() => {
+        const searchInput = document.getElementById('finance-tx-search-input');
+        if (searchInput) {
+          searchInput.value = id;
+          window.LifeOS.modules.finance.renderTransactionsTable();
+        }
+      }, 150);
+    }
   }
 };

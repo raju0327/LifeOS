@@ -1692,7 +1692,7 @@
             <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
                 <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin: 0;">Recent Transactions Affecting Budget</h4>
-                <button id="btn-budget-view-all-txs" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 4px 10px;">
+                <button id="btn-budget-view-all-txs" onclick="window.viewLedgerTransaction()" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 4px 10px; cursor: pointer;">
                   View Ledger <i class="fas fa-arrow-right" style="margin-left: 4px;"></i>
                 </button>
               </div>
@@ -1703,6 +1703,7 @@
                   <thead>
                     <tr style="color: var(--text-muted); text-align: left; border-bottom: 1px solid var(--glass-border);">
                       <th style="padding: 8px 10px; font-weight: 600;">Date</th>
+                      <th style="padding: 8px 10px; font-weight: 600;">Tx ID / Ledger Link</th>
                       <th style="padding: 8px 10px; font-weight: 600;">Description</th>
                       <th style="padding: 8px 10px; font-weight: 600;">Category</th>
                       <th style="padding: 8px 10px; font-weight: 600;">Account</th>
@@ -4817,32 +4818,32 @@
   </div>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=21"></script>
-  <script src="core/router.js?v=21"></script>
-  <script src="services/authService.js?v=21"></script>
-  <script src="services/supabaseService.js?v=21"></script>
-  <script src="services/storageService.js?v=21"></script>
-  <script src="services/syncService.js?v=21"></script>
-  <script src="services/notificationService.js?v=21"></script>
-  <script src="services/validationService.js?v=21"></script>
-  <script src="services/budgetService.js?v=21"></script>
-  <script src="services/financeService.js?v=21"></script>
-  <script src="services/chartService.js?v=21"></script>
+  <script src="core/config.js?v=22"></script>
+  <script src="core/router.js?v=22"></script>
+  <script src="services/authService.js?v=22"></script>
+  <script src="services/supabaseService.js?v=22"></script>
+  <script src="services/storageService.js?v=22"></script>
+  <script src="services/syncService.js?v=22"></script>
+  <script src="services/notificationService.js?v=22"></script>
+  <script src="services/validationService.js?v=22"></script>
+  <script src="services/budgetService.js?v=22"></script>
+  <script src="services/financeService.js?v=22"></script>
+  <script src="services/chartService.js?v=22"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=21"></script>
-  <script src="js/user.js?v=21"></script>
-  <script src="js/productivity.js?v=21"></script>
-  <script src="js/notes.js?v=21"></script>
-  <script src="js/finance.js?v=21"></script>
-  <script src="js/health.js?v=21"></script>
-  <script src="js/medicine.js?v=21"></script>
-  <script src="js/habits.js?v=21"></script>
-  <script src="js/personal.js?v=21"></script>
-  <script src="js/lifestyle.js?v=21"></script>
-  <script src="js/career.js?v=21"></script>
-  <script src="js/ai.js?v=21"></script>
-  <script src="js/analytics.js?v=21"></script>
+  <script src="js/app.js?v=22"></script>
+  <script src="js/user.js?v=22"></script>
+  <script src="js/productivity.js?v=22"></script>
+  <script src="js/notes.js?v=22"></script>
+  <script src="js/finance.js?v=22"></script>
+  <script src="js/health.js?v=22"></script>
+  <script src="js/medicine.js?v=22"></script>
+  <script src="js/habits.js?v=22"></script>
+  <script src="js/personal.js?v=22"></script>
+  <script src="js/lifestyle.js?v=22"></script>
+  <script src="js/career.js?v=22"></script>
+  <script src="js/ai.js?v=22"></script>
+  <script src="js/analytics.js?v=22"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {

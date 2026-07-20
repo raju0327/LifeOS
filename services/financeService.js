@@ -18,10 +18,13 @@ window.LifeOSFinanceService = {
     return (this.app && this.app.userUuidMap) ? (this.app.userUuidMap[username.toLowerCase()] || defaultAdminUuid) : defaultAdminUuid;
   },
 
-  // Fetch live transactions from Supabase
+  // Fetch live transactions from Supabase (merged with local state fallback)
   async fetchLiveTransactions(limit = 10) {
+    const app = this.app || window.LifeOS;
+    const localTxs = (app && app.state && app.state.transactions) ? app.state.transactions : [];
+
     const settings = this.getSettings();
-    if (!settings || !settings.url || !settings.anonKey) return [];
+    if (!settings || !settings.url || !settings.anonKey) return localTxs.slice(0, limit);
 
     const userId = this.getResolvedUserId();
     const url = `${settings.url}/rest/v1/finance_transactions?user_id=eq.${userId}&order=date.desc&select=*&limit=${limit}`;
@@ -33,11 +36,22 @@ window.LifeOSFinanceService = {
           'Authorization': `Bearer ${settings.anonKey}`
         }
       });
-      if (!res.ok) return [];
-      return await res.json();
+      if (!res.ok) return localTxs.slice(0, limit);
+      const remoteData = await res.json();
+      
+      const combinedMap = {};
+      localTxs.forEach(t => {
+        if (t.id) combinedMap[t.id] = t;
+      });
+      remoteData.forEach(t => {
+        if (t.id) combinedMap[t.id] = t;
+      });
+
+      const list = Object.values(combinedMap).sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+      return list.length > 0 ? list.slice(0, limit) : localTxs.slice(0, limit);
     } catch (e) {
       console.warn('Failed fetching live transactions from Supabase:', e);
-      return [];
+      return localTxs.slice(0, limit);
     }
   },
 
