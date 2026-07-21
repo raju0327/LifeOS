@@ -44,7 +44,13 @@ window.LifeOSRouter = {
     const activeNav = document.querySelector(`.nav-item[data-view="${targetView}"]`);
     if (activeNav) activeNav.classList.add('active');
 
-    const targetPanel = document.getElementById(`${targetView}-view`);
+    // Map finance-* routes (finance-dashboard, finance-ledger, finance-budgets, finance-hub) to #finance-view
+    let panelId = `${targetView}-view`;
+    if (targetView.startsWith('finance-')) {
+      panelId = 'finance-view';
+    }
+
+    const targetPanel = document.getElementById(panelId);
     if (targetPanel) targetPanel.classList.add('active');
 
     this.currentView = targetView;
