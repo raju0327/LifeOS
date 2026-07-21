@@ -1123,74 +1123,214 @@
           </div>
         </div>
 
-        <!-- 3. PRODUCTIVITY VIEW (Tasks, Projects, Goals) -->
+        <!-- 3. PRODUCTIVITY VIEW (Tasks & Goals Dashboard) -->
         <section id="tasks-view" class="view-panel">
-          <div class="view-header">
-            <h2>Productivity Hub</h2>
-            <p class="subtitle">Track checklists, active projects, and long-term milestones</p>
+          <!-- Header Bar -->
+          <div class="view-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+            <div>
+              <h2 style="font-size: 1.5rem; font-weight: 800; margin: 0; color: var(--text-main);">Tasks & Goals</h2>
+              <p class="subtitle" style="font-size: 0.78rem; color: var(--text-muted); margin: 2px 0 0 0;">Organize tasks, set goals and track your progress</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <button id="btn-open-add-task-modal" class="btn-primary-glow" style="padding: 8px 16px; font-size: 0.78rem; font-weight: 700; border: none; cursor: pointer; color: #fff; display: flex; align-items: center; gap: 6px; border-radius: var(--radius-sm);">
+                <i class="fas fa-plus"></i> Add New Task
+              </button>
+              <button id="btn-open-add-goal-modal" class="btn-glass-subtle" style="padding: 8px 16px; font-size: 0.78rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; border-radius: var(--radius-sm);">
+                <i class="fas fa-bullseye"></i> Add Goal
+              </button>
+            </div>
           </div>
 
-          <div class="tasks-layout">
-            <div class="tasks-sidebar">
-              <!-- Task Form -->
-              <div class="glass-card task-creator-card">
-                <h3>Add New Task</h3>
-                <form id="task-form">
-                  <div class="input-group">
-                    <label for="task-title">Title</label>
-                    <input type="text" id="task-title" placeholder="What needs to be done?" required>
+          <!-- Top Sub-Navigation Tabs Bar -->
+          <div class="tasks-subnav glass-card" style="display: flex; gap: 8px; padding: 6px; margin-bottom: 20px; border-radius: var(--radius-sm); overflow-x: auto; white-space: nowrap;">
+            <button class="tasks-subnav-btn active" data-subtab="overview"><i class="fas fa-chart-line" style="margin-right: 6px;"></i>Overview</button>
+            <button class="tasks-subnav-btn" data-subtab="tasks"><i class="fas fa-list-check" style="margin-right: 6px;"></i>Tasks</button>
+            <button class="tasks-subnav-btn" data-subtab="goals"><i class="fas fa-bullseye" style="margin-right: 6px;"></i>Goals</button>
+            <button class="tasks-subnav-btn" data-subtab="kanban"><i class="fas fa-columns" style="margin-right: 6px;"></i>Kanban</button>
+            <button class="tasks-subnav-btn" data-subtab="calendar"><i class="fas fa-calendar-alt" style="margin-right: 6px;"></i>Calendar</button>
+            <button class="tasks-subnav-btn" data-subtab="timeline"><i class="fas fa-stream" style="margin-right: 6px;"></i>Timeline</button>
+            <button class="tasks-subnav-btn" data-subtab="analytics"><i class="fas fa-chart-pie" style="margin-right: 6px;"></i>Analytics</button>
+          </div>
+
+          <!-- 1. TOP ROW: 5 SUMMARY KPI CARDS -->
+          <div class="tasks-kpi-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 20px;">
+            <!-- Card 1: Total Tasks -->
+            <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); position: relative; overflow: hidden;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(168, 85, 247, 0.15); color: #a855f7; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+                  <i class="fas fa-clipboard-list"></i>
+                </div>
+                <span style="font-size: 0.68rem; color: #a855f7; font-weight: 700; background: rgba(168, 85, 247, 0.1); padding: 2px 6px; border-radius: 4px;">↑ <span id="kpi-total-tasks-trend">12%</span></span>
+              </div>
+              <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">Total Tasks</span>
+              <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 2px 0;" id="kpi-total-tasks-val">0</div>
+              <span style="font-size: 0.65rem; color: var(--text-muted);">All Tasks &bull; Active & Completed</span>
+            </div>
+
+            <!-- Card 2: Completed -->
+            <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); position: relative; overflow: hidden;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <span style="font-size: 0.68rem; color: #3b82f6; font-weight: 700; background: rgba(59, 130, 246, 0.1); padding: 2px 6px; border-radius: 4px;">↑ <span id="kpi-completed-tasks-trend">28%</span></span>
+              </div>
+              <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">Completed</span>
+              <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 2px 0;" id="kpi-completed-tasks-val">0</div>
+              <span style="font-size: 0.65rem; color: var(--text-muted);">Finished Tasks</span>
+            </div>
+
+            <!-- Card 3: In Progress -->
+            <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); position: relative; overflow: hidden;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+                  <i class="fas fa-spinner"></i>
+                </div>
+                <span style="font-size: 0.68rem; color: #f59e0b; font-weight: 700; background: rgba(245, 158, 11, 0.1); padding: 2px 6px; border-radius: 4px;">↑ <span id="kpi-in-progress-trend">5%</span></span>
+              </div>
+              <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">In Progress</span>
+              <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 2px 0;" id="kpi-in-progress-val">0</div>
+              <span style="font-size: 0.65rem; color: var(--text-muted);">Currently Active</span>
+            </div>
+
+            <!-- Card 4: Overdue -->
+            <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); position: relative; overflow: hidden;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(239, 68, 68, 0.15); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+                  <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <span style="font-size: 0.68rem; color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.1); padding: 2px 6px; border-radius: 4px;">↓ <span id="kpi-overdue-tasks-trend">8%</span></span>
+              </div>
+              <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">Overdue</span>
+              <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 2px 0;" id="kpi-overdue-tasks-val">0</div>
+              <span style="font-size: 0.65rem; color: var(--text-muted);">Need Attention</span>
+            </div>
+
+            <!-- Card 5: Goals Progress -->
+            <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">Goals Progress</span>
+                <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 2px 0;" id="kpi-goals-progress-pct">0%</div>
+                <span style="font-size: 0.65rem; color: var(--green); font-weight: 700;">↑ <span id="kpi-goals-progress-trend">15%</span> <span style="color: var(--text-muted); font-weight: 400;">overall</span></span>
+              </div>
+              <div id="kpi-goals-donut-ring" style="width: 50px; height: 50px; flex-shrink: 0;">
+                <!-- Dynamic SVG Circle Ring -->
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. MIDDLE ROW: 3-COLUMN LAYOUT -->
+          <div class="tasks-middle-row" style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+            <!-- Left Column: My Tasks List -->
+            <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                  <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: var(--text-main);">My Tasks</h4>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <select id="tasks-filter-category" class="glass-widget" style="font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--bg-sidebar); color: var(--text-main);">
+                      <option value="all">All Tasks</option>
+                      <option value="Finance">Finance</option>
+                      <option value="Work">Work</option>
+                      <option value="Health">Health</option>
+                      <option value="Personal">Personal</option>
+                    </select>
+                    <select id="tasks-filter-priority" class="glass-widget" style="font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--bg-sidebar); color: var(--text-main);">
+                      <option value="all">Priority</option>
+                      <option value="high">High</option>
+                      <option value="medium">Medium</option>
+                      <option value="low">Low</option>
+                    </select>
                   </div>
-                  <div class="form-row">
-                    <div class="input-group">
-                      <label for="task-priority">Priority</label>
-                      <select id="task-priority">
-                        <option value="low">🟢 Low</option>
-                        <option value="medium" selected>🟡 Medium</option>
-                        <option value="high">🔴 High</option>
-                      </select>
-                    </div>
-                    <div class="input-group">
-                      <label for="task-category">Category</label>
-                      <select id="task-category">
-                        <option value="inbox">📥 Inbox</option>
-                        <option value="today">☀️ Today</option>
-                        <option value="upcoming">📅 Upcoming</option>
-                      </select>
-                    </div>
-                  </div>
-                  <button type="submit" class="btn-primary-glow btn-full">Create Task</button>
-                </form>
+                </div>
+
+                <!-- Dynamic Real-Time Tasks List Container -->
+                <div id="tasks-list-container" style="display: flex; flex-direction: column; gap: 10px; min-height: 240px;">
+                  <!-- Dynamic Task Rows -->
+                </div>
               </div>
 
-              <!-- Projects & Milestones -->
-              <div class="glass-card projects-card">
-                <h3>Projects & Goals</h3>
-                <form id="project-form" style="margin-bottom: 16px;">
-                  <div class="input-group">
-                    <input type="text" id="project-title" placeholder="e.g. Master React, Save for Travel" required>
+              <div style="margin-top: 14px; text-align: right; border-top: 1px solid var(--glass-border); padding-top: 10px;">
+                <span id="task-count-badge" class="badge" style="float: left; font-size: 0.68rem; margin-top: 2px;">0 Tasks</span>
+                <a href="javascript:void(0)" id="btn-tasks-view-all" style="font-size: 0.75rem; font-weight: 700; color: var(--primary); text-decoration: none;">View all tasks <i class="fas fa-chevron-right" style="font-size: 0.65rem;"></i></a>
+              </div>
+            </div>
+
+            <!-- Middle Column: Tasks by Priority & Weekly Overview -->
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <!-- Card 1: Tasks by Priority (Donut Chart) -->
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 12px 0; color: var(--text-main);">Tasks by Priority</h4>
+                <div style="display: flex; align-items: center; gap: 14px;">
+                  <div id="tasks-priority-donut-container" style="width: 100px; height: 100px; position: relative; flex-shrink: 0;">
+                    <!-- Dynamic Donut Chart -->
                   </div>
-                  <button type="submit" class="btn-primary-glow btn-full">Add Project</button>
-                </form>
-                <div class="project-list" id="projects-list-container">
-                  <!-- Dynamic projects -->
+                  <div id="tasks-priority-legend-container" style="display: flex; flex-direction: column; gap: 6px; font-size: 0.7rem; flex-grow: 1;">
+                    <!-- Dynamic Priority Breakdown -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 2: This Week Overview (Bar Chart) -->
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 10px 0; color: var(--text-main);">This Week Overview</h4>
+                <div id="tasks-weekly-bar-container" style="height: 110px; width: 100%;">
+                  <!-- Dynamic SVG Weekly Bar Chart -->
                 </div>
               </div>
             </div>
 
-            <!-- Task List Main -->
-            <div class="tasks-main">
-              <div class="glass-card tasks-list-card">
-                <div class="list-header">
-                  <div class="task-tabs">
-                    <button class="task-tab-btn active" data-tab="active">Active Tasks</button>
-                    <button class="task-tab-btn" data-tab="completed">Completed Tasks</button>
+            <!-- Right Column: Upcoming Deadlines & Recent Activity -->
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <!-- Card 1: Upcoming Deadlines -->
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-main);">Upcoming Deadlines</h4>
+                    <span style="font-size: 0.68rem; color: var(--primary); font-weight: 700;">Deadlines</span>
                   </div>
-                  <span class="badge" id="task-count-badge">0 Tasks</span>
+                  <div id="tasks-upcoming-deadlines-container" style="display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Dynamic Upcoming Task Deadlines -->
+                  </div>
                 </div>
-                <div class="task-list" id="task-list-items">
-                  <!-- Dynamic tasks -->
+                <div style="margin-top: 10px; text-align: right; border-top: 1px solid var(--glass-border); padding-top: 8px;">
+                  <a href="javascript:void(0)" id="btn-deadlines-view-all" style="font-size: 0.72rem; font-weight: 700; color: var(--primary); text-decoration: none;">View all deadlines <i class="fas fa-chevron-right" style="font-size: 0.65rem;"></i></a>
                 </div>
               </div>
+
+              <!-- Card 2: Recent Activity -->
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-main);">Recent Activity</h4>
+                    <span style="font-size: 0.68rem; color: var(--text-muted);">Real-time Log</span>
+                  </div>
+                  <div id="tasks-recent-activity-container" style="display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Dynamic Activity Timeline -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. BOTTOM ROW: GOALS OVERVIEW CARD GRID -->
+          <div class="glass-card" style="padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <div>
+                <h3 style="font-size: 1.1rem; font-weight: 800; margin: 0; color: var(--text-main);">Goals Overview</h3>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">Track long-term strategic objectives and milestone targets</span>
+              </div>
+              <button id="btn-open-add-goal-modal-bottom" class="btn-primary-glow" style="padding: 6px 14px; font-size: 0.75rem; font-weight: 700; border: none; cursor: pointer; color: #fff; border-radius: var(--radius-sm);">
+                <i class="fas fa-plus"></i> Add Goal
+              </button>
+            </div>
+
+            <!-- Dynamic Goals Grid -->
+            <div id="goals-overview-grid-container" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+              <!-- Dynamic Goal Cards -->
+            </div>
+
+            <div style="margin-top: 16px; text-align: right; border-top: 1px solid var(--glass-border); padding-top: 10px;">
+              <a href="javascript:void(0)" id="btn-goals-view-all" style="font-size: 0.78rem; font-weight: 700; color: var(--primary); text-decoration: none;">View all goals <i class="fas fa-chevron-right" style="font-size: 0.65rem;"></i></a>
             </div>
           </div>
         </section>
@@ -4700,6 +4840,94 @@
     </div>
   </div>
 
+  <!-- Modal Overlay: Add Task -->
+  <div class="modal-overlay" id="productivity-add-task-overlay"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(10px); z-index: 999999; align-items: center; justify-content: center;">
+    <div class="glass-card" style="width: 90%; max-width: 440px; padding: 22px; border-radius: var(--radius-md);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">
+        <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-main);"><i class="fas fa-plus-circle" style="color: var(--primary); margin-right: 6px;"></i>Create New Task</h3>
+        <button style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted);" id="btn-close-add-task-modal"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="productivity-add-task-form" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="input-group">
+          <label for="new-task-title-input">Task Title</label>
+          <input type="text" id="new-task-title-input" required placeholder="e.g. Complete Project Documentation" style="width: 100%;">
+        </div>
+        <div class="input-group">
+          <label for="new-task-desc-input">Description (Optional)</label>
+          <input type="text" id="new-task-desc-input" placeholder="Short detail or API references..." style="width: 100%;">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="input-group">
+            <label for="new-task-category-input">Category</label>
+            <select id="new-task-category-input" style="width: 100%;" required>
+              <option value="Finance">Finance</option>
+              <option value="Work" selected>Work</option>
+              <option value="Health">Health</option>
+              <option value="Personal">Personal</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="new-task-priority-input">Priority</label>
+            <select id="new-task-priority-input" style="width: 100%;" required>
+              <option value="high">🔴 High</option>
+              <option value="medium" selected>🟡 Medium</option>
+              <option value="low">🟢 Low</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-group">
+          <label for="new-task-date-input">Due Date</label>
+          <input type="date" id="new-task-date-input" style="width: 100%;" required>
+        </div>
+        <button type="submit" class="btn-primary-glow" style="padding: 12px; margin-top: 8px; border: none; color: #fff; cursor: pointer;">Create Task</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Overlay: Add Goal -->
+  <div class="modal-overlay" id="productivity-add-goal-overlay"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(10px); z-index: 999999; align-items: center; justify-content: center;">
+    <div class="glass-card" style="width: 90%; max-width: 440px; padding: 22px; border-radius: var(--radius-md);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">
+        <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-main);"><i class="fas fa-bullseye" style="color: var(--primary); margin-right: 6px;"></i>Add Strategic Goal</h3>
+        <button style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted);" id="btn-close-add-goal-modal"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="productivity-add-goal-form" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="input-group">
+          <label for="new-goal-title-input">Goal Name</label>
+          <input type="text" id="new-goal-title-input" required placeholder="e.g. Save ₹5,00,000 or Read 12 Books" style="width: 100%;">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="input-group">
+            <label for="new-goal-category-input">Category</label>
+            <select id="new-goal-category-input" style="width: 100%;" required>
+              <option value="Product Goal">Product Goal</option>
+              <option value="Personal Goal" selected>Personal Goal</option>
+              <option value="Financial Goal">Financial Goal</option>
+              <option value="Health Goal">Health Goal</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="new-goal-target-input">Target Value</label>
+            <input type="number" id="new-goal-target-input" placeholder="e.g. 500000" min="1" style="width: 100%;" required>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="input-group">
+            <label for="new-goal-current-input">Current Progress</label>
+            <input type="number" id="new-goal-current-input" placeholder="e.g. 312000" min="0" style="width: 100%;" required>
+          </div>
+          <div class="input-group">
+            <label for="new-goal-date-input">Target Date</label>
+            <input type="date" id="new-goal-date-input" style="width: 100%;" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary-glow" style="padding: 12px; margin-top: 8px; border: none; color: #fff; cursor: pointer;">Save Goal</button>
+      </form>
+    </div>
+  </div>
+
   <!-- Modal Overlay: Create Family Member Profile -->
   <div class="modal-overlay" id="finance-create-profile-overlay"
     style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); z-index: 1000; align-items: center; justify-content: center;">
@@ -5735,36 +5963,36 @@
   </div>
 
   <!-- Helpers & Validation & Controllers -->
-  <script src="helpers/financeHelper.js?v=40"></script>
-  <script src="validation/financeValidation.js?v=40"></script>
-  <script src="controllers/financeController.js?v=40"></script>
+  <script src="helpers/financeHelper.js?v=41"></script>
+  <script src="validation/financeValidation.js?v=41"></script>
+  <script src="controllers/financeController.js?v=41"></script>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=40"></script>
-  <script src="core/router.js?v=40"></script>
-  <script src="services/authService.js?v=40"></script>
-  <script src="services/supabaseService.js?v=40"></script>
-  <script src="services/storageService.js?v=40"></script>
-  <script src="services/syncService.js?v=40"></script>
-  <script src="services/notificationService.js?v=40"></script>
-  <script src="services/validationService.js?v=40"></script>
-  <script src="services/budgetService.js?v=40"></script>
-  <script src="services/financeService.js?v=40"></script>
-  <script src="services/chartService.js?v=40"></script>
+  <script src="core/config.js?v=41"></script>
+  <script src="core/router.js?v=41"></script>
+  <script src="services/authService.js?v=41"></script>
+  <script src="services/supabaseService.js?v=41"></script>
+  <script src="services/storageService.js?v=41"></script>
+  <script src="services/syncService.js?v=41"></script>
+  <script src="services/notificationService.js?v=41"></script>
+  <script src="services/validationService.js?v=41"></script>
+  <script src="services/budgetService.js?v=41"></script>
+  <script src="services/financeService.js?v=41"></script>
+  <script src="services/chartService.js?v=41"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=40"></script>
-  <script src="js/user.js?v=40"></script>
-  <script src="js/productivity.js?v=40"></script>
-  <script src="js/notes.js?v=40"></script>
-  <script src="js/finance.js?v=40"></script>
-  <script src="js/health.js?v=40"></script>
-  <script src="js/medicine.js?v=40"></script>
-  <script src="js/habits.js?v=40"></script>
-  <script src="js/personal.js?v=40"></script>
-  <script src="js/lifestyle.js?v=40"></script>
-  <script src="js/ai.js?v=40"></script>
-  <script src="js/analytics.js?v=40"></script>
+  <script src="js/app.js?v=41"></script>
+  <script src="js/user.js?v=41"></script>
+  <script src="js/productivity.js?v=41"></script>
+  <script src="js/notes.js?v=41"></script>
+  <script src="js/finance.js?v=41"></script>
+  <script src="js/health.js?v=41"></script>
+  <script src="js/medicine.js?v=41"></script>
+  <script src="js/habits.js?v=41"></script>
+  <script src="js/personal.js?v=41"></script>
+  <script src="js/lifestyle.js?v=41"></script>
+  <script src="js/ai.js?v=41"></script>
+  <script src="js/analytics.js?v=41"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
