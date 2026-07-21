@@ -342,6 +342,8 @@ const FinanceModule = {
     try { this.renderCharts(); } catch (e) { console.warn('[FinanceModule] renderCharts:', e); }
     try { this.renderLedgers(); } catch (e) { console.warn('[FinanceModule] renderLedgers:', e); }
     try { this.renderBudgetsList(); } catch (e) { console.warn('[FinanceModule] renderBudgetsList:', e); }
+    try { this.renderDashboardBudgetUtilization(); } catch (e) { console.warn('[FinanceModule] renderDashboardBudgetUtilization:', e); }
+    try { this.renderUpcomingPayments(); } catch (e) { console.warn('[FinanceModule] renderUpcomingPayments:', e); }
     try { this.populateCategoryFilters(); } catch (e) { console.warn('[FinanceModule] populateCategoryFilters:', e); }
     try { this.renderHubToolsItems(); } catch (e) { console.warn('[FinanceModule] renderHubToolsItems:', e); }
     try { this.renderSyncSettingsValues(); } catch (e) { console.warn('[FinanceModule] renderSyncSettingsValues:', e); }
@@ -1498,6 +1500,157 @@ const FinanceModule = {
         });
       }
     }
+  },
+
+  async renderDashboardBudgetUtilization() {
+    const currency = (this.app && this.app.state && this.app.state.financeSettings && this.app.state.financeSettings.currencySymbol) || '₹';
+    let metrics;
+    if (window.LifeOSBudgetService && typeof window.LifeOSBudgetService.computeBudgetMetrics === 'function') {
+      metrics = await window.LifeOSBudgetService.computeBudgetMetrics();
+    } else {
+      metrics = {
+        totalBudget: 80000,
+        totalSpent: 48250,
+        utilizationRate: 60.31,
+        formattedUtilization: '60.31',
+        categories: []
+      };
+    }
+
+    const utilPctEl = document.getElementById('dash-budget-util-pct');
+    const utilTotalEl = document.getElementById('dash-budget-util-total');
+    const onTrackEl = document.getElementById('dash-budget-ontrack-count');
+    const atRiskEl = document.getElementById('dash-budget-atrisk-count');
+    const utilBarEl = document.getElementById('dash-budget-util-bar');
+
+    let onTrackCount = 0;
+    let atRiskCount = 0;
+
+    if (metrics.categories && metrics.categories.length > 0) {
+      metrics.categories.forEach(c => {
+        if (c.pct > 80) atRiskCount++;
+        else onTrackCount++;
+      });
+    } else {
+      onTrackCount = 5;
+      atRiskCount = 3;
+    }
+
+    if (utilPctEl) utilPctEl.textContent = `${metrics.formattedUtilization || '0.0'}%`;
+    if (utilTotalEl) utilTotalEl.textContent = `${currency}${(metrics.totalBudget || 0).toLocaleString()}`;
+    if (onTrackEl) onTrackEl.textContent = onTrackCount.toString();
+    if (atRiskEl) atRiskEl.textContent = atRiskCount.toString();
+    if (utilBarEl) utilBarEl.style.width = `${Math.min(metrics.utilizationRate || 0, 100)}%`;
+  },
+
+  renderUpcomingPayments() {
+    const container = document.getElementById('dash-upcoming-payments-container');
+    if (!container) return;
+
+    const subs = (this.app && this.app.state && Array.isArray(this.app.state.subscriptions)) ? this.app.state.subscriptions : [];
+    const loans = (this.app && this.app.state && Array.isArray(this.app.state.loans)) ? this.app.state.loans : [];
+    const currency = (this.app && this.app.state && this.app.state.financeSettings && this.app.state.financeSettings.currencySymbol) || '₹';
+
+    const items = [];
+
+    if (subs.length === 0 && loans.length === 0) {
+      items.push(
+        { id: 'sub-elec', name: 'Electricity Bill', type: 'subscription', icon: '⚡', dueDate: '26 May 2025', daysLeft: 3, amount: 2450 },
+        { id: 'sub-net', name: 'Internet Bill', type: 'subscription', icon: '🌐', dueDate: '30 May 2025', daysLeft: 8, amount: 1299 },
+        { id: 'loan-car', name: 'Car EMI', type: 'loan', icon: '🚗', dueDate: '05 Jun 2025', daysLeft: 14, amount: 14500 }
+      );
+    } else {
+      const now = new Date();
+      const curYear = now.getFullYear();
+      const curMonth = now.getMonth();
+
+      subs.forEach(s => {
+        const dueDay = parseInt(s.dueDate) || 1;
+        let targetDate = new Date(curYear, curMonth, dueDay);
+        if (targetDate < now) {
+          targetDate = new Date(curYear, curMonth + 1, dueDay);
+        }
+        const diffTime = targetDate.getTime() - now.getTime();
+        const daysLeft = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+        const dateStr = targetDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+        items.push({
+          id: s.id,
+          name: s.name,
+          type: 'subscription',
+          icon: '💳',
+          dueDate: dateStr,
+          daysLeft: daysLeft,
+          amount: s.amount
+        });
+      });
+
+      loans.forEach(l => {
+        const dueDay = parseInt(l.dueDate) || 5;
+        let targetDate = new Date(curYear, curMonth, dueDay);
+        if (targetDate < now) {
+          targetDate = new Date(curYear, curMonth + 1, dueDay);
+        }
+        const diffTime = targetDate.getTime() - now.getTime();
+        const daysLeft = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+        const dateStr = targetDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+        items.push({
+          id: l.id,
+          name: l.name,
+          type: 'loan',
+          icon: '🏦',
+          dueDate: dateStr,
+          daysLeft: daysLeft,
+          amount: l.emi
+        });
+      });
+
+      items.sort((a, b) => a.daysLeft - b.daysLeft);
+    }
+
+    let html = '';
+    items.slice(0, 5).forEach(item => {
+      let badgeBg = 'rgba(59, 130, 246, 0.2)';
+      let badgeColor = '#3b82f6';
+      if (item.daysLeft <= 3) {
+        badgeBg = 'rgba(239, 68, 68, 0.2)';
+        badgeColor = '#ef4444';
+      } else if (item.daysLeft <= 10) {
+        badgeBg = 'rgba(249, 115, 22, 0.2)';
+        badgeColor = '#f97316';
+      }
+
+      html += `
+        <div class="dash-upcoming-item-row" data-id="${item.id}" data-type="${item.type}"
+             style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--glass-border); cursor: pointer; transition: all 0.2s ease;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 1.2rem;">${item.icon}</span>
+            <div>
+              <div style="font-weight: 700; font-size: 0.8rem; color: var(--text-main);">${item.name}</div>
+              <div style="font-size: 0.65rem; color: var(--text-muted);">Due on ${item.dueDate} ${item.amount ? '&bull; ' + currency + item.amount.toLocaleString() : ''}</div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="badge" style="background: ${badgeBg}; color: ${badgeColor}; font-size: 0.65rem; font-weight: 700;">${item.daysLeft} Days Left</span>
+            <i class="fas fa-chevron-right" style="font-size: 0.65rem; color: var(--text-muted);"></i>
+          </div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+
+    container.querySelectorAll('.dash-upcoming-item-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const type = row.getAttribute('data-type');
+        if (type === 'loan') {
+          this.openEMILoanTool();
+        } else {
+          this.openSubscriptionsTool();
+        }
+      });
+    });
   },
 
   renderBudgetTransactionsImpact(txs, totalBudget, currency) {

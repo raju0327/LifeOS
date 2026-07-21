@@ -1436,52 +1436,26 @@
                   </div>
                   <div style="margin-bottom: 12px;">
                     <span style="font-size: 0.72rem; color: var(--text-muted);">Overall Utilization</span>
-                    <div style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);">60.31% <span style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">of ₹80,000</span></div>
+                    <div style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);">
+                      <span id="dash-budget-util-pct">0.00%</span>
+                      <span style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">of <span id="dash-budget-util-total">₹0</span></span>
+                    </div>
                   </div>
                   <div style="display: flex; gap: 10px; margin-bottom: 12px;">
-                    <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.68rem; padding: 4px 8px;"><i class="fas fa-check-circle"></i> On Track: 5</span>
-                    <span class="badge" style="background: rgba(249, 115, 22, 0.15); color: #f97316; font-size: 0.68rem; padding: 4px 8px;"><i class="fas fa-exclamation-triangle"></i> At Risk: 3</span>
+                    <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.68rem; padding: 4px 8px;"><i class="fas fa-check-circle"></i> On Track: <span id="dash-budget-ontrack-count">0</span></span>
+                    <span class="badge" style="background: rgba(249, 115, 22, 0.15); color: #f97316; font-size: 0.68rem; padding: 4px 8px;"><i class="fas fa-exclamation-triangle"></i> At Risk: <span id="dash-budget-atrisk-count">0</span></span>
                   </div>
                 </div>
                 <div style="height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden;">
-                  <div style="width: 60.31%; height: 100%; background: linear-gradient(90deg, #10b981, #f97316); border-radius: 4px;"></div>
+                  <div id="dash-budget-util-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #f97316); border-radius: 4px; transition: width 0.3s ease;"></div>
                 </div>
               </div>
 
               <!-- Right: Upcoming Payments -->
               <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
                 <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 12px 0; color: var(--text-main);">Upcoming Payments</h4>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                  <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--glass-border);">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                      <span style="font-size: 1.1rem;">⚡</span>
-                      <div>
-                        <div style="font-weight: 700; font-size: 0.78rem;">Electricity Bill</div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted);">Due on 26 May 2025</div>
-                      </div>
-                    </div>
-                    <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; font-size: 0.65rem;">3 Days Left</span>
-                  </div>
-                  <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--glass-border);">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                      <span style="font-size: 1.1rem;">🌐</span>
-                      <div>
-                        <div style="font-weight: 700; font-size: 0.78rem;">Internet Bill</div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted);">Due on 30 May 2025</div>
-                      </div>
-                    </div>
-                    <span class="badge" style="background: rgba(249, 115, 22, 0.2); color: #f97316; font-size: 0.65rem;">8 Days Left</span>
-                  </div>
-                  <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--glass-border);">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                      <span style="font-size: 1.1rem;">🚗</span>
-                      <div>
-                        <div style="font-weight: 700; font-size: 0.78rem;">Car EMI</div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted);">Due on 05 Jun 2025</div>
-                      </div>
-                    </div>
-                    <span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6; font-size: 0.65rem;">14 Days Left</span>
-                  </div>
+                <div id="dash-upcoming-payments-container" style="display: flex; flex-direction: column; gap: 8px;">
+                  <!-- Dynamic Upcoming Payments List -->
                 </div>
               </div>
             </div>
@@ -4854,36 +4828,36 @@
   </div>
 
   <!-- Helpers & Validation & Controllers -->
-  <script src="helpers/financeHelper.js?v=35"></script>
-  <script src="validation/financeValidation.js?v=35"></script>
-  <script src="controllers/financeController.js?v=35"></script>
+  <script src="helpers/financeHelper.js?v=36"></script>
+  <script src="validation/financeValidation.js?v=36"></script>
+  <script src="controllers/financeController.js?v=36"></script>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=35"></script>
-  <script src="core/router.js?v=35"></script>
-  <script src="services/authService.js?v=35"></script>
-  <script src="services/supabaseService.js?v=35"></script>
-  <script src="services/storageService.js?v=35"></script>
-  <script src="services/syncService.js?v=35"></script>
-  <script src="services/notificationService.js?v=35"></script>
-  <script src="services/validationService.js?v=35"></script>
-  <script src="services/budgetService.js?v=35"></script>
-  <script src="services/financeService.js?v=35"></script>
-  <script src="services/chartService.js?v=35"></script>
+  <script src="core/config.js?v=36"></script>
+  <script src="core/router.js?v=36"></script>
+  <script src="services/authService.js?v=36"></script>
+  <script src="services/supabaseService.js?v=36"></script>
+  <script src="services/storageService.js?v=36"></script>
+  <script src="services/syncService.js?v=36"></script>
+  <script src="services/notificationService.js?v=36"></script>
+  <script src="services/validationService.js?v=36"></script>
+  <script src="services/budgetService.js?v=36"></script>
+  <script src="services/financeService.js?v=36"></script>
+  <script src="services/chartService.js?v=36"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=35"></script>
-  <script src="js/user.js?v=35"></script>
-  <script src="js/productivity.js?v=35"></script>
-  <script src="js/notes.js?v=35"></script>
-  <script src="js/finance.js?v=35"></script>
-  <script src="js/health.js?v=35"></script>
-  <script src="js/medicine.js?v=35"></script>
-  <script src="js/habits.js?v=35"></script>
-  <script src="js/personal.js?v=35"></script>
-  <script src="js/lifestyle.js?v=35"></script>
-  <script src="js/ai.js?v=35"></script>
-  <script src="js/analytics.js?v=35"></script>
+  <script src="js/app.js?v=36"></script>
+  <script src="js/user.js?v=36"></script>
+  <script src="js/productivity.js?v=36"></script>
+  <script src="js/notes.js?v=36"></script>
+  <script src="js/finance.js?v=36"></script>
+  <script src="js/health.js?v=36"></script>
+  <script src="js/medicine.js?v=36"></script>
+  <script src="js/habits.js?v=36"></script>
+  <script src="js/personal.js?v=36"></script>
+  <script src="js/lifestyle.js?v=36"></script>
+  <script src="js/ai.js?v=36"></script>
+  <script src="js/analytics.js?v=36"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
