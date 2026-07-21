@@ -1601,17 +1601,17 @@ const FinanceModule = {
           const icon = cat.icon || 'fa-tag';
 
           html += `
-            <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); min-width: 155px; flex-shrink: 0; background: rgba(255,255,255,0.01); box-sizing: border-box;">
-              <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); min-width: 320px; flex-shrink: 0; background: rgba(255,255,255,0.01); box-sizing: border-box;">
+              <div style="display: flex; align-items: center; gap: 10px; width: 38%; flex-shrink: 0;">
                 <div style="width: 26px; height: 26px; border-radius: 50%; background: ${barColor}15; color: ${barColor}; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;"><i class="fas ${icon}"></i></div>
                 <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${cat.name}</span>
               </div>
-              <div style="width: 100%; height: 5px; background: rgba(255,255,255,0.04); border-radius: 2.5px; overflow: hidden;">
+              <div style="flex-grow: 1; height: 5px; background: rgba(255,255,255,0.04); border-radius: 2.5px; position: relative; overflow: hidden; max-width: 100px;">
                 <div style="width: ${Math.min(pctVal, 100)}%; height: 100%; background: ${barColor}; border-radius: 2.5px;"></div>
               </div>
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2px;">
-                <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-main);">${currency}${spentVal.toLocaleString(undefined, {maximumFractionDigits:0})}</span>
-                <span style="font-size: 0.65rem; color: var(--text-muted);">${pctVal.toFixed(0)}%</span>
+              <div style="text-align: right; width: 28%; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end;">
+                <span style="font-size: 0.78rem; font-weight: 800; color: var(--text-main);">${currency}${spentVal.toLocaleString(undefined, {maximumFractionDigits:0})}</span>
+                <span style="font-size: 0.62rem; color: var(--text-muted);">${pctVal.toFixed(0)}%</span>
               </div>
             </div>
           `;
@@ -1699,7 +1699,6 @@ const FinanceModule = {
 
     // 4. Initialize Custom Drag Bars
     if (typeof this.setupDragBarSlider === 'function') {
-      this.setupDragBarSlider('spending-drag-track', 'spending-drag-thumb', 'finance-spending-categories-list', 'btn-spending-drag-left', 'btn-spending-drag-right');
       this.setupDragBarSlider('trend-drag-track', 'trend-drag-thumb', 'finance-trend-svg-chart-container', 'btn-trend-drag-left', 'btn-trend-drag-right');
     }
 
