@@ -61,10 +61,24 @@ window.LifeOSRouter = {
     window.dispatchEvent(new Event('resize'));
   },
 
-  restoreSavedRoute() {
-    if (this.app && this.app.state && this.app.state.user && this.app.state.user.isLoggedIn) {
+  async restoreSavedRoute() {
+    let hasSession = false;
+    if (window.LifeOSAuthService && typeof window.LifeOSAuthService.checkSession === 'function') {
+      try {
+        hasSession = await window.LifeOSAuthService.checkSession();
+      } catch (e) {
+        console.warn('[LifeOSRouter] checkSession warning:', e);
+      }
+    }
+
+    if (!hasSession && this.app && this.app.state && this.app.state.user) {
+      hasSession = !!this.app.state.user.isLoggedIn;
+    }
+
+    if (hasSession) {
       const saved = localStorage.getItem('life_os_active_view') || 'dashboard';
-      this.navigateTo(saved);
+      const target = (saved === 'user' || !saved) ? 'dashboard' : saved;
+      this.navigateTo(target);
     } else {
       this.navigateTo('user');
     }

@@ -128,6 +128,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.lucide.createIcons();
       }
 
+      // Restore session & route
+      if (window.LifeOSRouter && typeof window.LifeOSRouter.restoreSavedRoute === 'function') {
+        window.LifeOSRouter.restoreSavedRoute();
+      }
+
       this.showToast('Secure workspace decrypted and loaded.', 'success');
       setTimeout(() => this.syncGlobalGoogleSheetData(true), 2000);
     },
