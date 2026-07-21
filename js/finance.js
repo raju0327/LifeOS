@@ -3461,6 +3461,8 @@ window.deleteBudgetCategory = async (id) => {
     await window.LifeOS.modules.finance.renderManageCategoriesList();
     await window.LifeOS.modules.finance.renderBudgetsList();
   }
+};
+
 window.viewLedgerTransaction = (id) => {
   if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
     window.LifeOS.modules.finance.switchSubview('transactions');
@@ -3474,6 +3476,8 @@ window.viewLedgerTransaction = (id) => {
       }, 150);
     }
   }
+};
+
 window.switchFinanceSubview = (subviewName) => {
   if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
     window.LifeOS.modules.finance.switchSubview(subviewName);
