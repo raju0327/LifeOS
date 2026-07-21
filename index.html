@@ -1295,13 +1295,13 @@
           <!-- Finance sub-navigation -->
           <div class="finance-subnav glass-card"
             style="display: flex; gap: 8px; padding: 6px; margin-bottom: 16px; border-radius: var(--radius-sm);">
-            <button class="finance-subnav-btn active" data-subview="dashboard"><i class="fas fa-chart-bar"
+            <button class="finance-subnav-btn active" data-subview="dashboard" onclick="window.switchFinanceSubview('dashboard')"><i class="fas fa-chart-bar"
                 style="margin-right: 6px;"></i>Dashboard</button>
-            <button class="finance-subnav-btn" data-subview="ledger"><i class="fas fa-list-ul"
+            <button class="finance-subnav-btn" data-subview="ledger" onclick="window.switchFinanceSubview('ledger')"><i class="fas fa-list-ul"
                 style="margin-right: 6px;"></i>Ledger</button>
-            <button class="finance-subnav-btn" data-subview="budgets"><i class="fas fa-chart-pie"
+            <button class="finance-subnav-btn" data-subview="budgets" onclick="window.switchFinanceSubview('budgets')"><i class="fas fa-chart-pie"
                 style="margin-right: 6px;"></i>Budgets</button>
-            <button class="finance-subnav-btn" data-subview="hub"><i class="fas fa-cubes"
+            <button class="finance-subnav-btn" data-subview="hub" onclick="window.switchFinanceSubview('hub')"><i class="fas fa-cubes"
                 style="margin-right: 6px;"></i>Features Hub</button>
           </div>
 
@@ -4754,31 +4754,31 @@
   </div>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=27"></script>
-  <script src="core/router.js?v=27"></script>
-  <script src="services/authService.js?v=27"></script>
-  <script src="services/supabaseService.js?v=27"></script>
-  <script src="services/storageService.js?v=27"></script>
-  <script src="services/syncService.js?v=27"></script>
-  <script src="services/notificationService.js?v=27"></script>
-  <script src="services/validationService.js?v=27"></script>
-  <script src="services/budgetService.js?v=27"></script>
-  <script src="services/financeService.js?v=27"></script>
-  <script src="services/chartService.js?v=27"></script>
+  <script src="core/config.js?v=28"></script>
+  <script src="core/router.js?v=28"></script>
+  <script src="services/authService.js?v=28"></script>
+  <script src="services/supabaseService.js?v=28"></script>
+  <script src="services/storageService.js?v=28"></script>
+  <script src="services/syncService.js?v=28"></script>
+  <script src="services/notificationService.js?v=28"></script>
+  <script src="services/validationService.js?v=28"></script>
+  <script src="services/budgetService.js?v=28"></script>
+  <script src="services/financeService.js?v=28"></script>
+  <script src="services/chartService.js?v=28"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=27"></script>
-  <script src="js/user.js?v=27"></script>
-  <script src="js/productivity.js?v=27"></script>
-  <script src="js/notes.js?v=27"></script>
-  <script src="js/finance.js?v=27"></script>
-  <script src="js/health.js?v=27"></script>
-  <script src="js/medicine.js?v=27"></script>
-  <script src="js/habits.js?v=27"></script>
-  <script src="js/personal.js?v=27"></script>
-  <script src="js/lifestyle.js?v=27"></script>
-  <script src="js/ai.js?v=27"></script>
-  <script src="js/analytics.js?v=27"></script>
+  <script src="js/app.js?v=28"></script>
+  <script src="js/user.js?v=28"></script>
+  <script src="js/productivity.js?v=28"></script>
+  <script src="js/notes.js?v=28"></script>
+  <script src="js/finance.js?v=28"></script>
+  <script src="js/health.js?v=28"></script>
+  <script src="js/medicine.js?v=28"></script>
+  <script src="js/habits.js?v=28"></script>
+  <script src="js/personal.js?v=28"></script>
+  <script src="js/lifestyle.js?v=28"></script>
+  <script src="js/ai.js?v=28"></script>
+  <script src="js/analytics.js?v=28"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {

@@ -745,26 +745,34 @@ const FinanceModule = {
   },
 
   switchSubview(subviewName) {
-    if (subviewName === 'transactions') subviewName = 'ledger';
-    if (subviewName === 'budget') subviewName = 'budgets';
-    if (subviewName === 'tools') subviewName = 'hub';
+    if (subviewName === 'transactions' || subviewName === 'records') subviewName = 'ledger';
+    if (subviewName === 'budget' || subviewName === 'plans') subviewName = 'budgets';
+    if (subviewName === 'tools' || subviewName === 'features' || subviewName === 'feature-hub') subviewName = 'hub';
     this.activeSubview = subviewName;
     
     // Reset Navigation Classes
     document.querySelectorAll('.finance-subnav-btn').forEach(btn => {
       if (btn.getAttribute('data-subview') === subviewName) {
         btn.classList.add('active');
+        btn.style.opacity = '1';
       } else {
         btn.classList.remove('active');
+        btn.style.opacity = '0.7';
       }
     });
 
-    // Toggle panels visibility
-    document.querySelectorAll('.finance-subview-panel').forEach(panel => {
-      if (panel.id === `finance-subview-${subviewName}`) {
-        panel.classList.add('active');
-      } else {
-        panel.classList.remove('active');
+    // Toggle panels visibility explicitly
+    const panels = ['dashboard', 'ledger', 'budgets', 'hub'];
+    panels.forEach(p => {
+      const panelEl = document.getElementById(`finance-subview-${p}`);
+      if (panelEl) {
+        if (p === subviewName) {
+          panelEl.classList.add('active');
+          panelEl.style.display = 'block';
+        } else {
+          panelEl.classList.remove('active');
+          panelEl.style.display = 'none';
+        }
       }
     });
 
@@ -3448,5 +3456,11 @@ window.viewLedgerTransaction = (id) => {
         }
       }, 150);
     }
+  }
+window.switchFinanceSubview = (subviewName) => {
+  if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.finance) {
+    window.LifeOS.modules.finance.switchSubview(subviewName);
+  } else if (typeof FinanceModule !== 'undefined') {
+    FinanceModule.switchSubview(subviewName);
   }
 };
