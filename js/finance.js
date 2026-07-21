@@ -784,17 +784,34 @@ const FinanceModule = {
     if (!el) return;
     
     if (isVisible) {
+      // Re-parent modal directly to document.body to break out of any restricted stacking context
+      if (el.parentNode !== document.body) {
+        document.body.appendChild(el);
+      }
       el.style.zIndex = '999999';
+      el.style.position = 'fixed';
+      el.style.top = '0';
+      el.style.left = '0';
+      el.style.width = '100vw';
+      el.style.height = '100vh';
       el.style.display = 'flex';
+      el.style.alignItems = 'center';
+      el.style.justifyContent = 'center';
+      el.style.background = 'rgba(0, 0, 0, 0.78)';
+      el.style.backdropFilter = 'blur(12px)';
+      el.style.webkitBackdropFilter = 'blur(12px)';
       
       // Auto configure specific forms inside modals on load
       if (modalId === 'finance-add-transaction-overlay') {
-        document.getElementById('finance-tx-amount-input').focus();
-        document.getElementById('finance-tx-date-input').value = new Date().toISOString().split('T')[0];
+        const amtInp = document.getElementById('finance-tx-amount-input');
+        if (amtInp) amtInp.focus();
+        const dateInp = document.getElementById('finance-tx-date-input');
+        if (dateInp) dateInp.value = new Date().toISOString().split('T')[0];
         
         // Populate members and categories selectors
         this.populateTransactionFormMembers();
-        const activeType = document.getElementById('finance-type-expense-btn').classList.contains('active') ? 'expense' : 'income';
+        const expBtn = document.getElementById('finance-type-expense-btn');
+        const activeType = (expBtn && expBtn.classList.contains('active')) ? 'expense' : 'income';
         this.populateTransactionFormCategories(activeType);
       }
     } else {
