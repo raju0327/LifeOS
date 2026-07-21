@@ -1590,7 +1590,7 @@
             </div>
 
             <!-- Middle Row: Cash Flow Overview Line Chart + Category Donut Chart -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+            <div class="finance-dash-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
               <!-- Left: Cash Flow Overview -->
               <div class="glass-card"
                 style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
@@ -1625,7 +1625,7 @@
             </div>
 
             <!-- Bottom Row 1: Budget Utilization Progress + Upcoming Payments List -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+            <div class="finance-dash-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
               <!-- Left: Budget Utilization -->
               <div class="glass-card"
                 style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between;">
@@ -1939,7 +1939,7 @@
                   <div id="budget-vs-actual-chart-container" style="height: 140px; width: 100%;"></div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                <div class="budget-charts-subgrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
                   <div class="glass-card"
                     style="padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
                     <h5 style="font-size: 0.82rem; font-weight: 700; margin: 0 0 10px 0;">Spending by Category</h5>
@@ -5735,36 +5735,36 @@
   </div>
 
   <!-- Helpers & Validation & Controllers -->
-  <script src="helpers/financeHelper.js?v=38"></script>
-  <script src="validation/financeValidation.js?v=38"></script>
-  <script src="controllers/financeController.js?v=38"></script>
+  <script src="helpers/financeHelper.js?v=39"></script>
+  <script src="validation/financeValidation.js?v=39"></script>
+  <script src="controllers/financeController.js?v=39"></script>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=38"></script>
-  <script src="core/router.js?v=38"></script>
-  <script src="services/authService.js?v=38"></script>
-  <script src="services/supabaseService.js?v=38"></script>
-  <script src="services/storageService.js?v=38"></script>
-  <script src="services/syncService.js?v=38"></script>
-  <script src="services/notificationService.js?v=38"></script>
-  <script src="services/validationService.js?v=38"></script>
-  <script src="services/budgetService.js?v=38"></script>
-  <script src="services/financeService.js?v=38"></script>
-  <script src="services/chartService.js?v=38"></script>
+  <script src="core/config.js?v=39"></script>
+  <script src="core/router.js?v=39"></script>
+  <script src="services/authService.js?v=39"></script>
+  <script src="services/supabaseService.js?v=39"></script>
+  <script src="services/storageService.js?v=39"></script>
+  <script src="services/syncService.js?v=39"></script>
+  <script src="services/notificationService.js?v=39"></script>
+  <script src="services/validationService.js?v=39"></script>
+  <script src="services/budgetService.js?v=39"></script>
+  <script src="services/financeService.js?v=39"></script>
+  <script src="services/chartService.js?v=39"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=38"></script>
-  <script src="js/user.js?v=38"></script>
-  <script src="js/productivity.js?v=38"></script>
-  <script src="js/notes.js?v=38"></script>
-  <script src="js/finance.js?v=38"></script>
-  <script src="js/health.js?v=38"></script>
-  <script src="js/medicine.js?v=38"></script>
-  <script src="js/habits.js?v=38"></script>
-  <script src="js/personal.js?v=38"></script>
-  <script src="js/lifestyle.js?v=38"></script>
-  <script src="js/ai.js?v=38"></script>
-  <script src="js/analytics.js?v=38"></script>
+  <script src="js/app.js?v=39"></script>
+  <script src="js/user.js?v=39"></script>
+  <script src="js/productivity.js?v=39"></script>
+  <script src="js/notes.js?v=39"></script>
+  <script src="js/finance.js?v=39"></script>
+  <script src="js/health.js?v=39"></script>
+  <script src="js/medicine.js?v=39"></script>
+  <script src="js/habits.js?v=39"></script>
+  <script src="js/personal.js?v=39"></script>
+  <script src="js/lifestyle.js?v=39"></script>
+  <script src="js/ai.js?v=39"></script>
+  <script src="js/analytics.js?v=39"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {

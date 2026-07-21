@@ -3008,10 +3008,45 @@ html, body {
     grid-template-columns: 1fr !important;
   }
 }
-@media (max-width: 640px) {
+
+/* MOBILE ONLY: Stack all 2-column grids 1-by-1 vertically (No 2-column flex on mobile) */
+@media (max-width: 768px) {
+  .budget-middle-split,
+  .budget-charts-subgrid,
+  .finance-dash-row,
   .budget-overview-grid {
     grid-template-columns: 1fr !important;
+    display: grid !important;
+    gap: 16px !important;
+    width: 100% !important;
   }
+}
+
+/* Drag-to-Move / Swipe-to-Scroll Containers for Charts and Tables */
+#budget-vs-actual-chart-container,
+#budget-donut-chart-container,
+#budget-trend-chart-container,
+#finance-asset-multi-chart-container,
+#finance-donut-chart-container,
+.chart-container-scrollable,
+.finance-table-wrapper {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  user-select: none;
+  cursor: grab;
+}
+
+#budget-vs-actual-chart-container.active-drag,
+#budget-donut-chart-container.active-drag,
+#budget-trend-chart-container.active-drag,
+#finance-asset-multi-chart-container.active-drag,
+#finance-donut-chart-container.active-drag,
+.chart-container-scrollable.active-drag,
+.finance-table-wrapper.active-drag {
+  cursor: grabbing !important;
 }
 
 /* ==========================================================================

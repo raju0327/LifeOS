@@ -382,9 +382,9 @@ const FinanceModule = {
   },
 
   bindEvents() {
-    // 1. Subnavigation Tab Switching & Drag-to-Scroll
-    document.querySelectorAll('.finance-subnav').forEach(subnav => {
-      this.makeDraggableScroll(subnav);
+    // 1. Subnavigation Tab Switching & Drag-to-Scroll for Subnavs & Charts
+    document.querySelectorAll('.finance-subnav, #budget-vs-actual-chart-container, #budget-donut-chart-container, #budget-trend-chart-container, #finance-asset-multi-chart-container, #finance-donut-chart-container, .chart-container-scrollable, .finance-table-wrapper').forEach(el => {
+      this.makeDraggableScroll(el);
     });
 
     document.querySelectorAll('.finance-subnav-btn').forEach(btn => {
