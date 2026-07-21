@@ -36,7 +36,7 @@
   <!-- Supabase JS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=48">
 </head>
 
 <body>
@@ -2338,8 +2338,8 @@
                     </div>
                   </div>
 
-                  <!-- Right side: Category progress list -->
-                  <div id="finance-spending-categories-list" style="display: flex; flex-direction: column; gap: 14px; max-height: 230px; overflow-y: auto; padding-right: 6px;">
+                  <!-- Right side: Category progress list (Horizontal Scrollable) -->
+                  <div id="finance-spending-categories-list" style="display: flex; flex-direction: row; gap: 12px; overflow-x: auto; overflow-y: hidden; padding-bottom: 8px; width: 100%; scroll-behavior: smooth;">
                     <!-- Dynamic Real Time Category Rows -->
                   </div>
                 </div>
@@ -6248,36 +6248,36 @@
   </div>
 
   <!-- Helpers & Validation & Controllers -->
-  <script src="helpers/financeHelper.js?v=47"></script>
-  <script src="validation/financeValidation.js?v=47"></script>
-  <script src="controllers/financeController.js?v=47"></script>
+  <script src="helpers/financeHelper.js?v=48"></script>
+  <script src="validation/financeValidation.js?v=48"></script>
+  <script src="controllers/financeController.js?v=48"></script>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=47"></script>
-  <script src="core/router.js?v=47"></script>
-  <script src="services/authService.js?v=47"></script>
-  <script src="services/supabaseService.js?v=47"></script>
-  <script src="services/storageService.js?v=47"></script>
-  <script src="services/syncService.js?v=47"></script>
-  <script src="services/notificationService.js?v=47"></script>
-  <script src="services/validationService.js?v=47"></script>
-  <script src="services/budgetService.js?v=47"></script>
-  <script src="services/financeService.js?v=47"></script>
-  <script src="services/chartService.js?v=47"></script>
+  <script src="core/config.js?v=48"></script>
+  <script src="core/router.js?v=48"></script>
+  <script src="services/authService.js?v=48"></script>
+  <script src="services/supabaseService.js?v=48"></script>
+  <script src="services/storageService.js?v=48"></script>
+  <script src="services/syncService.js?v=48"></script>
+  <script src="services/notificationService.js?v=48"></script>
+  <script src="services/validationService.js?v=48"></script>
+  <script src="services/budgetService.js?v=48"></script>
+  <script src="services/financeService.js?v=48"></script>
+  <script src="services/chartService.js?v=48"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=47"></script>
-  <script src="js/user.js?v=47"></script>
-  <script src="js/productivity.js?v=47"></script>
-  <script src="js/notes.js?v=47"></script>
-  <script src="js/finance.js?v=47"></script>
-  <script src="js/health.js?v=47"></script>
-  <script src="js/medicine.js?v=47"></script>
-  <script src="js/habits.js?v=47"></script>
-  <script src="js/personal.js?v=47"></script>
-  <script src="js/lifestyle.js?v=47"></script>
-  <script src="js/ai.js?v=47"></script>
-  <script src="js/analytics.js?v=47"></script>
+  <script src="js/app.js?v=48"></script>
+  <script src="js/user.js?v=48"></script>
+  <script src="js/productivity.js?v=48"></script>
+  <script src="js/notes.js?v=48"></script>
+  <script src="js/finance.js?v=48"></script>
+  <script src="js/health.js?v=48"></script>
+  <script src="js/medicine.js?v=48"></script>
+  <script src="js/habits.js?v=48"></script>
+  <script src="js/personal.js?v=48"></script>
+  <script src="js/lifestyle.js?v=48"></script>
+  <script src="js/ai.js?v=48"></script>
+  <script src="js/analytics.js?v=48"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
