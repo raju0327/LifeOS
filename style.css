@@ -3162,7 +3162,7 @@ html, body {
 
 /* --- Budget Page Scrolling & Responsive Improvements --- */
 #finance-spending-categories-list::-webkit-scrollbar {
-  height: 6px;
+  width: 6px;
 }
 #finance-spending-categories-list::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.02);

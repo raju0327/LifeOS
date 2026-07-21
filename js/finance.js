@@ -1598,33 +1598,23 @@ const FinanceModule = {
           const limitVal = Number(cat.limit || 0);
           const pctVal = metrics.totalSpent > 0 ? (spentVal / metrics.totalSpent) * 100 : 0;
           const barColor = cat.color || '#a370f7';
-          const icon = cat.icon || 'fa-tag';
-
-          html += `
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); min-width: 320px; flex-shrink: 0; background: rgba(255,255,255,0.01); box-sizing: border-box;">
-              <div style="display: flex; align-items: center; gap: 10px; width: 38%; flex-shrink: 0;">
-                <div style="width: 26px; height: 26px; border-radius: 50%; background: ${barColor}15; color: ${barColor}; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;"><i class="fas ${icon}"></i></div>
-                <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${cat.name}</span>
+              html += `
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 2px 0;">
+              <div style="display: flex; align-items: center; gap: 10px; width: 40%; flex-shrink: 0;">
+                <div style="width: 28px; height: 28px; border-radius: 50%; background: ${barColor}15; color: ${barColor}; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;"><i class="fas ${icon}"></i></div>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${cat.name}</span>
               </div>
-              <div style="flex-grow: 1; height: 5px; background: rgba(255,255,255,0.04); border-radius: 2.5px; position: relative; overflow: hidden; max-width: 100px;">
-                <div style="width: ${Math.min(pctVal, 100)}%; height: 100%; background: ${barColor}; border-radius: 2.5px;"></div>
+              <div style="flex-grow: 1; height: 6px; background: rgba(255,255,255,0.04); border-radius: 3px; position: relative; overflow: hidden; max-width: 140px;">
+                <div style="width: ${Math.min(pctVal, 100)}%; height: 100%; background: ${barColor}; border-radius: 3px;"></div>
               </div>
-              <div style="text-align: right; width: 28%; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end;">
-                <span style="font-size: 0.78rem; font-weight: 800; color: var(--text-main);">${currency}${spentVal.toLocaleString(undefined, {maximumFractionDigits:0})}</span>
-                <span style="font-size: 0.62rem; color: var(--text-muted);">${pctVal.toFixed(0)}%</span>
+              <div style="text-align: right; width: 30%; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end;">
+                <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-main);">${currency}${spentVal.toLocaleString(undefined, {maximumFractionDigits:0})}</span>
+                <span style="font-size: 0.65rem; color: var(--text-muted);">${pctVal.toFixed(0)}%</span>
               </div>
             </div>
           `;
         });
         categoriesListEl.innerHTML = html;
-
-        // Enable mouse wheel horizontal scrolling
-        categoriesListEl.addEventListener('wheel', (e) => {
-          if (e.deltaY !== 0) {
-            e.preventDefault();
-            categoriesListEl.scrollLeft += e.deltaY;
-          }
-        }, { passive: false });
       }
     }
 

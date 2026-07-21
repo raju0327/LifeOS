@@ -36,7 +36,7 @@
   <!-- Supabase JS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=49">
+  <link rel="stylesheet" href="style.css?v=50">
 </head>
 
 <body>
@@ -2338,11 +2338,10 @@
                     </div>
                   </div>
 
-                  <!-- Right side: Category progress list (Horizontal Scrollable) -->
-                  <div id="finance-spending-categories-list" style="display: flex; flex-direction: row; gap: 12px; overflow-x: auto; overflow-y: hidden; padding-bottom: 8px; width: 100%; scroll-behavior: smooth;">
+                  <!-- Right side: Category progress list (Vertical Scrollable) -->
+                  <div id="finance-spending-categories-list" style="display: flex; flex-direction: column; gap: 14px; max-height: 230px; overflow-y: auto; overflow-x: hidden; padding-right: 6px; scroll-behavior: smooth;">
                     <!-- Dynamic Real Time Category Rows -->
                   </div>
-                </div>
                 </div>
               </div>
 
@@ -6240,36 +6239,36 @@
   </div>
 
   <!-- Helpers & Validation & Controllers -->
-  <script src="helpers/financeHelper.js?v=49"></script>
-  <script src="validation/financeValidation.js?v=49"></script>
-  <script src="controllers/financeController.js?v=49"></script>
+  <script src="helpers/financeHelper.js?v=50"></script>
+  <script src="validation/financeValidation.js?v=50"></script>
+  <script src="controllers/financeController.js?v=50"></script>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=49"></script>
-  <script src="core/router.js?v=49"></script>
-  <script src="services/authService.js?v=49"></script>
-  <script src="services/supabaseService.js?v=49"></script>
-  <script src="services/storageService.js?v=49"></script>
-  <script src="services/syncService.js?v=49"></script>
-  <script src="services/notificationService.js?v=49"></script>
-  <script src="services/validationService.js?v=49"></script>
-  <script src="services/budgetService.js?v=49"></script>
-  <script src="services/financeService.js?v=49"></script>
-  <script src="services/chartService.js?v=49"></script>
+  <script src="core/config.js?v=50"></script>
+  <script src="core/router.js?v=50"></script>
+  <script src="services/authService.js?v=50"></script>
+  <script src="services/supabaseService.js?v=50"></script>
+  <script src="services/storageService.js?v=50"></script>
+  <script src="services/syncService.js?v=50"></script>
+  <script src="services/notificationService.js?v=50"></script>
+  <script src="services/validationService.js?v=50"></script>
+  <script src="services/budgetService.js?v=50"></script>
+  <script src="services/financeService.js?v=50"></script>
+  <script src="services/chartService.js?v=50"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=49"></script>
-  <script src="js/user.js?v=49"></script>
-  <script src="js/productivity.js?v=49"></script>
-  <script src="js/notes.js?v=49"></script>
-  <script src="js/finance.js?v=49"></script>
-  <script src="js/health.js?v=49"></script>
-  <script src="js/medicine.js?v=49"></script>
-  <script src="js/habits.js?v=49"></script>
-  <script src="js/personal.js?v=49"></script>
-  <script src="js/lifestyle.js?v=49"></script>
-  <script src="js/ai.js?v=49"></script>
-  <script src="js/analytics.js?v=49"></script>
+  <script src="js/app.js?v=50"></script>
+  <script src="js/user.js?v=50"></script>
+  <script src="js/productivity.js?v=50"></script>
+  <script src="js/notes.js?v=50"></script>
+  <script src="js/finance.js?v=50"></script>
+  <script src="js/health.js?v=50"></script>
+  <script src="js/medicine.js?v=50"></script>
+  <script src="js/habits.js?v=50"></script>
+  <script src="js/personal.js?v=50"></script>
+  <script src="js/lifestyle.js?v=50"></script>
+  <script src="js/ai.js?v=50"></script>
+  <script src="js/analytics.js?v=50"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
