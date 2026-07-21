@@ -297,18 +297,32 @@ const FinanceModule = {
   voiceRecognition: null,
   isRecordingVoice: false,
   
+  initDatabaseDefaults() {
+    if (!this.app || !this.app.state) return;
+    const s = this.app.state;
+    if (!s.transactions) s.transactions = [];
+    if (!s.loans) s.loans = [];
+    if (!s.subscriptions) s.subscriptions = [];
+    if (!s.members || s.members.length === 0) s.members = (this.app && this.app.getMockMembers) ? this.app.getMockMembers() : [];
+    if (!s.categories || Object.keys(s.categories).length === 0) s.categories = (this.app && this.app.getMockCategories) ? this.app.getMockCategories() : {};
+    if (!s.budgets) s.budgets = {};
+    if (!s.goals) s.goals = [];
+    if (!s.investments) s.investments = {};
+    if (!s.financeSettings) s.financeSettings = { pinLockEnabled: false, currencySymbol: '₹', currencyCode: 'INR' };
+    if (!s.budgetCategories) s.budgetCategories = [];
+  },
+
   init() {
     this.app = window.LifeOS;
+    this.initDatabaseDefaults();
     this.bindEvents();
     this.initVoiceEntry();
-    
-    
-    // Database pulls are automatically handled by the app core.
   },
 
   onActive() {
+    this.initDatabaseDefaults();
     // Check PIN Lock access on navigation active
-    if (this.app.state.financeSettings.pinLockEnabled) {
+    if (this.app && this.app.state && this.app.state.financeSettings && this.app.state.financeSettings.pinLockEnabled) {
       this.promptPinLockScreen();
     } else {
       this.render();
@@ -316,19 +330,20 @@ const FinanceModule = {
   },
 
   render() {
-    const state = this.app.state;
-    const currency = state.financeSettings.currencySymbol || '₹';
+    this.initDatabaseDefaults();
+    const state = (this.app && this.app.state) ? this.app.state : {};
+    const currency = (state.financeSettings && state.financeSettings.currencySymbol) || '₹';
 
-    // Renders
-    this.renderMemberChips();
-    this.renderBalances();
-    this.renderAccountsCarousel();
-    this.renderCharts();
-    this.renderLedgers();
-    this.renderBudgetsList();
-    this.populateCategoryFilters();
-    this.renderHubToolsItems();
-    this.renderSyncSettingsValues();
+    // Renders with error handling so one subview error cannot block others
+    try { this.renderMemberChips(); } catch (e) { console.warn('[FinanceModule] renderMemberChips:', e); }
+    try { this.renderBalances(); } catch (e) { console.warn('[FinanceModule] renderBalances:', e); }
+    try { this.renderAccountsCarousel(); } catch (e) { console.warn('[FinanceModule] renderAccountsCarousel:', e); }
+    try { this.renderCharts(); } catch (e) { console.warn('[FinanceModule] renderCharts:', e); }
+    try { this.renderLedgers(); } catch (e) { console.warn('[FinanceModule] renderLedgers:', e); }
+    try { this.renderBudgetsList(); } catch (e) { console.warn('[FinanceModule] renderBudgetsList:', e); }
+    try { this.populateCategoryFilters(); } catch (e) { console.warn('[FinanceModule] populateCategoryFilters:', e); }
+    try { this.renderHubToolsItems(); } catch (e) { console.warn('[FinanceModule] renderHubToolsItems:', e); }
+    try { this.renderSyncSettingsValues(); } catch (e) { console.warn('[FinanceModule] renderSyncSettingsValues:', e); }
   },
 
   bindEvents() {
