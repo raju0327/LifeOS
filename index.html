@@ -109,17 +109,39 @@
           </div>
         </div>
 
-        <!-- GROUP 4: LIFE TRACKERS -->
+        <!-- GROUP 4: FAMILY FINANCE -->
+        <div class="nav-group">
+          <div class="nav-group-header">
+            <span>FAMILY FINANCE</span>
+            <i data-lucide="chevron-down"></i>
+          </div>
+          <div class="nav-group-items">
+            <a href="#finance-dashboard" class="nav-item active" data-view="finance-dashboard">
+              <i data-lucide="layout-dashboard"></i>
+              <span>Finance Dashboard</span>
+            </a>
+            <a href="#finance-ledger" class="nav-item" data-view="finance-ledger">
+              <i data-lucide="list"></i>
+              <span>Finance Ledger</span>
+            </a>
+            <a href="#finance-budgets" class="nav-item" data-view="finance-budgets">
+              <i data-lucide="pie-chart"></i>
+              <span>Finance Budgets</span>
+            </a>
+            <a href="#finance-hub" class="nav-item" data-view="finance-hub">
+              <i data-lucide="grid"></i>
+              <span>Features Hub</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- GROUP 5: LIFE TRACKERS -->
         <div class="nav-group">
           <div class="nav-group-header">
             <span>LIFE TRACKERS</span>
             <i data-lucide="chevron-down"></i>
           </div>
           <div class="nav-group-items">
-            <a href="#finance" class="nav-item" data-view="finance">
-              <i data-lucide="wallet"></i>
-              <span>Finance Planner</span>
-            </a>
             <a href="#health" class="nav-item" data-view="health">
               <i data-lucide="heart-pulse"></i>
               <span>Health & Fitness</span>
@@ -4753,32 +4775,37 @@
     </div>
   </div>
 
+  <!-- Helpers & Validation & Controllers -->
+  <script src="helpers/financeHelper.js?v=29"></script>
+  <script src="validation/financeValidation.js?v=29"></script>
+  <script src="controllers/financeController.js?v=29"></script>
+
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=28"></script>
-  <script src="core/router.js?v=28"></script>
-  <script src="services/authService.js?v=28"></script>
-  <script src="services/supabaseService.js?v=28"></script>
-  <script src="services/storageService.js?v=28"></script>
-  <script src="services/syncService.js?v=28"></script>
-  <script src="services/notificationService.js?v=28"></script>
-  <script src="services/validationService.js?v=28"></script>
-  <script src="services/budgetService.js?v=28"></script>
-  <script src="services/financeService.js?v=28"></script>
-  <script src="services/chartService.js?v=28"></script>
+  <script src="core/config.js?v=29"></script>
+  <script src="core/router.js?v=29"></script>
+  <script src="services/authService.js?v=29"></script>
+  <script src="services/supabaseService.js?v=29"></script>
+  <script src="services/storageService.js?v=29"></script>
+  <script src="services/syncService.js?v=29"></script>
+  <script src="services/notificationService.js?v=29"></script>
+  <script src="services/validationService.js?v=29"></script>
+  <script src="services/budgetService.js?v=29"></script>
+  <script src="services/financeService.js?v=29"></script>
+  <script src="services/chartService.js?v=29"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=28"></script>
-  <script src="js/user.js?v=28"></script>
-  <script src="js/productivity.js?v=28"></script>
-  <script src="js/notes.js?v=28"></script>
-  <script src="js/finance.js?v=28"></script>
-  <script src="js/health.js?v=28"></script>
-  <script src="js/medicine.js?v=28"></script>
-  <script src="js/habits.js?v=28"></script>
-  <script src="js/personal.js?v=28"></script>
-  <script src="js/lifestyle.js?v=28"></script>
-  <script src="js/ai.js?v=28"></script>
-  <script src="js/analytics.js?v=28"></script>
+  <script src="js/app.js?v=29"></script>
+  <script src="js/user.js?v=29"></script>
+  <script src="js/productivity.js?v=29"></script>
+  <script src="js/notes.js?v=29"></script>
+  <script src="js/finance.js?v=29"></script>
+  <script src="js/health.js?v=29"></script>
+  <script src="js/medicine.js?v=29"></script>
+  <script src="js/habits.js?v=29"></script>
+  <script src="js/personal.js?v=29"></script>
+  <script src="js/lifestyle.js?v=29"></script>
+  <script src="js/ai.js?v=29"></script>
+  <script src="js/analytics.js?v=29"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {

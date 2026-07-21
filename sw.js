@@ -1,7 +1,10 @@
-const CACHE_NAME = 'lifeos-cache-v28';
+const CACHE_NAME = 'lifeos-cache-v29';
 const ASSETS = [
   './index.html',
   './style.css',
+  './helpers/financeHelper.js',
+  './validation/financeValidation.js',
+  './controllers/financeController.js',
   './core/config.js',
   './core/router.js',
   './services/authService.js',

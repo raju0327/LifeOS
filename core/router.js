@@ -54,7 +54,15 @@ window.LifeOSRouter = {
     }
 
     // Invoke module onActive lifecycle hook
-    if (this.app && this.app.modules && this.app.modules[targetView] && typeof this.app.modules[targetView].onActive === 'function') {
+    if (targetView.startsWith('finance-') && this.app && this.app.modules && this.app.modules.finance) {
+      const sub = targetView.replace('finance-', '');
+      if (typeof this.app.modules.finance.switchSubview === 'function') {
+        this.app.modules.finance.switchSubview(sub);
+      }
+      if (typeof this.app.modules.finance.onActive === 'function') {
+        this.app.modules.finance.onActive();
+      }
+    } else if (this.app && this.app.modules && this.app.modules[targetView] && typeof this.app.modules[targetView].onActive === 'function') {
       this.app.modules[targetView].onActive();
     }
 
