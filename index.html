@@ -1338,312 +1338,320 @@
 
           <!-- 1. DASHBOARD SUBVIEW -->
           <div id="finance-subview-dashboard" class="finance-subview-panel active">
-            <!-- Family Members Slider -->
-            <section class="members-slider" id="finance-members-container"
-              style="display: flex; gap: 12px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 6px;">
-              <!-- Loaded Dynamically -->
-            </section>
 
-            <!-- Total Balance Card -->
-            <div class="glass-card balance-card"
-              style="position: relative; overflow: hidden; margin-bottom: 16px; padding: 20px; border-radius: var(--radius-md);">
-              <span class="balance-label"
-                style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Total Family
-                Balance</span>
-              <div class="balance-amount" id="finance-total-balance"
-                style="font-size: 2.2rem; font-weight: 800; color: var(--primary); margin-bottom: 16px;">₹0.00</div>
-              <div class="balance-details"
-                style="display: flex; gap: 24px; border-top: 1px solid var(--glass-border); padding-top: 12px;">
-                <div class="bal-detail-item" style="flex: 1;">
-                  <span style="font-size: 0.72rem; color: var(--text-muted);">Family Income</span>
-                  <p class="text-income text-green" id="finance-total-income"
-                    style="font-size: 1.1rem; font-weight: 700; margin-top: 2px;">+₹0</p>
+            <!-- Welcome Greeting Banner -->
+            <div class="glass-card" style="padding: 14px 18px; margin-bottom: 16px; border-radius: var(--radius-md); background: linear-gradient(135deg, rgba(163, 112, 247, 0.08), rgba(255, 255, 255, 0.02)); border: 1px solid var(--glass-border);">
+              <h3 style="font-size: 1rem; font-weight: 700; margin: 0 0 2px 0;">Good Morning, Kishore! 👋</h3>
+              <p style="font-size: 0.72rem; color: var(--text-muted); margin: 0;">Here's what's happening with your finances today.</p>
+            </div>
+
+            <!-- 4 Summary KPI Cards Grid -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px;">
+              <!-- Card 1: Total Balance -->
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); position: relative; border: 1px solid var(--glass-border);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Total Balance</span>
+                  <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(59, 130, 246, 0.15); display: flex; align-items: center; justify-content: center; color: #3b82f6; font-size: 0.9rem;">
+                    <i class="fas fa-credit-card"></i>
+                  </div>
                 </div>
-                <div class="bal-detail-item" style="flex: 1;">
-                  <span style="font-size: 0.72rem; color: var(--text-muted);">Family Expenses</span>
-                  <p class="text-expense text-red" id="finance-total-expense"
-                    style="font-size: 1.1rem; font-weight: 700; margin-top: 2px;">-₹0</p>
+                <div id="finance-total-balance" style="font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">₹2,45,680</div>
+                <span style="font-size: 0.65rem; color: var(--text-muted);">Across all accounts</span>
+              </div>
+
+              <!-- Card 2: Monthly Income -->
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); position: relative; border: 1px solid var(--glass-border);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Monthly Income</span>
+                  <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 0.9rem;">
+                    <i class="fas fa-arrow-down"></i>
+                  </div>
+                </div>
+                <div id="finance-total-income" style="font-size: 1.5rem; font-weight: 800; color: var(--green); margin-bottom: 2px;">₹1,20,000</div>
+                <span style="font-size: 0.65rem; color: var(--text-muted);">This Month</span>
+              </div>
+
+              <!-- Card 3: Monthly Expense -->
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); position: relative; border: 1px solid var(--glass-border);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Monthly Expense</span>
+                  <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(239, 68, 68, 0.15); display: flex; align-items: center; justify-content: center; color: #ef4444; font-size: 0.9rem;">
+                    <i class="fas fa-arrow-up"></i>
+                  </div>
+                </div>
+                <div id="finance-total-expense" style="font-size: 1.5rem; font-weight: 800; color: var(--red); margin-bottom: 2px;">₹48,250</div>
+                <span style="font-size: 0.65rem; color: var(--text-muted);">This Month</span>
+              </div>
+
+              <!-- Card 4: Savings This Month -->
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); position: relative; border: 1px solid var(--glass-border);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Savings This Month</span>
+                  <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(163, 112, 247, 0.15); display: flex; align-items: center; justify-content: center; color: #a370f7; font-size: 0.9rem;">
+                    <i class="fas fa-piggy-bank"></i>
+                  </div>
+                </div>
+                <div id="finance-total-savings" style="font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">₹71,750</div>
+                <span style="font-size: 0.62rem; color: #10b981; font-weight: 700; background: rgba(16, 185, 129, 0.12); padding: 2px 6px; border-radius: 4px;">Compared to last month +12.5%</span>
+              </div>
+            </div>
+
+            <!-- Middle Row: Cash Flow Overview Line Chart + Category Donut Chart -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+              <!-- Left: Cash Flow Overview -->
+              <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                  <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-main);">Cash Flow Overview</h4>
+                  <select class="glass-widget" style="font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--bg-sidebar); color: var(--text-main);">
+                    <option>This Month</option>
+                    <option>Last Month</option>
+                  </select>
+                </div>
+                <div id="finance-asset-multi-chart-container" style="height: 180px; width: 100%;"></div>
+              </div>
+
+              <!-- Right: Expense by Category Donut Chart -->
+              <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                  <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-main);">Expense by Category</h4>
+                  <span style="font-size: 0.68rem; color: var(--text-muted);">This Month</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                  <div id="finance-donut-chart-container" style="width: 140px; height: 140px; position: relative; flex-shrink: 0;"></div>
+                  <div id="finance-donut-legend" style="display: flex; flex-direction: column; gap: 4px; font-size: 0.68rem; flex-grow: 1; max-height: 140px; overflow-y: auto;"></div>
                 </div>
               </div>
             </div>
 
-            <!-- Accounts Balance Slider Carousel -->
-            <div class="accounts-slider-container" style="margin-bottom: 20px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span
-                  style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;">Accounts
-                  & Wallets</span>
-                <div style="display: flex; gap: 8px; align-items: center; font-size: 0.7rem;">
-                  <span id="finance-btn-open-transfer"
-                    style="color: var(--primary); font-weight: 700; cursor: pointer; text-decoration: underline;"><i
-                      class="fas fa-random"></i> Transfer</span>
-                  <span style="color: var(--text-dim);">Swipe <i class="fas fa-arrow-right"></i></span>
+            <!-- Bottom Row 1: Budget Utilization Progress + Upcoming Payments List -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+              <!-- Left: Budget Utilization -->
+              <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-main);">Budget Utilization</h4>
+                    <select class="glass-widget" style="font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--bg-sidebar); color: var(--text-main);">
+                      <option>This Month</option>
+                    </select>
+                  </div>
+                  <div style="margin-bottom: 12px;">
+                    <span style="font-size: 0.72rem; color: var(--text-muted);">Overall Utilization</span>
+                    <div style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);">60.31% <span style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">of ₹80,000</span></div>
+                  </div>
+                  <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                    <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.68rem; padding: 4px 8px;"><i class="fas fa-check-circle"></i> On Track: 5</span>
+                    <span class="badge" style="background: rgba(249, 115, 22, 0.15); color: #f97316; font-size: 0.68rem; padding: 4px 8px;"><i class="fas fa-exclamation-triangle"></i> At Risk: 3</span>
+                  </div>
+                </div>
+                <div style="height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden;">
+                  <div style="width: 60.31%; height: 100%; background: linear-gradient(90deg, #10b981, #f97316); border-radius: 4px;"></div>
                 </div>
               </div>
-              <div class="accounts-carousel" id="finance-accounts-carousel-list"
-                style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
+
+              <!-- Right: Upcoming Payments -->
+              <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 12px 0; color: var(--text-main);">Upcoming Payments</h4>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--glass-border);">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <span style="font-size: 1.1rem;">⚡</span>
+                      <div>
+                        <div style="font-weight: 700; font-size: 0.78rem;">Electricity Bill</div>
+                        <div style="font-size: 0.65rem; color: var(--text-muted);">Due on 26 May 2025</div>
+                      </div>
+                    </div>
+                    <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; font-size: 0.65rem;">3 Days Left</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--glass-border);">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <span style="font-size: 1.1rem;">🌐</span>
+                      <div>
+                        <div style="font-weight: 700; font-size: 0.78rem;">Internet Bill</div>
+                        <div style="font-size: 0.65rem; color: var(--text-muted);">Due on 30 May 2025</div>
+                      </div>
+                    </div>
+                    <span class="badge" style="background: rgba(249, 115, 22, 0.2); color: #f97316; font-size: 0.65rem;">8 Days Left</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--glass-border);">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <span style="font-size: 1.1rem;">🚗</span>
+                      <div>
+                        <div style="font-weight: 700; font-size: 0.78rem;">Car EMI</div>
+                        <div style="font-size: 0.65rem; color: var(--text-muted);">Due on 05 Jun 2025</div>
+                      </div>
+                    </div>
+                    <span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6; font-size: 0.65rem;">14 Days Left</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Row 2: Recent Transactions Table -->
+            <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: var(--text-main);">Recent Transactions</h4>
+                <button onclick="window.switchFinanceSubview('ledger')" style="background: none; border: none; color: var(--primary); font-size: 0.75rem; font-weight: 700; cursor: pointer;">View All <i class="fas fa-arrow-right"></i></button>
+              </div>
+              <div class="transaction-list" id="finance-recent-transactions-container" style="display: flex; flex-direction: column; gap: 8px;">
                 <!-- Loaded dynamically -->
               </div>
             </div>
 
-            <!-- Charts and List Row -->
-            <div class="finance-dashboard-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-              <!-- Left Col: Asset Track comparative chart & Recent Transactions -->
-              <div style="display: flex; flex-direction: column; gap: 16px;">
-                <div class="cyber-card" style="padding: 16px;">
-                  <div style="margin-bottom: 12px;">
-                    <h3 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 2px;">Income & Expense Trends</h3>
-                    <p style="font-size: 0.65rem; color: var(--text-muted);">Comparison timeline chart</p>
-                  </div>
-                  <div
-                    style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; background: rgba(255, 255, 255, 0.02); border-radius: var(--radius-sm); padding: 8px; border: 1px solid var(--glass-border); text-align: center;">
-                    <div>
-                      <span style="font-size: 0.55rem; color: var(--text-muted); display: block;">Available Cash</span>
-                      <span style="font-weight: 700; font-size: 0.75rem; color: var(--primary);"
-                        id="finance-track-assets-val">₹0</span>
-                    </div>
-                    <div
-                      style="border-left: 1px solid var(--glass-border); border-right: 1px solid var(--glass-border);">
-                      <span style="font-size: 0.55rem; color: var(--text-muted); display: block;">Total Income</span>
-                      <span style="font-weight: 700; font-size: 0.75rem; color: var(--green);"
-                        id="finance-track-income-val">₹0</span>
-                    </div>
-                    <div>
-                      <span style="font-size: 0.55rem; color: var(--text-muted); display: block;">Total Expense</span>
-                      <span style="font-weight: 700; font-size: 0.75rem; color: var(--red);"
-                        id="finance-track-expense-val">₹0</span>
-                    </div>
-                  </div>
-                  <div id="finance-asset-multi-chart-container" style="position: relative;"></div>
-                </div>
-
-                <!-- Recent Transactions -->
-                <div class="glass-card" style="padding: 16px;">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <h3 style="font-size: 0.9rem; font-weight: 700;">Recent Transactions</h3>
-                    <button class="small-link finance-nav-trigger" data-target-subview="ledger"
-                      style="background: none; border: none; cursor: pointer; color: var(--primary); font-size: 0.7rem; font-weight: 600;">View
-                      All</button>
-                  </div>
-                  <div class="transaction-list" id="finance-recent-transactions-container"
-                    style="display: flex; flex-direction: column; gap: 8px;">
-                    <!-- Loaded dynamically -->
-                  </div>
-                </div>
-              </div>
-
-              <!-- Right Col: Category Spending Donut Chart & Monthly Trend -->
-              <div style="display: flex; flex-direction: column; gap: 16px;">
-                <div class="cyber-card" style="padding: 16px;">
-                  <div style="margin-bottom: 12px;">
-                    <h3 style="font-size: 0.9rem; font-weight: 700;">Expenses by Category</h3>
-                    <p style="font-size: 0.65rem; color: var(--text-muted);">Current month breakdown</p>
-                  </div>
-                  <div id="finance-donut-chart-container"></div>
-                  <div class="chart-legend" id="finance-donut-legend" style="margin-top: 12px;"></div>
-                </div>
-
-                <div class="cyber-card" style="padding: 16px;">
-                  <div style="margin-bottom: 12px;">
-                    <h3 style="font-size: 0.9rem; font-weight: 700;">Spending Trend Curve</h3>
-                    <p style="font-size: 0.65rem; color: var(--text-muted);">Timeline view</p>
-                  </div>
-                  <div id="finance-line-chart-container"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Floating Action Button inside dashboard view -->
-            <button class="btn-primary-glow" id="finance-btn-open-add-tx"
-              style="position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; z-index: 99; box-shadow: 0 4px 20px var(--primary-glow); border: none; color: #fff; cursor: pointer;">
-              <i class="fas fa-plus"></i>
-            </button>
           </div>
 
           <!-- 2. LEDGER SUBVIEW -->
           <div id="finance-subview-ledger" class="finance-subview-panel">
-            <div class="glass-card" style="padding: 12px; margin-bottom: 12px;">
-              <div style="display: flex; gap: 8px; align-items: center;">
-                <div class="input-group" style="margin-bottom: 0; flex: 1;">
-                  <input type="text" id="finance-search-tx" placeholder="Search description..."
-                    style="width: 100%; font-size: 0.75rem;">
+            <!-- Search & Add Transaction Bar -->
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px;">
+              <div style="display: flex; gap: 10px; flex: 1;">
+                <div class="input-group" style="margin: 0; flex: 1;">
+                  <input type="text" id="finance-search-tx" placeholder="Search transactions..." style="width: 100%; font-size: 0.78rem; padding: 10px 14px;">
                 </div>
-                <button id="finance-btn-toggle-filters" class="btn-primary-glow-secondary"
-                  style="padding: 10px 14px; font-size: 0.75rem; flex-shrink: 0; cursor: pointer;">
-                  <i class="fas fa-filter"></i> Filters
+                <button id="finance-btn-toggle-filters" class="btn-glass-subtle" style="padding: 10px 16px; font-size: 0.78rem; cursor: pointer; flex-shrink: 0;">
+                  <i class="fas fa-filter"></i> Filters <i class="fas fa-chevron-down" style="font-size: 0.65rem;"></i>
                 </button>
               </div>
+              <button onclick="window.LifeOS.modules.finance.toggleModal('finance-add-transaction-overlay', true)" class="btn-primary-glow" style="padding: 10px 18px; font-size: 0.82rem; font-weight: 700; border: none; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-plus"></i> Add Transaction
+              </button>
+            </div>
 
-              <!-- Filters Dropdown Panel -->
-              <div id="finance-ledger-filters-panel"
-                style="display: none; flex-direction: column; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--glass-border);">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                  <div class="input-group">
-                    <label style="font-size: 0.58rem; margin-bottom: 4px; display: block;">Category</label>
-                    <select id="finance-filter-category-select"
-                      style="width: 100%; font-size: 0.7rem; padding: 6px 10px;">
-                      <option value="all">All Categories</option>
-                      <!-- Populated dynamically -->
-                    </select>
-                  </div>
-                  <div class="input-group">
-                    <label style="font-size: 0.58rem; margin-bottom: 4px; display: block;">Account / Wallet</label>
-                    <select id="finance-filter-account-select"
-                      style="width: 100%; font-size: 0.7rem; padding: 6px 10px;">
-                      <option value="all">All Accounts</option>
-                      <option value="cash">💵 Cash</option>
-                      <option value="bank">🏦 Bank Account</option>
-                      <option value="card">💳 Credit Card</option>
-                      <option value="upi">📱 UPI Wallet</option>
-                      <option value="savings">💰 Savings Account</option>
-                    </select>
-                  </div>
+            <!-- Filters Dropdown Panel -->
+            <div id="finance-ledger-filters-panel" style="display: none; flex-direction: column; gap: 10px; margin-bottom: 16px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: var(--radius-md); border: 1px dashed var(--glass-border);">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div class="input-group">
+                  <label style="font-size: 0.58rem; margin-bottom: 4px; display: block;">Category</label>
+                  <select id="finance-filter-category-select" style="width: 100%; font-size: 0.7rem; padding: 6px 10px;">
+                    <option value="all">All Categories</option>
+                  </select>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                  <div class="input-group">
-                    <label style="font-size: 0.58rem; margin-bottom: 4px; display: block;">Specific Date</label>
-                    <input type="date" id="finance-filter-date-input"
-                      style="width: 100%; font-size: 0.7rem; padding: 6px 10px;">
-                  </div>
-                  <div class="input-group">
-                    <label style="font-size: 0.58rem; margin-bottom: 4px; display: block;">Tags</label>
-                    <input type="text" id="finance-filter-tags-input" placeholder="e.g. food"
-                      style="width: 100%; font-size: 0.7rem; padding: 6px 10px;">
-                  </div>
+                <div class="input-group">
+                  <label style="font-size: 0.58rem; margin-bottom: 4px; display: block;">Account / Wallet</label>
+                  <select id="finance-filter-account-select" style="width: 100%; font-size: 0.7rem; padding: 6px 10px;">
+                    <option value="all">All Accounts</option>
+                    <option value="cash">💵 Cash</option>
+                    <option value="bank">🏦 Bank Account</option>
+                    <option value="card">💳 Credit Card</option>
+                    <option value="upi">📱 UPI Wallet</option>
+                    <option value="savings">💰 Savings Account</option>
+                  </select>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                  <div class="input-group">
-                    <label style="font-size: 0.58rem; margin-bottom: 4px; display: block;">Min Amount</label>
-                    <input type="number" id="finance-filter-min-amount" placeholder="Min"
-                      style="width: 100%; font-size: 0.7rem; padding: 6px 10px;">
-                  </div>
-                  <div class="input-group">
-                    <label style="font-size: 0.58rem; margin-bottom: 4px; display: block;">Max Amount</label>
-                    <input type="number" id="finance-filter-max-amount" placeholder="Max"
-                      style="width: 100%; font-size: 0.7rem; padding: 6px 10px;">
-                  </div>
+              </div>
+              <button id="finance-btn-clear-filters" class="btn-primary-glow" style="padding: 6px; font-size: 0.7rem; background: var(--red); font-weight: 700; width: 100%;">
+                Reset All Filters
+              </button>
+            </div>
+
+            <!-- 4 Summary KPI Cards -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px;">
+              <div class="glass-card" style="padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Total Transactions</span>
+                  <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;"><i class="fas fa-receipt"></i></div>
                 </div>
-                <button id="finance-btn-clear-filters" class="btn-primary-glow"
-                  style="margin-top: 4px; padding: 8px; font-size: 0.7rem; background: var(--red); font-weight: 700; width: 100%;">
-                  Reset All Filters
-                </button>
+                <div style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);">56</div>
+                <span style="font-size: 0.62rem; color: var(--text-muted);">This Month</span>
+              </div>
+              <div class="glass-card" style="padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Total Debits</span>
+                  <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;"><i class="fas fa-arrow-up"></i></div>
+                </div>
+                <div style="font-size: 1.4rem; font-weight: 800; color: var(--red);">₹48,250</div>
+                <span style="font-size: 0.62rem; color: var(--text-muted);">This Month</span>
+              </div>
+              <div class="glass-card" style="padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Total Credits</span>
+                  <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;"><i class="fas fa-arrow-down"></i></div>
+                </div>
+                <div style="font-size: 1.4rem; font-weight: 800; color: var(--green);">₹1,20,000</div>
+                <span style="font-size: 0.62rem; color: var(--text-muted);">This Month</span>
+              </div>
+              <div class="glass-card" style="padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                  <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Net Cash Flow</span>
+                  <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(163, 112, 247, 0.15); color: #a370f7; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;"><i class="fas fa-chart-line"></i></div>
+                </div>
+                <div style="font-size: 1.4rem; font-weight: 800; color: var(--primary);">₹71,750</div>
+                <span style="font-size: 0.62rem; color: var(--text-muted);">This Month</span>
               </div>
             </div>
 
-            <div class="glass-card">
-              <div
-                style="display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid var(--glass-border);">
-                <h3 style="font-size: 0.9rem; font-weight: 700;">Transactions Log</h3>
-                <span class="badge" id="finance-tx-count">0 Records</span>
-              </div>
-              <div class="transaction-list" id="finance-full-transactions-container"
-                style="padding: 16px; display: flex; flex-direction: column; gap: 8px; max-height: 500px; overflow-y: auto;">
-                <!-- Loaded dynamically -->
+            <!-- Filter Tabs Bar -->
+            <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+              <button class="btn-primary-glow" style="padding: 6px 16px; font-size: 0.75rem; font-weight: 700; border-radius: 20px;">All Transactions</button>
+              <button class="btn-glass-subtle" style="padding: 6px 16px; font-size: 0.75rem; border-radius: 20px;">Income</button>
+              <button class="btn-glass-subtle" style="padding: 6px 16px; font-size: 0.75rem; border-radius: 20px;">Expense</button>
+              <button class="btn-glass-subtle" style="padding: 6px 16px; font-size: 0.75rem; border-radius: 20px;">Transfer</button>
+            </div>
+
+            <!-- Data Table Container -->
+            <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+              <div class="transaction-list" id="finance-full-transactions-container" style="display: flex; flex-direction: column; gap: 8px;">
+                <!-- Dynamic Rows -->
               </div>
             </div>
           </div>
 
-          <!-- 3. BUDGETS SUBVIEW (Mockup-Aligned Budget Management Module) -->
+          <!-- 3. BUDGETS SUBVIEW -->
           <div id="finance-subview-budgets" class="finance-subview-panel">
-
-            <!-- Budget Alerts Banner Container -->
             <div id="budget-alerts-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;"></div>
 
-            <!-- Top Header: Budget Limit Overview -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-              <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin: 0;">Budget Limit Overview</h3>
-              <div style="display: flex; gap: 8px; align-items: center;">
-                <button id="btn-manage-categories" onclick="window.openManageCategoriesModal()" class="btn-glass-subtle" style="font-size: 0.75rem; padding: 6px 12px; cursor: pointer;">
-                  <i class="fas fa-tags"></i> Manage Categories
-                </button>
-                <button id="btn-export-budget-reports" onclick="window.openReportsModal()" class="btn-glass-subtle" style="font-size: 0.75rem; padding: 6px 12px; cursor: pointer;">
-                  <i class="fas fa-file-export"></i> Reports & Export
-                </button>
-                <select id="budget-period-filter" class="glass-widget" style="padding: 6px 12px; font-size: 0.78rem; font-weight: 600; background: var(--bg-sidebar); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: var(--text-main); cursor: pointer;">
-                  <option value="monthly">Monthly</option>
-                  <option value="yearly">Yearly</option>
-                  <option value="custom">Custom Period</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- 4 Overview Metric Cards -->
+            <!-- 4 Summary KPI Cards -->
             <div class="budget-overview-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px;">
-              <!-- Card 1: Total Budget -->
-              <div class="glass-card" style="padding: 16px; position: relative; border-radius: var(--radius-md); background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);">
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                  <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(163, 112, 247, 0.15); display: flex; align-items: center; justify-content: center; color: #a370f7; font-size: 1.1rem;">
-                    <i class="fas fa-wallet"></i>
-                  </div>
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                  <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(163, 112, 247, 0.15); color: #a370f7; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-wallet"></i></div>
                   <div>
-                    <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Total Budget</span>
+                    <span style="display: block; font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Total Budget</span>
                     <span id="budget-stat-total-amount" style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);">₹80,000</span>
                   </div>
                 </div>
-                <span style="font-size: 0.7rem; color: var(--text-muted);">This Month</span>
+                <span style="font-size: 0.65rem; color: var(--text-muted);">This Month</span>
               </div>
-
-              <!-- Card 2: Total Spent -->
-              <div class="glass-card" style="padding: 16px; position: relative; border-radius: var(--radius-md); background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);">
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                  <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 1.1rem;">
-                    <i class="fas fa-receipt"></i>
-                  </div>
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                  <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(16, 185, 129, 0.15); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-receipt"></i></div>
                   <div>
-                    <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Total Spent</span>
+                    <span style="display: block; font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Total Spent</span>
                     <span id="budget-stat-total-spent" style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);">₹48,250</span>
                   </div>
                 </div>
-                <span style="font-size: 0.7rem; color: var(--text-muted);">This Month</span>
+                <span style="font-size: 0.65rem; color: var(--text-muted);">This Month</span>
               </div>
-
-              <!-- Card 3: Remaining Budget -->
-              <div class="glass-card" style="padding: 16px; position: relative; border-radius: var(--radius-md); background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);">
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                  <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(59, 130, 246, 0.15); display: flex; align-items: center; justify-content: center; color: #3b82f6; font-size: 1.1rem;">
-                    <i class="fas fa-clock"></i>
-                  </div>
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                  <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-clock"></i></div>
                   <div>
-                    <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Remaining Budget</span>
+                    <span style="display: block; font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Remaining Budget</span>
                     <span id="budget-stat-remaining" style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);">₹31,750</span>
                   </div>
                 </div>
-                <span style="font-size: 0.7rem; color: var(--text-muted);">Left to Spend</span>
+                <span style="font-size: 0.65rem; color: var(--text-muted);">Left to Spend</span>
               </div>
-
-              <!-- Card 4: Budget Utilization -->
-              <div class="glass-card" style="padding: 16px; position: relative; border-radius: var(--radius-md); background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);">
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                  <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(249, 115, 22, 0.15); display: flex; align-items: center; justify-content: center; color: #f97316; font-size: 1.1rem;">
-                    <i class="fas fa-hourglass-half"></i>
-                  </div>
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                  <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(249, 115, 22, 0.15); color: #f97316; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-hourglass-half"></i></div>
                   <div>
-                    <span style="display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Budget Utilization</span>
+                    <span style="display: block; font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Budget Utilization</span>
                     <span id="budget-stat-utilization" style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);">60.31%</span>
                   </div>
                 </div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <span style="font-size: 0.7rem; color: var(--text-muted);">of Total Budget</span>
-                </div>
-                <div style="height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; margin-top: 6px;">
-                  <div id="budget-stat-utilization-bar" style="width: 60.31%; height: 100%; background: linear-gradient(90deg, #f97316, #eab308); transition: width 0.3s ease;"></div>
-                </div>
+                <span style="font-size: 0.65rem; color: var(--text-muted);">of Total Budget</span>
               </div>
             </div>
 
-            <!-- Middle Split Grid (Left: Category Progress, Right: Visual Analytics & Charts) -->
+            <!-- Middle Split Grid -->
             <div class="budget-middle-split" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
-
-              <!-- Left Panel: Category Limit Progress -->
-              <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); display: flex; flex-direction: column;">
+              <!-- Left: Budget vs Actual Table -->
+              <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                  <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin: 0;">Category Limit Progress</h4>
-                  <button id="btn-open-plan-budget" onclick="window.openPlanBudgetModal()" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 4px 10px; cursor: pointer;">
+                  <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0;">Budget vs Actual</h4>
+                  <button onclick="window.openPlanBudgetModal()" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 4px 10px; cursor: pointer;">
                     <i class="fas fa-plus"></i> Plan Budget
                   </button>
                 </div>
-
-                <!-- Category Limit Table -->
                 <div style="overflow-x: auto; flex-grow: 1;">
                   <table style="width: 100%; border-collapse: collapse; font-size: 0.78rem;">
                     <thead>
@@ -1655,76 +1663,52 @@
                       </tr>
                     </thead>
                     <tbody id="budget-category-rows-container">
-                      <!-- Dynamic Category Progress Rows -->
+                      <!-- Dynamic Category Rows -->
                     </tbody>
                   </table>
                 </div>
-
-                <!-- Plan Budget Button -->
-                <button id="btn-plan-budget-bottom" onclick="window.openPlanBudgetModal()" class="btn-primary-glow" style="width: 100%; margin-top: 14px; padding: 10px; font-size: 0.82rem; font-weight: 700; border: none; cursor: pointer; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+                <button onclick="window.openPlanBudgetModal()" class="btn-primary-glow" style="width: 100%; margin-top: 14px; padding: 10px; font-size: 0.82rem; font-weight: 700; border: none; cursor: pointer; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px;">
                   <i class="fas fa-calendar-plus"></i> Plan Budget
                 </button>
               </div>
 
-              <!-- Right Panel: Visual Analytics & Charts -->
+              <!-- Right: Donut Chart & Trend -->
               <div style="display: flex; flex-direction: column; gap: 16px;">
-
-                <!-- Top Chart: Budget vs Actual Bar Chart -->
-                <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);">
+                <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--text-main); margin: 0;">Budget vs Actual</h4>
-                    <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">This Month</span>
+                    <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0;">Budget vs Actual Chart</h4>
+                    <span style="font-size: 0.72rem; color: var(--text-muted);">This Month</span>
                   </div>
-                  <!-- Chart Legend -->
-                  <div style="display: flex; gap: 16px; font-size: 0.72rem; margin-bottom: 8px;">
-                    <span style="display: flex; align-items: center; gap: 6px; color: var(--text-muted);">
-                      <span style="width: 10px; height: 10px; background: #a370f7; border-radius: 2px;"></span> Budget
-                    </span>
-                    <span style="display: flex; align-items: center; gap: 6px; color: var(--text-muted);">
-                      <span style="width: 10px; height: 10px; background: #10b981; border-radius: 2px;"></span> Actual
-                    </span>
-                  </div>
-                  <!-- SVG Bar Chart -->
                   <div id="budget-vs-actual-chart-container" style="height: 140px; width: 100%;"></div>
                 </div>
 
-                <!-- Bottom Charts Grid: Spending Donut + Trend Line -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-
-                  <!-- Spending by Category Donut Chart -->
-                  <div class="glass-card" style="padding: 14px; border-radius: var(--radius-md); background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);">
-                    <h5 style="font-size: 0.82rem; font-weight: 700; color: var(--text-main); margin: 0 0 10px 0;">Spending by Category</h5>
+                  <div class="glass-card" style="padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                    <h5 style="font-size: 0.82rem; font-weight: 700; margin: 0 0 10px 0;">Spending by Category</h5>
                     <div style="display: flex; align-items: center; gap: 10px;">
                       <div id="budget-donut-chart-container" style="width: 110px; height: 110px; position: relative; flex-shrink: 0;"></div>
                       <div id="budget-donut-legend-container" style="display: flex; flex-direction: column; gap: 3px; font-size: 0.65rem; max-height: 110px; overflow-y: auto; flex-grow: 1;"></div>
                     </div>
                   </div>
-
-                  <!-- Budget Utilization Trend Line Chart -->
-                  <div class="glass-card" style="padding: 14px; border-radius: var(--radius-md); background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);">
+                  <div class="glass-card" style="padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                      <h5 style="font-size: 0.82rem; font-weight: 700; color: var(--text-main); margin: 0;">Utilization Trend</h5>
+                      <h5 style="font-size: 0.82rem; font-weight: 700; margin: 0;">Utilization Trend</h5>
                       <span style="font-size: 0.65rem; color: var(--text-muted);">6 Months</span>
                     </div>
                     <div id="budget-trend-chart-container" style="height: 100px; width: 100%;"></div>
                   </div>
-
                 </div>
-
               </div>
-
             </div>
 
-            <!-- Bottom Panel: Recent Transactions Affecting Budget -->
-            <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);">
+            <!-- Bottom Table: Recent Transactions Affecting Budget -->
+            <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin: 0;">Recent Transactions Affecting Budget</h4>
-                <button id="btn-budget-view-all-txs" onclick="window.viewLedgerTransaction()" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 4px 10px; cursor: pointer;">
+                <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0;">Recent Transactions Affecting Budget</h4>
+                <button onclick="window.viewLedgerTransaction()" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 4px 10px; cursor: pointer;">
                   View Ledger <i class="fas fa-arrow-right" style="margin-left: 4px;"></i>
                 </button>
               </div>
-
-              <!-- Transactions Table -->
               <div style="overflow-x: auto;">
                 <table style="width: 100%; border-collapse: collapse; font-size: 0.78rem;">
                   <thead>
@@ -1739,72 +1723,159 @@
                     </tr>
                   </thead>
                   <tbody id="budget-recent-txs-container">
-                    <!-- Dynamic Transaction Impact Rows -->
+                    <!-- Dynamic Rows -->
                   </tbody>
                 </table>
               </div>
             </div>
-
           </div>
 
-          <!-- 4. TOOLS HUB SUBVIEW -->
+          <!-- 4. FEATURES HUB SUBVIEW -->
           <div id="finance-subview-hub" class="finance-subview-panel">
-            <div class="glass-card" style="padding: 16px;">
-              <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 16px;">Financial Feature Hub</h3>
-              <div class="tools-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;">
-                <div class="tool-card-btn glass-card" id="finance-btn-tool-goals"
-                  style="padding: 14px; display: flex; flex-direction: column; gap: 6px; cursor: pointer; align-items: flex-start; border: 1px solid var(--glass-border);">
-                  <span style="font-size: 1.5rem;">🎯</span>
-                  <span style="font-size: 0.78rem; font-weight: 700;">Savings Goals</span>
-                  <span style="font-size: 0.58rem; color: var(--text-muted);">Track savings targets</span>
-                </div>
-                <div class="tool-card-btn glass-card" id="finance-btn-tool-calendar"
-                  style="padding: 14px; display: flex; flex-direction: column; gap: 6px; cursor: pointer; align-items: flex-start; border: 1px solid var(--glass-border);">
-                  <span style="font-size: 1.5rem;">📅</span>
-                  <span style="font-size: 0.78rem; font-weight: 700;">Calendar Statement</span>
-                  <span style="font-size: 0.58rem; color: var(--text-muted);">View daily statements</span>
-                </div>
-                <div class="tool-card-btn glass-card" id="finance-btn-tool-subs"
-                  style="padding: 14px; display: flex; flex-direction: column; gap: 6px; cursor: pointer; align-items: flex-start; border: 1px solid var(--glass-border);">
-                  <span style="font-size: 1.5rem;">💳</span>
-                  <span style="font-size: 0.78rem; font-weight: 700;">Bills & Subscriptions</span>
-                  <span style="font-size: 0.58rem; color: var(--text-muted);">Log Netflix, broadband bills</span>
-                </div>
-                <div class="tool-card-btn glass-card" id="finance-btn-tool-emi"
-                  style="padding: 14px; display: flex; flex-direction: column; gap: 6px; cursor: pointer; align-items: flex-start; border: 1px solid var(--glass-border);">
-                  <span style="font-size: 1.5rem;">🏦</span>
-                  <span style="font-size: 0.78rem; font-weight: 700;">Loan & EMI Tracker</span>
-                  <span style="font-size: 0.58rem; color: var(--text-muted);">Remaining debts schedule</span>
-                </div>
-                <div class="tool-card-btn glass-card" id="finance-btn-tool-invest"
-                  style="padding: 14px; display: flex; flex-direction: column; gap: 6px; cursor: pointer; align-items: flex-start; border: 1px solid var(--glass-border);">
-                  <span style="font-size: 1.5rem;">📈</span>
-                  <span style="font-size: 0.78rem; font-weight: 700;">Asset Portfolio</span>
-                  <span style="font-size: 0.58rem; color: var(--text-muted);">Stocks, mutual funds SIPs</span>
-                </div>
-                <div class="tool-card-btn glass-card" id="finance-btn-tool-split"
-                  style="padding: 14px; display: flex; flex-direction: column; gap: 6px; cursor: pointer; align-items: flex-start; border: 1px solid var(--glass-border);">
-                  <span style="font-size: 1.5rem;">👨‍👩‍👧</span>
-                  <span style="font-size: 0.78rem; font-weight: 700;">Split Expenses</span>
-                  <span style="font-size: 0.58rem; color: var(--text-muted);">Split bill shares in family</span>
-                </div>
-                <div class="tool-card-btn glass-card" id="finance-btn-tool-accounts"
-                  style="padding: 14px; display: flex; flex-direction: column; gap: 6px; cursor: pointer; align-items: flex-start; border: 1px solid var(--glass-border);">
-                  <span style="font-size: 1.5rem;">💵</span>
-                  <span style="font-size: 0.78rem; font-weight: 700;">Accounts & Wallets</span>
-                  <span style="font-size: 0.58rem; color: var(--text-muted);">Detailed balances table</span>
-                </div>
-                <div class="tool-card-btn glass-card" id="finance-btn-tool-challenges"
-                  style="padding: 14px; display: flex; flex-direction: column; gap: 6px; cursor: pointer; align-items: flex-start; border: 1px solid var(--glass-border); grid-column: span 2;">
-                  <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                    <span style="font-size: 1.5rem;">🏆</span>
-                    <span class="badge"
-                      style="font-size: 0.55rem; background: var(--primary-glow); color: var(--primary);">Gamification</span>
+            <!-- 12 Feature Tools Cards Grid (4 Columns) -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px;">
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;"><i class="fas fa-wallet"></i></div>
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.85rem;">Accounts</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted);">Manage bank accounts, wallets & cards.</div>
                   </div>
-                  <span style="font-size: 0.78rem; font-weight: 700;">Challenges & Streaks</span>
-                  <span style="font-size: 0.58rem; color: var(--text-muted);">Savings streak & No-Spend days
-                    count</span>
                 </div>
+                <button onclick="window.LifeOS.modules.finance.openAccountsTableTool()" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 6px; width: 100%; cursor: pointer;">Go to <i class="fas fa-arrow-right" style="margin-left: 4px;"></i></button>
+              </div>
+
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(163, 112, 247, 0.15); color: #a370f7; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;"><i class="fas fa-list-ul"></i></div>
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.85rem;">Transactions</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted);">Add, view and manage all transactions.</div>
+                  </div>
+                </div>
+                <button onclick="window.switchFinanceSubview('ledger')" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 6px; width: 100%; cursor: pointer;">Go to <i class="fas fa-arrow-right" style="margin-left: 4px;"></i></button>
+              </div>
+
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(16, 185, 129, 0.15); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;"><i class="fas fa-chart-bar"></i></div>
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.85rem;">Reports</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted);">Detailed reports and financial insights.</div>
+                  </div>
+                </div>
+                <button onclick="window.openReportsModal()" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 6px; width: 100%; cursor: pointer;">Go to <i class="fas fa-arrow-right" style="margin-left: 4px;"></i></button>
+              </div>
+
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;"><i class="fas fa-bullseye"></i></div>
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.85rem;">Savings Goals</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted);">Set and track your target goals.</div>
+                  </div>
+                </div>
+                <button onclick="window.LifeOS.modules.finance.openSavingsGoalsTool()" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 6px; width: 100%; cursor: pointer;">Go to <i class="fas fa-arrow-right" style="margin-left: 4px;"></i></button>
+              </div>
+
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(236, 72, 153, 0.15); color: #ec4899; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;"><i class="fas fa-chart-line"></i></div>
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.85rem;">Investments</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted);">Track stocks, SIPs & portfolio returns.</div>
+                  </div>
+                </div>
+                <button onclick="window.LifeOS.modules.finance.openInvestmentsTool()" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 6px; width: 100%; cursor: pointer;">Go to <i class="fas fa-arrow-right" style="margin-left: 4px;"></i></button>
+              </div>
+
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;"><i class="fas fa-landmark"></i></div>
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.85rem;">Loans & EMI</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted);">Manage debts, EMIs and payments.</div>
+                  </div>
+                </div>
+                <button onclick="window.LifeOS.modules.finance.openEMILoanTool()" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 6px; width: 100%; cursor: pointer;">Go to <i class="fas fa-arrow-right" style="margin-left: 4px;"></i></button>
+              </div>
+
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(16, 185, 129, 0.15); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;"><i class="fas fa-sync-alt"></i></div>
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.85rem;">Recurring</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted);">Manage subscriptions & utility bills.</div>
+                  </div>
+                </div>
+                <button onclick="window.LifeOS.modules.finance.openSubscriptionsTool()" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 6px; width: 100%; cursor: pointer;">Go to <i class="fas fa-arrow-right" style="margin-left: 4px;"></i></button>
+              </div>
+
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(163, 112, 247, 0.15); color: #a370f7; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;"><i class="fas fa-tags"></i></div>
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.85rem;">Categories</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted);">Manage expense and income tags.</div>
+                  </div>
+                </div>
+                <button onclick="window.openManageCategoriesModal()" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 6px; width: 100%; cursor: pointer;">Go to <i class="fas fa-arrow-right" style="margin-left: 4px;"></i></button>
+              </div>
+
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(239, 68, 68, 0.15); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;"><i class="fas fa-hashtag"></i></div>
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.85rem;">Tags</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted);">Organize transaction labels.</div>
+                  </div>
+                </div>
+                <button onclick="window.switchFinanceSubview('ledger')" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 6px; width: 100%; cursor: pointer;">Go to <i class="fas fa-arrow-right" style="margin-left: 4px;"></i></button>
+              </div>
+
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;"><i class="fas fa-calculator"></i></div>
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.85rem;">Budget Planner</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted);">Plan monthly budget limits.</div>
+                  </div>
+                </div>
+                <button onclick="window.openPlanBudgetModal()" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 6px; width: 100%; cursor: pointer;">Go to <i class="fas fa-arrow-right" style="margin-left: 4px;"></i></button>
+              </div>
+
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(16, 185, 129, 0.15); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;"><i class="fas fa-file-export"></i></div>
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.85rem;">Data Export</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted);">Export in CSV, Excel, PDF.</div>
+                  </div>
+                </div>
+                <button onclick="window.openReportsModal()" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 6px; width: 100%; cursor: pointer;">Go to <i class="fas fa-arrow-right" style="margin-left: 4px;"></i></button>
+              </div>
+
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(163, 112, 247, 0.15); color: #a370f7; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;"><i class="fas fa-cog"></i></div>
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.85rem;">Settings</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted);">App preferences & security PIN lock.</div>
+                  </div>
+                </div>
+                <button onclick="window.LifeOS.modules.finance.promptPinLockScreen()" class="btn-glass-subtle" style="font-size: 0.72rem; padding: 6px; width: 100%; cursor: pointer;">Go to <i class="fas fa-arrow-right" style="margin-left: 4px;"></i></button>
+              </div>
+            </div>
+
+            <!-- Bottom Quick Actions Bar -->
+            <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+              <h4 style="font-size: 0.88rem; font-weight: 700; margin: 0 0 12px 0;">Quick Actions</h4>
+              <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <button onclick="window.LifeOS.modules.finance.toggleModal('finance-add-transaction-overlay', true)" class="btn-glass-subtle" style="padding: 8px 16px; font-size: 0.78rem; font-weight: 700; color: #10b981; border: 1px solid rgba(16,185,129,0.3); cursor: pointer;"><i class="fas fa-plus"></i> Add Income</button>
+                <button onclick="window.LifeOS.modules.finance.toggleModal('finance-add-transaction-overlay', true)" class="btn-glass-subtle" style="padding: 8px 16px; font-size: 0.78rem; font-weight: 700; color: #ef4444; border: 1px solid rgba(239,68,68,0.3); cursor: pointer;"><i class="fas fa-plus"></i> Add Expense</button>
+                <button onclick="window.LifeOS.modules.finance.openFundsTransferModal()" class="btn-glass-subtle" style="padding: 8px 16px; font-size: 0.78rem; font-weight: 700; color: #3b82f6; border: 1px solid rgba(59,130,246,0.3); cursor: pointer;"><i class="fas fa-exchange-alt"></i> Transfer Money</button>
+                <button onclick="window.openPlanBudgetModal()" class="btn-glass-subtle" style="padding: 8px 16px; font-size: 0.78rem; font-weight: 700; color: #a370f7; border: 1px solid rgba(163,112,247,0.3); cursor: pointer;"><i class="fas fa-calendar-plus"></i> Plan Budget</button>
+                <button onclick="window.openReportsModal()" class="btn-glass-subtle" style="padding: 8px 16px; font-size: 0.78rem; font-weight: 700; color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); cursor: pointer;"><i class="fas fa-chart-bar"></i> View Reports</button>
               </div>
             </div>
           </div>
@@ -4783,36 +4854,36 @@
   </div>
 
   <!-- Helpers & Validation & Controllers -->
-  <script src="helpers/financeHelper.js?v=33"></script>
-  <script src="validation/financeValidation.js?v=33"></script>
-  <script src="controllers/financeController.js?v=33"></script>
+  <script src="helpers/financeHelper.js?v=34"></script>
+  <script src="validation/financeValidation.js?v=34"></script>
+  <script src="controllers/financeController.js?v=34"></script>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=33"></script>
-  <script src="core/router.js?v=33"></script>
-  <script src="services/authService.js?v=33"></script>
-  <script src="services/supabaseService.js?v=33"></script>
-  <script src="services/storageService.js?v=33"></script>
-  <script src="services/syncService.js?v=33"></script>
-  <script src="services/notificationService.js?v=33"></script>
-  <script src="services/validationService.js?v=33"></script>
-  <script src="services/budgetService.js?v=33"></script>
-  <script src="services/financeService.js?v=33"></script>
-  <script src="services/chartService.js?v=33"></script>
+  <script src="core/config.js?v=34"></script>
+  <script src="core/router.js?v=34"></script>
+  <script src="services/authService.js?v=34"></script>
+  <script src="services/supabaseService.js?v=34"></script>
+  <script src="services/storageService.js?v=34"></script>
+  <script src="services/syncService.js?v=34"></script>
+  <script src="services/notificationService.js?v=34"></script>
+  <script src="services/validationService.js?v=34"></script>
+  <script src="services/budgetService.js?v=34"></script>
+  <script src="services/financeService.js?v=34"></script>
+  <script src="services/chartService.js?v=34"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=33"></script>
-  <script src="js/user.js?v=33"></script>
-  <script src="js/productivity.js?v=33"></script>
-  <script src="js/notes.js?v=33"></script>
-  <script src="js/finance.js?v=33"></script>
-  <script src="js/health.js?v=33"></script>
-  <script src="js/medicine.js?v=33"></script>
-  <script src="js/habits.js?v=33"></script>
-  <script src="js/personal.js?v=33"></script>
-  <script src="js/lifestyle.js?v=33"></script>
-  <script src="js/ai.js?v=33"></script>
-  <script src="js/analytics.js?v=33"></script>
+  <script src="js/app.js?v=34"></script>
+  <script src="js/user.js?v=34"></script>
+  <script src="js/productivity.js?v=34"></script>
+  <script src="js/notes.js?v=34"></script>
+  <script src="js/finance.js?v=34"></script>
+  <script src="js/health.js?v=34"></script>
+  <script src="js/medicine.js?v=34"></script>
+  <script src="js/habits.js?v=34"></script>
+  <script src="js/personal.js?v=34"></script>
+  <script src="js/lifestyle.js?v=34"></script>
+  <script src="js/ai.js?v=34"></script>
+  <script src="js/analytics.js?v=34"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
