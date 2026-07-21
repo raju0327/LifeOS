@@ -193,27 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
 
     setupAutoLogout() {
-      // Inactivity session timeout: 5 minutes (300 seconds)
-      let inactivityTimer;
-      const resetInactivity = () => {
-        clearTimeout(inactivityTimer);
-        if (this.app.state.user.isLoggedIn) {
-          inactivityTimer = setTimeout(() => {
-            this.app.state.user.isLoggedIn = false;
-            this.app.saveState();
-            this.logSecurityEvent('Session Timeout', 'Automatic logout due to 5 minutes of inactivity', this.app.state.user.username);
-            this.app.showToast('Workspace locked due to inactivity.', 'info');
-            this.render();
-          }, 300000); // 300,000ms = 5 mins
-        }
-      };
-
-      // Listen for basic user interactions
-      ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(evt => {
-        document.addEventListener(evt, resetInactivity, true);
-      });
-
-      resetInactivity();
+      // Session persistence enabled: Users stay logged in until explicit logout
     },
 
     // Enforce password requirements
@@ -563,16 +543,20 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     },
 
-    logoutUser() {
+    async logoutUser() {
       const dropdown = document.getElementById('topbar-profile-dropdown');
       if (dropdown) dropdown.classList.add('hidden');
 
-      this.app.state.user.isLoggedIn = false;
-      this.app.saveState();
-      
-      this.logSecurityEvent('Logout Success', 'User successfully locked the workspace session', this.app.state.user.username);
-      this.app.showToast('Workspace session locked.', 'info');
-      this.render();
+      this.logSecurityEvent('Logout Success', 'User signed out of workspace session', this.app.state.user.username);
+      this.app.showToast('Workspace session logged out.', 'info');
+
+      if (window.LifeOSAuthService && typeof window.LifeOSAuthService.signOut === 'function') {
+        await window.LifeOSAuthService.signOut();
+      } else {
+        this.app.state.user.isLoggedIn = false;
+        this.app.saveState();
+        if (window.LifeOSRouter) window.LifeOSRouter.navigateTo('user');
+      }
     },
 
     setupRecoveryModal() {
@@ -802,11 +786,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // 4. Logout Click handler
       document.getElementById('logout-btn')?.addEventListener('click', () => {
-        this.app.state.user.isLoggedIn = false;
-        this.app.saveState();
-        this.logSecurityEvent('Sign Out', 'User logged out of active workspace session', this.app.state.user.username);
-        this.app.showToast('Workspace locked.', 'info');
-        this.render();
+        this.logoutUser();
       });
 
       // 5. Admin edit user modal closure binds
