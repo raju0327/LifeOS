@@ -1552,61 +1552,65 @@ const FinanceModule = {
     const currency = (this.app && this.app.state && this.app.state.financeSettings && this.app.state.financeSettings.currencySymbol) || '₹';
 
     const items = [];
+    const now = new Date();
+    const curYear = now.getFullYear();
+    const curMonth = now.getMonth();
 
-    if (subs.length === 0 && loans.length === 0) {
-      items.push(
-        { id: 'sub-elec', name: 'Electricity Bill', type: 'subscription', icon: '⚡', dueDate: '26 May 2025', daysLeft: 3, amount: 2450 },
-        { id: 'sub-net', name: 'Internet Bill', type: 'subscription', icon: '🌐', dueDate: '30 May 2025', daysLeft: 8, amount: 1299 },
-        { id: 'loan-car', name: 'Car EMI', type: 'loan', icon: '🚗', dueDate: '05 Jun 2025', daysLeft: 14, amount: 14500 }
-      );
-    } else {
-      const now = new Date();
-      const curYear = now.getFullYear();
-      const curMonth = now.getMonth();
+    subs.forEach(s => {
+      const dueDay = parseInt(s.dueDate) || 1;
+      let targetDate = new Date(curYear, curMonth, dueDay);
+      if (targetDate < now) {
+        targetDate = new Date(curYear, curMonth + 1, dueDay);
+      }
+      const diffTime = targetDate.getTime() - now.getTime();
+      const daysLeft = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+      const dateStr = targetDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 
-      subs.forEach(s => {
-        const dueDay = parseInt(s.dueDate) || 1;
-        let targetDate = new Date(curYear, curMonth, dueDay);
-        if (targetDate < now) {
-          targetDate = new Date(curYear, curMonth + 1, dueDay);
-        }
-        const diffTime = targetDate.getTime() - now.getTime();
-        const daysLeft = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
-        const dateStr = targetDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-
-        items.push({
-          id: s.id,
-          name: s.name,
-          type: 'subscription',
-          icon: '💳',
-          dueDate: dateStr,
-          daysLeft: daysLeft,
-          amount: s.amount
-        });
+      items.push({
+        id: s.id,
+        name: s.name,
+        type: 'subscription',
+        icon: '💳',
+        dueDate: dateStr,
+        daysLeft: daysLeft,
+        amount: parseFloat(s.amount) || 0
       });
+    });
 
-      loans.forEach(l => {
-        const dueDay = parseInt(l.dueDate) || 5;
-        let targetDate = new Date(curYear, curMonth, dueDay);
-        if (targetDate < now) {
-          targetDate = new Date(curYear, curMonth + 1, dueDay);
-        }
-        const diffTime = targetDate.getTime() - now.getTime();
-        const daysLeft = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
-        const dateStr = targetDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    loans.forEach(l => {
+      const dueDay = parseInt(l.dueDate) || 5;
+      let targetDate = new Date(curYear, curMonth, dueDay);
+      if (targetDate < now) {
+        targetDate = new Date(curYear, curMonth + 1, dueDay);
+      }
+      const diffTime = targetDate.getTime() - now.getTime();
+      const daysLeft = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+      const dateStr = targetDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 
-        items.push({
-          id: l.id,
-          name: l.name,
-          type: 'loan',
-          icon: '🏦',
-          dueDate: dateStr,
-          daysLeft: daysLeft,
-          amount: l.emi
-        });
+      items.push({
+        id: l.id,
+        name: l.name,
+        type: 'loan',
+        icon: '🏦',
+        dueDate: dateStr,
+        daysLeft: daysLeft,
+        amount: parseFloat(l.emi) || 0
       });
+    });
 
-      items.sort((a, b) => a.daysLeft - b.daysLeft);
+    items.sort((a, b) => a.daysLeft - b.daysLeft);
+
+    if (items.length === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 24px 12px; background: rgba(255,255,255,0.01); border-radius: var(--radius-sm); border: 1px dashed var(--glass-border);">
+          <i class="fas fa-calendar-check" style="font-size: 1.2rem; color: var(--primary); margin-bottom: 6px; display: block;"></i>
+          <span>No upcoming payments scheduled in database.</span>
+          <div style="margin-top: 8px;">
+            <button onclick="window.LifeOS.modules.finance.openSubscriptionsTool()" class="btn-glass-subtle" style="font-size: 0.68rem; padding: 4px 10px; cursor: pointer; color: var(--primary);">+ Add Recurring Bill</button>
+          </div>
+        </div>
+      `;
+      return;
     }
 
     let html = '';
