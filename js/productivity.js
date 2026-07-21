@@ -1029,7 +1029,9 @@ document.addEventListener('DOMContentLoaded', () => {
     renderProjects() {},
     setupCalendarControls() {},
     renderEvents() {},
-    renderTimeblocks() {}
+    renderTimeblocks() {},
+    setupPomodoroTimer() {},
+    setupFocusMode() {}
   };
 
   // Register in application namespace
