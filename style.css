@@ -2015,6 +2015,33 @@ body.fullscreen-focus .main-content {
 }
 
 /* Subnav tabs */
+.finance-subnav {
+  display: flex !important;
+  gap: 8px;
+  padding: 6px;
+  margin-bottom: 16px;
+  border-radius: var(--radius-sm);
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  white-space: nowrap !important;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  user-select: none;
+  cursor: grab;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.finance-subnav::-webkit-scrollbar {
+  display: none;
+}
+.finance-subnav {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.finance-subnav.active-drag {
+  cursor: grabbing !important;
+}
+
 .finance-subnav-btn {
   background: transparent;
   border: none;
@@ -2028,6 +2055,8 @@ body.fullscreen-focus .main-content {
   display: flex;
   align-items: center;
   outline: none;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
 }
 .finance-subnav-btn:hover {
   color: var(--text-main);

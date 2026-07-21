@@ -349,8 +349,44 @@ const FinanceModule = {
     try { this.renderSyncSettingsValues(); } catch (e) { console.warn('[FinanceModule] renderSyncSettingsValues:', e); }
   },
 
+  makeDraggableScroll(el) {
+    if (!el) return;
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    el.addEventListener('mousedown', (e) => {
+      isDown = true;
+      el.classList.add('active-drag');
+      startX = e.pageX - el.offsetLeft;
+      scrollLeft = el.scrollLeft;
+    });
+
+    el.addEventListener('mouseleave', () => {
+      isDown = false;
+      el.classList.remove('active-drag');
+    });
+
+    el.addEventListener('mouseup', () => {
+      isDown = false;
+      el.classList.remove('active-drag');
+    });
+
+    el.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - el.offsetLeft;
+      const walk = (x - startX) * 2;
+      el.scrollLeft = scrollLeft - walk;
+    });
+  },
+
   bindEvents() {
-    // 1. Subnavigation Tab Switching
+    // 1. Subnavigation Tab Switching & Drag-to-Scroll
+    document.querySelectorAll('.finance-subnav').forEach(subnav => {
+      this.makeDraggableScroll(subnav);
+    });
+
     document.querySelectorAll('.finance-subnav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const subview = btn.getAttribute('data-subview');
