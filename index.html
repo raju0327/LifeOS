@@ -1549,7 +1549,7 @@
                   <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Total Transactions</span>
                   <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;"><i class="fas fa-receipt"></i></div>
                 </div>
-                <div style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);">56</div>
+                <div id="ledger-kpi-total-txs" style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);">0</div>
                 <span style="font-size: 0.62rem; color: var(--text-muted);">This Month</span>
               </div>
               <div class="glass-card" style="padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
@@ -1557,7 +1557,7 @@
                   <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Total Debits</span>
                   <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;"><i class="fas fa-arrow-up"></i></div>
                 </div>
-                <div style="font-size: 1.4rem; font-weight: 800; color: var(--red);">₹48,250</div>
+                <div id="ledger-kpi-total-debits" style="font-size: 1.4rem; font-weight: 800; color: var(--red);">₹0</div>
                 <span style="font-size: 0.62rem; color: var(--text-muted);">This Month</span>
               </div>
               <div class="glass-card" style="padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
@@ -1565,7 +1565,7 @@
                   <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Total Credits</span>
                   <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;"><i class="fas fa-arrow-down"></i></div>
                 </div>
-                <div style="font-size: 1.4rem; font-weight: 800; color: var(--green);">₹1,20,000</div>
+                <div id="ledger-kpi-total-credits" style="font-size: 1.4rem; font-weight: 800; color: var(--green);">₹0</div>
                 <span style="font-size: 0.62rem; color: var(--text-muted);">This Month</span>
               </div>
               <div class="glass-card" style="padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
@@ -1573,17 +1573,17 @@
                   <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Net Cash Flow</span>
                   <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(163, 112, 247, 0.15); color: #a370f7; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;"><i class="fas fa-chart-line"></i></div>
                 </div>
-                <div style="font-size: 1.4rem; font-weight: 800; color: var(--primary);">₹71,750</div>
+                <div id="ledger-kpi-net-cashflow" style="font-size: 1.4rem; font-weight: 800; color: var(--primary);">₹0</div>
                 <span style="font-size: 0.62rem; color: var(--text-muted);">This Month</span>
               </div>
             </div>
 
             <!-- Filter Tabs Bar -->
             <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-              <button class="btn-primary-glow" style="padding: 6px 16px; font-size: 0.75rem; font-weight: 700; border-radius: 20px;">All Transactions</button>
-              <button class="btn-glass-subtle" style="padding: 6px 16px; font-size: 0.75rem; border-radius: 20px;">Income</button>
-              <button class="btn-glass-subtle" style="padding: 6px 16px; font-size: 0.75rem; border-radius: 20px;">Expense</button>
-              <button class="btn-glass-subtle" style="padding: 6px 16px; font-size: 0.75rem; border-radius: 20px;">Transfer</button>
+              <button class="ledger-type-btn btn-primary-glow active" data-type="all" style="padding: 6px 16px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; cursor: pointer;">All Transactions</button>
+              <button class="ledger-type-btn btn-glass-subtle" data-type="income" style="padding: 6px 16px; font-size: 0.75rem; border-radius: 20px; cursor: pointer;">Income</button>
+              <button class="ledger-type-btn btn-glass-subtle" data-type="expense" style="padding: 6px 16px; font-size: 0.75rem; border-radius: 20px; cursor: pointer;">Expense</button>
+              <button class="ledger-type-btn btn-glass-subtle" data-type="transfer" style="padding: 6px 16px; font-size: 0.75rem; border-radius: 20px; cursor: pointer;">Transfer</button>
             </div>
 
             <!-- Data Table Container -->
@@ -4854,36 +4854,36 @@
   </div>
 
   <!-- Helpers & Validation & Controllers -->
-  <script src="helpers/financeHelper.js?v=34"></script>
-  <script src="validation/financeValidation.js?v=34"></script>
-  <script src="controllers/financeController.js?v=34"></script>
+  <script src="helpers/financeHelper.js?v=35"></script>
+  <script src="validation/financeValidation.js?v=35"></script>
+  <script src="controllers/financeController.js?v=35"></script>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=34"></script>
-  <script src="core/router.js?v=34"></script>
-  <script src="services/authService.js?v=34"></script>
-  <script src="services/supabaseService.js?v=34"></script>
-  <script src="services/storageService.js?v=34"></script>
-  <script src="services/syncService.js?v=34"></script>
-  <script src="services/notificationService.js?v=34"></script>
-  <script src="services/validationService.js?v=34"></script>
-  <script src="services/budgetService.js?v=34"></script>
-  <script src="services/financeService.js?v=34"></script>
-  <script src="services/chartService.js?v=34"></script>
+  <script src="core/config.js?v=35"></script>
+  <script src="core/router.js?v=35"></script>
+  <script src="services/authService.js?v=35"></script>
+  <script src="services/supabaseService.js?v=35"></script>
+  <script src="services/storageService.js?v=35"></script>
+  <script src="services/syncService.js?v=35"></script>
+  <script src="services/notificationService.js?v=35"></script>
+  <script src="services/validationService.js?v=35"></script>
+  <script src="services/budgetService.js?v=35"></script>
+  <script src="services/financeService.js?v=35"></script>
+  <script src="services/chartService.js?v=35"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=34"></script>
-  <script src="js/user.js?v=34"></script>
-  <script src="js/productivity.js?v=34"></script>
-  <script src="js/notes.js?v=34"></script>
-  <script src="js/finance.js?v=34"></script>
-  <script src="js/health.js?v=34"></script>
-  <script src="js/medicine.js?v=34"></script>
-  <script src="js/habits.js?v=34"></script>
-  <script src="js/personal.js?v=34"></script>
-  <script src="js/lifestyle.js?v=34"></script>
-  <script src="js/ai.js?v=34"></script>
-  <script src="js/analytics.js?v=34"></script>
+  <script src="js/app.js?v=35"></script>
+  <script src="js/user.js?v=35"></script>
+  <script src="js/productivity.js?v=35"></script>
+  <script src="js/notes.js?v=35"></script>
+  <script src="js/finance.js?v=35"></script>
+  <script src="js/health.js?v=35"></script>
+  <script src="js/medicine.js?v=35"></script>
+  <script src="js/habits.js?v=35"></script>
+  <script src="js/personal.js?v=35"></script>
+  <script src="js/lifestyle.js?v=35"></script>
+  <script src="js/ai.js?v=35"></script>
+  <script src="js/analytics.js?v=35"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {

@@ -292,6 +292,7 @@ const FinanceModule = {
   activeMemberFilter: 'all',
   activeCategoryFilter: 'all',
   activeAccountFilter: 'all',
+  activeTypeFilter: 'all',
   
   // Audio Speech Recognition references
   voiceRecognition: null,
@@ -546,6 +547,20 @@ const FinanceModule = {
     document.getElementById('finance-filter-min-amount')?.addEventListener('input', () => this.renderLedgers());
     document.getElementById('finance-filter-max-amount')?.addEventListener('input', () => this.renderLedgers());
 
+    // Ledger Type Filter Buttons (All, Income, Expense, Transfer)
+    document.querySelectorAll('.ledger-type-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.ledger-type-btn').forEach(b => {
+          b.classList.remove('active', 'btn-primary-glow');
+          b.classList.add('btn-glass-subtle');
+        });
+        btn.classList.add('active', 'btn-primary-glow');
+        btn.classList.remove('btn-glass-subtle');
+        this.activeTypeFilter = btn.getAttribute('data-type') || 'all';
+        this.renderLedgers();
+      });
+    });
+
     document.getElementById('finance-btn-clear-filters')?.addEventListener('click', () => {
       document.getElementById('finance-search-tx').value = '';
       document.getElementById('finance-filter-category-select').value = 'all';
@@ -556,6 +571,16 @@ const FinanceModule = {
       document.getElementById('finance-filter-max-amount').value = '';
       this.activeCategoryFilter = 'all';
       this.activeAccountFilter = 'all';
+      this.activeTypeFilter = 'all';
+      document.querySelectorAll('.ledger-type-btn').forEach(b => {
+        if (b.getAttribute('data-type') === 'all') {
+          b.classList.add('active', 'btn-primary-glow');
+          b.classList.remove('btn-glass-subtle');
+        } else {
+          b.classList.remove('active', 'btn-primary-glow');
+          b.classList.add('btn-glass-subtle');
+        }
+      });
       this.renderLedgers();
     });
 
@@ -825,15 +850,17 @@ const FinanceModule = {
     const container = document.getElementById('finance-members-container');
     if (!container) return;
 
-    const user = this.app.state.user;
+    const user = (this.app && this.app.state && this.app.state.user) || {};
     const activeUserId = user.id || 'admin';
-    const isAdmin = user.role === 'Administrator' || user.role === 'Super Admin';
+    const isAdmin = user.role ? (user.role === 'Administrator' || user.role === 'Super Admin') : true;
 
     let html = '';
 
+    const membersList = (this.app && this.app.state && Array.isArray(this.app.state.members)) ? this.app.state.members : [];
+
     if (isAdmin) {
       // Administrators see chips for all registered members
-      this.app.state.members.forEach(m => {
+      membersList.forEach(m => {
         const isActive = this.app.activeViewedUser === m.id;
         html += `
           <div class="member-chip ${isActive ? 'active' : ''}" 
@@ -847,12 +874,12 @@ const FinanceModule = {
       });
     } else {
       // Guests, Employees, and Managers: Show ONLY their own respective profile chip
-      let loggedInMember = this.app.state.members.find(m => m.id === activeUserId);
+      let loggedInMember = membersList.find(m => m.id === activeUserId);
       if (!loggedInMember) {
         loggedInMember = {
           id: activeUserId,
-          name: user.username,
-          avatar: user.avatar,
+          name: user.username || 'User',
+          avatar: user.avatar || '👤',
           color: 'var(--primary)',
           glow: 'rgba(255,255,255,0.05)'
         };
@@ -897,7 +924,7 @@ const FinanceModule = {
   },
 
   renderBalances() {
-    const txs = this.app.state.transactions;
+    const txs = (this.app && this.app.state && Array.isArray(this.app.state.transactions)) ? this.app.state.transactions : [];
     const filterId = this.activeMemberFilter;
 
     let income = 0;
@@ -915,7 +942,7 @@ const FinanceModule = {
     });
 
     const net = income - expense;
-    const currency = this.app.state.financeSettings.currencySymbol || '₹';
+    const currency = (this.app && this.app.state && this.app.state.financeSettings && this.app.state.financeSettings.currencySymbol) || '₹';
 
     const netEl = document.getElementById('finance-total-balance');
     const incEl = document.getElementById('finance-total-income');
@@ -933,8 +960,8 @@ const FinanceModule = {
     const container = document.getElementById('finance-accounts-carousel-list');
     if (!container) return;
 
-    const txs = this.app.state.transactions;
-    const currency = this.app.state.financeSettings.currencySymbol || '₹';
+    const txs = (this.app && this.app.state && Array.isArray(this.app.state.transactions)) ? this.app.state.transactions : [];
+    const currency = (this.app && this.app.state && this.app.state.financeSettings && this.app.state.financeSettings.currencySymbol) || '₹';
 
     const accounts = {
       bank: { name: 'Bank Account', icon: '🏦', bal: 0 },
@@ -961,7 +988,8 @@ const FinanceModule = {
     });
 
     // Populate loans outstanding liability balance
-    const totalLoanVal = this.app.state.loans.reduce((sum, l) => sum + parseFloat(l.total || 0), 0);
+    const loansList = (this.app && this.app.state && Array.isArray(this.app.state.loans)) ? this.app.state.loans : [];
+    const totalLoanVal = loansList.reduce((sum, l) => sum + parseFloat(l.total || 0), 0);
     accounts.loans.bal = -totalLoanVal;
 
     let html = '';
@@ -988,11 +1016,11 @@ const FinanceModule = {
   },
 
   renderCharts() {
-    const txs = this.app.state.transactions;
-    const categories = this.app.state.categories;
-    const budgets = this.app.state.budgets;
+    const txs = (this.app && this.app.state && Array.isArray(this.app.state.transactions)) ? this.app.state.transactions : [];
+    const categories = (this.app && this.app.state && this.app.state.categories) ? this.app.state.categories : {};
+    const budgets = (this.app && this.app.state && this.app.state.budgets) ? this.app.state.budgets : {};
     const filterId = this.activeMemberFilter;
-    const currency = this.app.state.financeSettings.currencySymbol || '₹';
+    const currency = (this.app && this.app.state && this.app.state.financeSettings && this.app.state.financeSettings.currencySymbol) || '₹';
 
     const catSums = {};
     Object.keys(categories).forEach(k => { catSums[k] = 0; });
@@ -1199,13 +1227,43 @@ const FinanceModule = {
   },
 
   renderLedgers() {
-    const txs = this.app.state.transactions;
-    const categories = this.app.state.categories;
-    const members = this.app.state.members;
+    const txs = (this.app && this.app.state && Array.isArray(this.app.state.transactions)) ? this.app.state.transactions : [];
+    const categories = (this.app && this.app.state && this.app.state.categories) ? this.app.state.categories : {};
+    const members = (this.app && this.app.state && Array.isArray(this.app.state.members)) ? this.app.state.members : [];
     const filterMember = this.activeMemberFilter;
     const filterCat = this.activeCategoryFilter;
     const filterAcc = this.activeAccountFilter;
-    const currency = this.app.state.financeSettings.currencySymbol || '₹';
+    const filterType = this.activeTypeFilter || 'all';
+    const currency = (this.app && this.app.state && this.app.state.financeSettings && this.app.state.financeSettings.currencySymbol) || '₹';
+
+    // Calculate real-time totals for Ledger KPI Cards
+    let totalDebits = 0;
+    let totalCredits = 0;
+
+    txs.forEach(t => {
+      if (filterMember !== 'all' && t.memberId !== filterMember) return;
+      const amt = parseFloat(t.amount) || 0;
+      if (t.type === 'income') {
+        totalCredits += amt;
+      } else if (t.type === 'expense') {
+        totalDebits += amt;
+      }
+    });
+
+    const netFlow = totalCredits - totalDebits;
+
+    const kpiCountEl = document.getElementById('ledger-kpi-total-txs');
+    const kpiDebitsEl = document.getElementById('ledger-kpi-total-debits');
+    const kpiCreditsEl = document.getElementById('ledger-kpi-total-credits');
+    const kpiNetEl = document.getElementById('ledger-kpi-net-cashflow');
+
+    if (kpiCountEl) kpiCountEl.textContent = txs.length.toString();
+    if (kpiDebitsEl) kpiDebitsEl.textContent = `${currency}${totalDebits.toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+    if (kpiCreditsEl) kpiCreditsEl.textContent = `${currency}${totalCredits.toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+    if (kpiNetEl) {
+      kpiNetEl.textContent = `${netFlow < 0 ? '-' : ''}${currency}${Math.abs(netFlow).toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+      kpiNetEl.style.color = netFlow < 0 ? 'var(--red)' : 'var(--green)';
+    }
 
     const query = document.getElementById('finance-search-tx')?.value.toLowerCase().trim() || '';
     const specificDate = document.getElementById('finance-filter-date-input')?.value || '';
@@ -1217,6 +1275,7 @@ const FinanceModule = {
       if (filterMember !== 'all' && t.memberId !== filterMember) return false;
       if (filterCat !== 'all' && t.categoryId !== filterCat) return false;
       if (filterAcc !== 'all' && t.account !== filterAcc) return false;
+      if (filterType !== 'all' && t.type !== filterType) return false;
       if (query && !t.description.toLowerCase().includes(query)) return false;
       if (specificDate && t.date !== specificDate) return false;
       const amt = parseFloat(t.amount) || 0;
@@ -1316,10 +1375,23 @@ const FinanceModule = {
   },
 
   async renderBudgetsList() {
-    const currency = (this.app.state.financeSettings && this.app.state.financeSettings.currencySymbol) || '₹';
+    const currency = (this.app && this.app.state && this.app.state.financeSettings && this.app.state.financeSettings.currencySymbol) || '₹';
 
     // Fetch dynamic database metrics & calculations from LifeOSBudgetService
-    const metrics = await window.LifeOSBudgetService.computeBudgetMetrics();
+    let metrics;
+    if (window.LifeOSBudgetService && typeof window.LifeOSBudgetService.computeBudgetMetrics === 'function') {
+      metrics = await window.LifeOSBudgetService.computeBudgetMetrics();
+    } else {
+      metrics = {
+        totalBudget: 0,
+        totalSpent: 0,
+        remainingBudget: 0,
+        utilizationRate: 0,
+        formattedUtilization: '0.0',
+        alerts: [],
+        categories: []
+      };
+    }
 
     // 1. Update Overview Metric Cards
     const totalEl = document.getElementById('budget-stat-total-amount');
@@ -1328,16 +1400,16 @@ const FinanceModule = {
     const utilEl = document.getElementById('budget-stat-utilization');
     const utilBarEl = document.getElementById('budget-stat-utilization-bar');
 
-    if (totalEl) totalEl.textContent = `${currency}${metrics.totalBudget.toLocaleString()}`;
-    if (spentEl) spentEl.textContent = `${currency}${metrics.totalSpent.toLocaleString()}`;
-    if (remainEl) remainEl.textContent = `${currency}${metrics.remainingBudget.toLocaleString()}`;
-    if (utilEl) utilEl.textContent = `${metrics.formattedUtilization}%`;
-    if (utilBarEl) utilBarEl.style.width = `${Math.min(metrics.utilizationRate, 100)}%`;
+    if (totalEl) totalEl.textContent = `${currency}${(metrics.totalBudget || 0).toLocaleString()}`;
+    if (spentEl) spentEl.textContent = `${currency}${(metrics.totalSpent || 0).toLocaleString()}`;
+    if (remainEl) remainEl.textContent = `${currency}${(metrics.remainingBudget || 0).toLocaleString()}`;
+    if (utilEl) utilEl.textContent = `${metrics.formattedUtilization || '0.0'}%`;
+    if (utilBarEl) utilBarEl.style.width = `${Math.min(metrics.utilizationRate || 0, 100)}%`;
 
     // 2. Render Alert Badges
     const alertsContainer = document.getElementById('budget-alerts-container');
     if (alertsContainer) {
-      if (metrics.alerts.length === 0) {
+      if (!metrics.alerts || metrics.alerts.length === 0) {
         alertsContainer.innerHTML = '';
       } else {
         let alertBadgesHtml = '';
@@ -1361,7 +1433,7 @@ const FinanceModule = {
     // 3. Render Category Table Rows
     const rowsContainer = document.getElementById('budget-category-rows-container');
     if (rowsContainer) {
-      if (metrics.categories.length === 0) {
+      if (!metrics.categories || metrics.categories.length === 0) {
         rowsContainer.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 20px; color: var(--text-muted);">No budget categories configured in database. Click "+ Add Budget Category" to begin.</td></tr>`;
       } else {
         let categoryRowsHtml = '';
@@ -1380,13 +1452,13 @@ const FinanceModule = {
                   <span style="font-weight: 600; color: var(--text-main);">${c.name}</span>
                 </div>
               </td>
-              <td style="padding: 10px 6px; font-weight: 700; color: var(--text-main);">${currency}${c.spent.toLocaleString()}</td>
-              <td style="padding: 10px 6px; font-weight: 600; color: var(--text-muted);">${currency}${c.limit.toLocaleString()}</td>
+              <td style="padding: 10px 6px; font-weight: 700; color: var(--text-main);">${currency}${(c.spent || 0).toLocaleString()}</td>
+              <td style="padding: 10px 6px; font-weight: 600; color: var(--text-muted);">${currency}${(c.limit || 0).toLocaleString()}</td>
               <td style="padding: 10px 6px;">
                 <div style="display: flex; flex-direction: column; gap: 4px; min-width: 90px;">
-                  <span style="font-size: 0.7rem; font-weight: 700; color: ${barColor};">${c.formattedPct}%</span>
+                  <span style="font-size: 0.7rem; font-weight: 700; color: ${barColor};">${c.formattedPct || 0}%</span>
                   <div style="height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;">
-                    <div style="width: ${Math.min(c.pct, 100)}%; height: 100%; background: ${barColor}; border-radius: 2px; transition: width 0.3s ease;"></div>
+                    <div style="width: ${Math.min(c.pct || 0, 100)}%; height: 100%; background: ${barColor}; border-radius: 2px; transition: width 0.3s ease;"></div>
                   </div>
                 </div>
               </td>
@@ -1398,20 +1470,33 @@ const FinanceModule = {
     }
 
     // 4. Render SVG Analytics Charts via LifeOSChartService
-    window.LifeOSChartService.renderBudgetVsActualBarChart('budget-vs-actual-chart-container', metrics.categories);
-    window.LifeOSChartService.renderCategoryDonutChart('budget-donut-chart-container', 'budget-donut-legend-container', metrics.categories, metrics.totalSpent, currency);
-    window.LifeOSChartService.renderUtilizationTrendChart('budget-trend-chart-container', metrics.utilizationRate);
+    if (window.LifeOSChartService) {
+      if (typeof window.LifeOSChartService.renderBudgetVsActualBarChart === 'function') {
+        window.LifeOSChartService.renderBudgetVsActualBarChart('budget-vs-actual-chart-container', metrics.categories || []);
+      }
+      if (typeof window.LifeOSChartService.renderCategoryDonutChart === 'function') {
+        window.LifeOSChartService.renderCategoryDonutChart('budget-donut-chart-container', 'budget-donut-legend-container', metrics.categories || [], metrics.totalSpent || 0, currency);
+      }
+      if (typeof window.LifeOSChartService.renderUtilizationTrendChart === 'function') {
+        window.LifeOSChartService.renderUtilizationTrendChart('budget-trend-chart-container', metrics.utilizationRate || 0);
+      }
+    }
 
     // 5. Render Live Transactions Impact
-    const liveTxs = await window.LifeOSFinanceService.fetchLiveTransactions(5);
+    let liveTxs = [];
+    if (window.LifeOSFinanceService && typeof window.LifeOSFinanceService.fetchLiveTransactions === 'function') {
+      liveTxs = await window.LifeOSFinanceService.fetchLiveTransactions(5);
+    }
     this.renderBudgetTransactionsImpact(liveTxs, metrics.totalBudget, currency);
 
     // 6. Setup Supabase Realtime WebSocket Listener (Auto updates without refresh)
     if (!this.budgetRealtimeSubscribing) {
       this.budgetRealtimeSubscribing = true;
-      window.LifeOSBudgetService.setupRealtimeListener(() => {
-        this.renderBudgetsList();
-      });
+      if (window.LifeOSBudgetService && typeof window.LifeOSBudgetService.setupRealtimeListener === 'function') {
+        window.LifeOSBudgetService.setupRealtimeListener(() => {
+          this.renderBudgetsList();
+        });
+      }
     }
   },
 
