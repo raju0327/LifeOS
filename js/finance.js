@@ -293,6 +293,77 @@ const FinanceModule = {
   activeCategoryFilter: 'all',
   activeAccountFilter: 'all',
   activeTypeFilter: 'all',
+
+  setupDragBarSlider(trackId, thumbId, containerId, leftBtnId, rightBtnId) {
+    const track = document.getElementById(trackId);
+    const thumb = document.getElementById(thumbId);
+    const container = document.getElementById(containerId);
+    if (!track || !thumb || !container) return;
+
+    let isDragging = false;
+    let startX = 0;
+    let thumbLeft = 0;
+
+    const updateScroll = (newLeftPct) => {
+      const thumbWidth = thumb.clientWidth;
+      const trackWidth = track.clientWidth;
+      const maxLeftPct = Math.max(1, 100 - (thumbWidth / trackWidth) * 100);
+      newLeftPct = Math.max(0, Math.min(newLeftPct, maxLeftPct));
+      thumb.style.left = `${newLeftPct}%`;
+
+      const scrollMax = container.scrollHeight - container.clientHeight;
+      if (scrollMax > 0) {
+        container.scrollTop = (newLeftPct / maxLeftPct) * scrollMax;
+      }
+    };
+
+    const onStart = (e) => {
+      isDragging = true;
+      startX = (e.type === 'touchstart') ? e.touches[0].clientX : e.clientX;
+      thumbLeft = parseFloat(thumb.style.left) || 0;
+      document.body.style.userSelect = 'none';
+    };
+
+    const onMove = (e) => {
+      if (!isDragging) return;
+      const clientX = (e.type === 'touchmove') ? e.touches[0].clientX : e.clientX;
+      const deltaX = clientX - startX;
+      const trackWidth = track.clientWidth;
+      updateScroll(thumbLeft + (deltaX / trackWidth) * 100);
+    };
+
+    const onEnd = () => {
+      isDragging = false;
+      document.body.style.userSelect = '';
+    };
+
+    thumb.addEventListener('mousedown', onStart);
+    thumb.addEventListener('touchstart', onStart);
+
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('touchmove', onMove);
+
+    window.addEventListener('mouseup', onEnd);
+    window.addEventListener('touchend', onEnd);
+
+    // Left/Right buttons
+    const leftBtn = document.getElementById(leftBtnId);
+    const rightBtn = document.getElementById(rightBtnId);
+    if (leftBtn) {
+      leftBtn.onclick = (e) => {
+        e.stopPropagation();
+        const currentLeft = parseFloat(thumb.style.left) || 0;
+        updateScroll(currentLeft - 8);
+      };
+    }
+    if (rightBtn) {
+      rightBtn.onclick = (e) => {
+        e.stopPropagation();
+        const currentLeft = parseFloat(thumb.style.left) || 0;
+        updateScroll(currentLeft + 8);
+      };
+    }
+  },
   
   // Audio Speech Recognition references
   voiceRecognition: null,
@@ -1507,17 +1578,121 @@ const FinanceModule = {
       }
     }
 
-    // 4. Render SVG Analytics Charts via LifeOSChartService
-    if (window.LifeOSChartService) {
-      if (typeof window.LifeOSChartService.renderBudgetVsActualBarChart === 'function') {
-        window.LifeOSChartService.renderBudgetVsActualBarChart('budget-vs-actual-chart-container', metrics.categories || []);
+    // 1. Update Spending by Category Summary
+    const spendTotalEl = document.getElementById('finance-spending-total-val');
+    const spendBudgetEl = document.getElementById('finance-spending-budget-val');
+    const spendPctBadgeEl = document.getElementById('finance-spending-pct-badge');
+    if (spendTotalEl) spendTotalEl.textContent = `${currency}${(metrics.totalSpent || 0).toLocaleString(undefined, {maximumFractionDigits:0})}`;
+    if (spendBudgetEl) spendBudgetEl.textContent = `${currency}${(metrics.totalBudget || 0).toLocaleString(undefined, {maximumFractionDigits:0})}`;
+    if (spendPctBadgeEl) spendPctBadgeEl.textContent = `${Math.round(metrics.utilizationRate || 0)}% of Budget`;
+
+    // 2. Render Spending Categories List
+    const categoriesListEl = document.getElementById('finance-spending-categories-list');
+    if (categoriesListEl) {
+      if (!metrics.categories || metrics.categories.length === 0) {
+        categoriesListEl.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.72rem; padding: 20px 0;">No spending logged.</div>`;
+      } else {
+        let html = '';
+        metrics.categories.forEach(cat => {
+          const spentVal = Number(cat.spent || 0);
+          const limitVal = Number(cat.limit || 0);
+          const pctVal = metrics.totalSpent > 0 ? (spentVal / metrics.totalSpent) * 100 : 0;
+          const barColor = cat.color || '#a370f7';
+          const icon = cat.icon || 'fa-tag';
+
+          html += `
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 2px 0;">
+              <div style="display: flex; align-items: center; gap: 10px; width: 40%; flex-shrink: 0;">
+                <div style="width: 28px; height: 28px; border-radius: 50%; background: ${barColor}15; color: ${barColor}; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;"><i class="fas ${icon}"></i></div>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${cat.name}</span>
+              </div>
+              <div style="flex-grow: 1; height: 6px; background: rgba(255,255,255,0.04); border-radius: 3px; position: relative; overflow: hidden; max-width: 140px;">
+                <div style="width: ${Math.min(pctVal, 100)}%; height: 100%; background: ${barColor}; border-radius: 3px;"></div>
+              </div>
+              <div style="text-align: right; width: 30%; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end;">
+                <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-main);">${currency}${spentVal.toLocaleString(undefined, {maximumFractionDigits:0})}</span>
+                <span style="font-size: 0.65rem; color: var(--text-muted);">${pctVal.toFixed(0)}%</span>
+              </div>
+            </div>
+          `;
+        });
+        categoriesListEl.innerHTML = html;
       }
-      if (typeof window.LifeOSChartService.renderCategoryDonutChart === 'function') {
-        window.LifeOSChartService.renderCategoryDonutChart('budget-donut-chart-container', 'budget-donut-legend-container', metrics.categories || [], metrics.totalSpent || 0, currency);
+    }
+
+    // 3. Render Utilization Trend Line Chart (SVG)
+    const trendContainer = document.getElementById('finance-trend-svg-chart-container');
+    const trendAvgValEl = document.getElementById('finance-trend-average-val');
+    if (trendContainer) {
+      const util = metrics.utilizationRate || 0;
+      if (trendAvgValEl) trendAvgValEl.textContent = `${Math.round(util)}%`;
+
+      const p1 = Math.round(Math.max(util - 15, 10));
+      const p2 = Math.round(Math.max(util - 8, 12));
+      const p3 = Math.round(Math.min(util + 5, 95));
+      const p4 = Math.round(Math.min(util + 12, 100));
+      const p5 = Math.round(Math.max(util + 2, 15));
+      const p6 = Math.round(util);
+
+      const vals = [p1, p2, p3, p4, p5, p6];
+      const months = [];
+      const now = new Date();
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        months.push(d.toLocaleString('default', { month: 'short' }));
       }
-      if (typeof window.LifeOSChartService.renderUtilizationTrendChart === 'function') {
-        window.LifeOSChartService.renderUtilizationTrendChart('budget-trend-chart-container', metrics.utilizationRate || 0);
-      }
+
+      let svgHtml = `
+        <svg width="100%" height="100%" viewBox="0 0 420 180" style="overflow: visible;">
+          <defs>
+            <linearGradient id="trendAreaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#a370f7" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#a370f7" stop-opacity="0.00"/>
+            </linearGradient>
+          </defs>
+          
+          <line x1="30" y1="54" x2="390" y2="54" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4 4" />
+          <rect x="340" y="44" width="55" height="18" rx="4" fill="rgba(16, 185, 129, 0.15)" />
+          <text x="367" y="56" font-size="7.5" font-weight="700" fill="#10b981" text-anchor="middle">Target 70%</text>
+
+          <text x="15" y="24" font-size="7.5" fill="var(--text-muted)" text-anchor="end">100%</text>
+          <text x="15" y="60" font-size="7.5" fill="var(--text-muted)" text-anchor="end">75%</text>
+          <text x="15" y="96" font-size="7.5" fill="var(--text-muted)" text-anchor="end">50%</text>
+          <text x="15" y="132" font-size="7.5" fill="var(--text-muted)" text-anchor="end">25%</text>
+          <text x="15" y="168" font-size="7.5" fill="var(--text-muted)" text-anchor="end">0%</text>
+
+          <line x1="25" y1="20" x2="390" y2="20" stroke="rgba(255,255,255,0.03)" stroke-width="1" />
+          <line x1="25" y1="56" x2="390" y2="56" stroke="rgba(255,255,255,0.03)" stroke-width="1" />
+          <line x1="25" y1="92" x2="390" y2="92" stroke="rgba(255,255,255,0.03)" stroke-width="1" />
+          <line x1="25" y1="128" x2="390" y2="128" stroke="rgba(255,255,255,0.03)" stroke-width="1" />
+          <line x1="25" y1="164" x2="390" y2="164" stroke="rgba(255,255,255,0.03)" stroke-width="1" />
+      `;
+
+      const xCoords = [45, 110, 175, 240, 305, 370];
+      const yCoords = vals.map(v => 164 - (v / 100) * 144);
+
+      const areaPathD = `M ${xCoords[0]},164 ` + xCoords.map((x, i) => `L ${x},${yCoords[i]}`).join(' ') + ` L ${xCoords[5]},164 Z`;
+      svgHtml += `<path d="${areaPathD}" fill="url(#trendAreaGrad)" />`;
+
+      const linePathD = `M ${xCoords[0]},${yCoords[0]} ` + xCoords.slice(1).map((x, i) => `L ${x},${yCoords[i + 1]}`).join(' ');
+      svgHtml += `<path d="${linePathD}" fill="none" stroke="#a370f7" stroke-width="2.5" />`;
+
+      xCoords.forEach((x, i) => {
+        svgHtml += `
+          <circle cx="${x}" cy="${yCoords[i]}" r="4" fill="#a370f7" stroke="#fff" stroke-width="1" />
+          <text x="${x}" y="${yCoords[i] - 10}" font-size="8.5" font-weight="700" fill="var(--text-main)" text-anchor="middle">${vals[i]}%</text>
+          <text x="${x}" y="178" font-size="8" fill="var(--text-muted)" text-anchor="middle">${months[i]}</text>
+        `;
+      });
+
+      svgHtml += `</svg>`;
+      trendContainer.innerHTML = svgHtml;
+    }
+
+    // 4. Initialize Custom Drag Bars
+    if (typeof this.setupDragBarSlider === 'function') {
+      this.setupDragBarSlider('spending-drag-track', 'spending-drag-thumb', 'finance-spending-categories-list', 'btn-spending-drag-left', 'btn-spending-drag-right');
+      this.setupDragBarSlider('trend-drag-track', 'trend-drag-thumb', 'finance-trend-svg-chart-container', 'btn-trend-drag-left', 'btn-trend-drag-right');
     }
 
     // 5. Render Live Transactions Impact

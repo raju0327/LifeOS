@@ -129,8 +129,21 @@ window.LifeOSBudgetService = {
 
   // Calculate Category Spending dynamically from finance_transactions: SUM(amount)
   async calculateCategorySpending() {
+    const app = this.app || window.LifeOS;
+    const localTxs = (app && app.state && Array.isArray(app.state.transactions)) ? app.state.transactions : [];
+
+    const spendingMap = {};
+    // Calculate local transactions fallback
+    localTxs.forEach(t => {
+      const type = (t.type || '').toLowerCase();
+      if (type === 'expense' || type === 'debit') {
+        const cat = (t.category || 'General').toLowerCase();
+        spendingMap[cat] = (spendingMap[cat] || 0) + (parseFloat(t.amount) || 0);
+      }
+    });
+
     const settings = this.getSettings();
-    if (!settings || !settings.url || !settings.anonKey) return {};
+    if (!settings || !settings.url || !settings.anonKey) return spendingMap;
 
     const userId = this.getResolvedUserId();
     const url = `${settings.url}/rest/v1/finance_transactions?user_id=eq.${userId}&type=eq.expense&select=category,amount`;
@@ -142,20 +155,19 @@ window.LifeOSBudgetService = {
           'Authorization': `Bearer ${settings.anonKey}`
         }
       });
-      if (!res.ok) return {};
-      const txs = await res.json();
-
-      const spendingMap = {};
-      txs.forEach(t => {
-        const cat = (t.category || 'General').toLowerCase();
-        spendingMap[cat] = (spendingMap[cat] || 0) + (parseFloat(t.amount) || 0);
-      });
-
-      return spendingMap;
+      if (res.ok) {
+        const txs = await res.json();
+        const dbMap = {};
+        txs.forEach(t => {
+          const cat = (t.category || 'General').toLowerCase();
+          dbMap[cat] = (dbMap[cat] || 0) + (parseFloat(t.amount) || 0);
+        });
+        return dbMap;
+      }
     } catch (e) {
-      console.warn('Failed calculating category spending from Supabase:', e);
-      return {};
+      console.warn('Failed calculating category spending from Supabase, falling back to local state:', e);
     }
+    return spendingMap;
   },
 
   // Compute live budget metrics, utilization %, remaining budget, and 80%/90%/100% threshold alerts

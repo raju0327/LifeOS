@@ -2301,75 +2301,92 @@
               </div>
             </div>
 
-            <!-- Middle Split Grid -->
-            <div class="budget-middle-split"
-              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
-              <!-- Left: Budget vs Actual Table -->
-              <div class="glass-card"
-                style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                  <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0;">Budget vs Actual</h4>
-                  <button onclick="window.openPlanBudgetModal()" class="btn-glass-subtle"
-                    style="font-size: 0.72rem; padding: 4px 10px; cursor: pointer;">
-                    <i class="fas fa-plus"></i> Plan Budget
-                  </button>
-                </div>
-                <div style="overflow-x: auto; flex-grow: 1;">
-                  <table style="width: 100%; border-collapse: collapse; font-size: 0.78rem;">
-                    <thead>
-                      <tr
-                        style="color: var(--text-muted); text-align: left; border-bottom: 1px solid var(--glass-border);">
-                        <th style="padding: 8px 6px; font-weight: 600;">Category</th>
-                        <th style="padding: 8px 6px; font-weight: 600;">Spent</th>
-                        <th style="padding: 8px 6px; font-weight: 600;">Limit</th>
-                        <th style="padding: 8px 6px; font-weight: 600;">Progress</th>
-                      </tr>
-                    </thead>
-                    <tbody id="budget-category-rows-container">
-                      <!-- Dynamic Category Rows -->
-                    </tbody>
-                  </table>
-                </div>
-                <button onclick="window.openPlanBudgetModal()" class="btn-primary-glow"
-                  style="width: 100%; margin-top: 14px; padding: 10px; font-size: 0.82rem; font-weight: 700; border: none; cursor: pointer; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                  <i class="fas fa-calendar-plus"></i> Manage Budget
-                </button>
-              </div>
-
-              <!-- Right: Donut Chart & Trend -->
-              <div class="mobile-charts-swipe-wrapper" style="display: flex; flex-direction: column; gap: 16px;">
-                <div class="glass-card budget-chart-card"
-                  style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0;">Budget vs Actual Chart</h4>
-                    <span style="font-size: 0.72rem; color: var(--text-muted);">This Month</span>
-                  </div>
-                  <div id="budget-vs-actual-chart-container" style="height: 140px; width: 100%; min-width: 300px; overflow-x: auto;"></div>
+            <!-- Custom Drag Bar Cards (Spending by Category & Utilization Trend) -->
+            <div style="display: flex; flex-direction: column; gap: 18px; margin-bottom: 20px;">
+              
+              <!-- Card 1: Spending by Category -->
+              <div class="glass-card" style="padding: 22px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                  <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0; color: var(--text-main);">Spending by Category</h3>
+                  <select id="budget-spending-period-select" class="glass-widget" style="font-size: 0.75rem; padding: 4px 10px; border-radius: var(--radius-sm); background: var(--bg-sidebar); border: 1px solid var(--glass-border); color: var(--text-main);">
+                    <option value="this-month">This Month</option>
+                  </select>
                 </div>
 
-                <div class="budget-charts-subgrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                  <div class="glass-card budget-chart-card"
-                    style="padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
-                    <h5 style="font-size: 0.82rem; font-weight: 700; margin: 0 0 10px 0;">Spending by Category</h5>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                      <div id="budget-donut-chart-container"
-                        style="width: 110px; height: 110px; position: relative; flex-shrink: 0;"></div>
-                      <div id="budget-donut-legend-container"
-                        style="display: flex; flex-direction: column; gap: 3px; font-size: 0.65rem; max-height: 110px; overflow-y: auto; flex-grow: 1;">
+                <div class="spending-by-category-layout" style="display: grid; grid-template-columns: 1fr 2.2fr; gap: 24px; min-height: 200px;">
+                  <!-- Left side: Spent summary overview -->
+                  <div style="display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid var(--glass-border); padding-right: 20px;">
+                    <div>
+                      <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Total Spent</span>
+                      <div id="finance-spending-total-val" style="font-size: 1.8rem; font-weight: 800; color: var(--text-main); margin: 4px 0 2px 0;">₹1,02,650</div>
+                      <span style="font-size: 0.72rem; color: var(--text-muted);">of <span id="finance-spending-budget-val">₹1,53,000</span> Budget</span>
+                      <div style="margin-top: 8px;">
+                        <span id="finance-spending-pct-badge" class="badge" style="background: rgba(163, 112, 247, 0.15); color: #a370f7; font-size: 0.7rem; font-weight: 700; padding: 4px 8px;">67% of Budget</span>
+                      </div>
+                    </div>
+
+                    <!-- Comparison Box -->
+                    <div class="glass-card" style="padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); background: rgba(255,255,255,0.01); display: flex; align-items: center; gap: 10px; margin-top: 14px;">
+                      <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(163, 112, 247, 0.1); color: #a370f7; display: flex; align-items: center; justify-content: center; font-size: 0.85rem;"><i class="fas fa-chart-line"></i></div>
+                      <div>
+                        <span style="font-size: 0.65rem; color: var(--text-muted); display: block;">vs Last Month</span>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                          <span style="font-size: 0.75rem; font-weight: 800; color: var(--green);">↓ 8.4%</span>
+                          <span style="font-size: 0.65rem; color: var(--text-muted);"><span id="finance-spending-last-month-val">₹1,12,150</span></span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div class="glass-card budget-chart-card"
-                    style="padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
-                    <div
-                      style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                      <h5 style="font-size: 0.82rem; font-weight: 700; margin: 0;">Utilization Trend</h5>
-                      <span style="font-size: 0.65rem; color: var(--text-muted);">6 Months</span>
-                    </div>
-                    <div id="budget-trend-chart-container" style="height: 100px; width: 100%; min-width: 260px; overflow-x: auto;"></div>
+
+                  <!-- Right side: Category progress list -->
+                  <div id="finance-spending-categories-list" style="display: flex; flex-direction: column; gap: 14px; max-height: 230px; overflow-y: auto; padding-right: 6px;">
+                    <!-- Dynamic Real Time Category Rows -->
                   </div>
                 </div>
+
+                <!-- custom horizontal drag bar -->
+                <div style="display: flex; align-items: center; gap: 10px; margin-top: 20px; border-top: 1px solid var(--glass-border); padding-top: 14px;">
+                  <button id="btn-spending-drag-left" class="btn-glass-subtle" style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; padding: 0;"><i class="fas fa-chevron-left" style="font-size: 0.65rem; color: var(--text-muted);"></i></button>
+                  <div id="spending-drag-track" class="scrollbar-drag-track" style="flex-grow: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; position: relative; cursor: pointer;">
+                    <div id="spending-drag-thumb" class="scrollbar-drag-thumb" style="position: absolute; left: 0%; width: 25%; height: 100%; background: var(--primary); border-radius: 3px; cursor: grab;"></div>
+                  </div>
+                  <button id="btn-spending-drag-right" class="btn-glass-subtle" style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; padding: 0;"><i class="fas fa-chevron-right" style="font-size: 0.65rem; color: var(--text-muted);"></i></button>
+                </div>
               </div>
+
+              <!-- Card 2: Utilization Trend -->
+              <div class="glass-card" style="padding: 22px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                  <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0; color: var(--text-main);">Utilization Trend</h3>
+                  <select id="budget-trend-period-select" class="glass-widget" style="font-size: 0.75rem; padding: 4px 10px; border-radius: var(--radius-sm); background: var(--bg-sidebar); border: 1px solid var(--glass-border); color: var(--text-main);">
+                    <option value="6-months">6 Months</option>
+                  </select>
+                </div>
+
+                <div class="utilization-trend-layout" style="display: grid; grid-template-columns: 1fr 2.2fr; gap: 24px; min-height: 180px;">
+                  <!-- Left side: average utilization metrics -->
+                  <div style="display: flex; flex-direction: column; justify-content: center; border-right: 1px solid var(--glass-border); padding-right: 20px;">
+                    <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Average Utilization</span>
+                    <div id="finance-trend-average-val" style="font-size: 2.2rem; font-weight: 800; color: var(--text-main); margin: 6px 0 4px 0;">62%</div>
+                    <span style="font-size: 0.7rem; color: var(--green); font-weight: 700;"><i class="fas fa-arrow-up" style="margin-right: 4px;"></i>12% vs previous 6 months</span>
+                  </div>
+
+                  <!-- Right side: Utilization trend SVG Line Chart -->
+                  <div id="finance-trend-svg-chart-container" style="width: 100%; height: 180px; position: relative;">
+                    <!-- Real Time Dynamic SVG Line Chart -->
+                  </div>
+                </div>
+
+                <!-- custom horizontal drag bar -->
+                <div style="display: flex; align-items: center; gap: 10px; margin-top: 20px; border-top: 1px solid var(--glass-border); padding-top: 14px;">
+                  <button id="btn-trend-drag-left" class="btn-glass-subtle" style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; padding: 0;"><i class="fas fa-chevron-left" style="font-size: 0.65rem; color: var(--text-muted);"></i></button>
+                  <div id="trend-drag-track" class="scrollbar-drag-track" style="flex-grow: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; position: relative; cursor: pointer;">
+                    <div id="trend-drag-thumb" class="scrollbar-drag-thumb" style="position: absolute; left: 0%; width: 25%; height: 100%; background: var(--primary); border-radius: 3px; cursor: grab;"></div>
+                  </div>
+                  <button id="btn-trend-drag-right" class="btn-glass-subtle" style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; padding: 0;"><i class="fas fa-chevron-right" style="font-size: 0.65rem; color: var(--text-muted);"></i></button>
+                </div>
+              </div>
+
             </div>
 
             <!-- Bottom Table: Recent Transactions Affecting Budget -->
@@ -6231,36 +6248,36 @@
   </div>
 
   <!-- Helpers & Validation & Controllers -->
-  <script src="helpers/financeHelper.js?v=46"></script>
-  <script src="validation/financeValidation.js?v=46"></script>
-  <script src="controllers/financeController.js?v=46"></script>
+  <script src="helpers/financeHelper.js?v=47"></script>
+  <script src="validation/financeValidation.js?v=47"></script>
+  <script src="controllers/financeController.js?v=47"></script>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=46"></script>
-  <script src="core/router.js?v=46"></script>
-  <script src="services/authService.js?v=46"></script>
-  <script src="services/supabaseService.js?v=46"></script>
-  <script src="services/storageService.js?v=46"></script>
-  <script src="services/syncService.js?v=46"></script>
-  <script src="services/notificationService.js?v=46"></script>
-  <script src="services/validationService.js?v=46"></script>
-  <script src="services/budgetService.js?v=46"></script>
-  <script src="services/financeService.js?v=46"></script>
-  <script src="services/chartService.js?v=46"></script>
+  <script src="core/config.js?v=47"></script>
+  <script src="core/router.js?v=47"></script>
+  <script src="services/authService.js?v=47"></script>
+  <script src="services/supabaseService.js?v=47"></script>
+  <script src="services/storageService.js?v=47"></script>
+  <script src="services/syncService.js?v=47"></script>
+  <script src="services/notificationService.js?v=47"></script>
+  <script src="services/validationService.js?v=47"></script>
+  <script src="services/budgetService.js?v=47"></script>
+  <script src="services/financeService.js?v=47"></script>
+  <script src="services/chartService.js?v=47"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=46"></script>
-  <script src="js/user.js?v=46"></script>
-  <script src="js/productivity.js?v=46"></script>
-  <script src="js/notes.js?v=46"></script>
-  <script src="js/finance.js?v=46"></script>
-  <script src="js/health.js?v=46"></script>
-  <script src="js/medicine.js?v=46"></script>
-  <script src="js/habits.js?v=46"></script>
-  <script src="js/personal.js?v=46"></script>
-  <script src="js/lifestyle.js?v=46"></script>
-  <script src="js/ai.js?v=46"></script>
-  <script src="js/analytics.js?v=46"></script>
+  <script src="js/app.js?v=47"></script>
+  <script src="js/user.js?v=47"></script>
+  <script src="js/productivity.js?v=47"></script>
+  <script src="js/notes.js?v=47"></script>
+  <script src="js/finance.js?v=47"></script>
+  <script src="js/health.js?v=47"></script>
+  <script src="js/medicine.js?v=47"></script>
+  <script src="js/habits.js?v=47"></script>
+  <script src="js/personal.js?v=47"></script>
+  <script src="js/lifestyle.js?v=47"></script>
+  <script src="js/ai.js?v=47"></script>
+  <script src="js/analytics.js?v=47"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
