@@ -1598,7 +1598,8 @@ const FinanceModule = {
           const limitVal = Number(cat.limit || 0);
           const pctVal = metrics.totalSpent > 0 ? (spentVal / metrics.totalSpent) * 100 : 0;
           const barColor = cat.color || '#a370f7';
-              html += `
+          const icon = cat.icon || 'fa-tag';
+          html += `
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 2px 0;">
               <div style="display: flex; align-items: center; gap: 10px; width: 40%; flex-shrink: 0;">
                 <div style="width: 28px; height: 28px; border-radius: 50%; background: ${barColor}15; color: ${barColor}; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;"><i class="fas ${icon}"></i></div>
