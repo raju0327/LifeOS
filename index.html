@@ -6,8 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Life OS - Enterprise Workspace</title>
   
-  <!-- Progressive Web App Mobile Setup -->
-  <link rel="manifest" href="manifest.json">
+  <!-- Progressive Web App Setup (Inject manifest on HTTP/HTTPS only to prevent local file:// CORS errors) -->
+  <script>
+    if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+      const mLink = document.createElement('link');
+      mLink.rel = 'manifest';
+      mLink.href = './manifest.json';
+      document.head.appendChild(mLink);
+    }
+  </script>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -4776,36 +4783,36 @@
   </div>
 
   <!-- Helpers & Validation & Controllers -->
-  <script src="helpers/financeHelper.js?v=31"></script>
-  <script src="validation/financeValidation.js?v=31"></script>
-  <script src="controllers/financeController.js?v=31"></script>
+  <script src="helpers/financeHelper.js?v=32"></script>
+  <script src="validation/financeValidation.js?v=32"></script>
+  <script src="controllers/financeController.js?v=32"></script>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=31"></script>
-  <script src="core/router.js?v=31"></script>
-  <script src="services/authService.js?v=31"></script>
-  <script src="services/supabaseService.js?v=31"></script>
-  <script src="services/storageService.js?v=31"></script>
-  <script src="services/syncService.js?v=31"></script>
-  <script src="services/notificationService.js?v=31"></script>
-  <script src="services/validationService.js?v=31"></script>
-  <script src="services/budgetService.js?v=31"></script>
-  <script src="services/financeService.js?v=31"></script>
-  <script src="services/chartService.js?v=31"></script>
+  <script src="core/config.js?v=32"></script>
+  <script src="core/router.js?v=32"></script>
+  <script src="services/authService.js?v=32"></script>
+  <script src="services/supabaseService.js?v=32"></script>
+  <script src="services/storageService.js?v=32"></script>
+  <script src="services/syncService.js?v=32"></script>
+  <script src="services/notificationService.js?v=32"></script>
+  <script src="services/validationService.js?v=32"></script>
+  <script src="services/budgetService.js?v=32"></script>
+  <script src="services/financeService.js?v=32"></script>
+  <script src="services/chartService.js?v=32"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=31"></script>
-  <script src="js/user.js?v=31"></script>
-  <script src="js/productivity.js?v=31"></script>
-  <script src="js/notes.js?v=31"></script>
-  <script src="js/finance.js?v=31"></script>
-  <script src="js/health.js?v=31"></script>
-  <script src="js/medicine.js?v=31"></script>
-  <script src="js/habits.js?v=31"></script>
-  <script src="js/personal.js?v=31"></script>
-  <script src="js/lifestyle.js?v=31"></script>
-  <script src="js/ai.js?v=31"></script>
-  <script src="js/analytics.js?v=31"></script>
+  <script src="js/app.js?v=32"></script>
+  <script src="js/user.js?v=32"></script>
+  <script src="js/productivity.js?v=32"></script>
+  <script src="js/notes.js?v=32"></script>
+  <script src="js/finance.js?v=32"></script>
+  <script src="js/health.js?v=32"></script>
+  <script src="js/medicine.js?v=32"></script>
+  <script src="js/habits.js?v=32"></script>
+  <script src="js/personal.js?v=32"></script>
+  <script src="js/lifestyle.js?v=32"></script>
+  <script src="js/ai.js?v=32"></script>
+  <script src="js/analytics.js?v=32"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
