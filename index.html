@@ -1336,82 +1336,269 @@
               </div>
             </div>
           </div>
-
-          <!-- SUBTAB 2: DEDICATED TASKS DIRECTORY -->
           <div id="tasks-subview-tasks" class="tasks-subview-panel" style="display: none;">
-            <div class="glass-card" style="padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h3 style="font-size: 1.1rem; font-weight: 800; margin: 0; color: var(--text-main);">Full Tasks Directory</h3>
-                <button onclick="window.LifeOS.modules.productivity.openAddTaskModal()" class="btn-primary-glow" style="padding: 6px 14px; font-size: 0.75rem; font-weight: 700; border: none; cursor: pointer; color: #fff; border-radius: var(--radius-sm);">+ Add Task</button>
+            <div class="view-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <div>
+                <h3 style="font-size: 1.3rem; font-weight: 800; margin: 0; color: var(--text-main);">Tasks</h3>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 2px 0 0 0;">Manage your tasks and stay productive</p>
               </div>
-              <div id="full-tasks-list-container" style="display: flex; flex-direction: column; gap: 10px;">
-                <!-- Full Tasks List -->
+              <button onclick="window.LifeOS.modules.productivity.openAddTaskModal()" class="btn-primary-glow" style="padding: 8px 16px; font-size: 0.78rem; font-weight: 700; border: none; cursor: pointer; color: #fff; border-radius: var(--radius-sm);">+ Add Task</button>
+            </div>
+
+            <!-- Top 4 Summary KPI Cards -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px;">
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 14px;">
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(168, 85, 247, 0.15); color: #a855f7; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-clipboard-list"></i></div>
+                <div><span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Total Tasks</span><div style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);" id="tab-tasks-kpi-total">0</div></div>
+              </div>
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 14px;">
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(16, 185, 129, 0.15); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-check-circle"></i></div>
+                <div><span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Completed</span><div style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);" id="tab-tasks-kpi-completed">0</div></div>
+              </div>
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 14px;">
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-spinner"></i></div>
+                <div><span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">In Progress</span><div style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);" id="tab-tasks-kpi-in-progress">0</div></div>
+              </div>
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 14px;">
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(239, 68, 68, 0.15); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-exclamation-circle"></i></div>
+                <div><span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Overdue</span><div style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);" id="tab-tasks-kpi-overdue">0</div></div>
+              </div>
+            </div>
+
+            <!-- Tasks Table Card with Filter Bar -->
+            <div class="glass-card" style="padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  <select id="tasks-tab-filter-cat" class="glass-widget" style="font-size: 0.72rem; padding: 6px 12px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); background: var(--bg-sidebar); color: var(--text-main);">
+                    <option value="all">All Tasks</option>
+                    <option value="Work">Work</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Health">Health</option>
+                    <option value="Personal">Personal</option>
+                  </select>
+                  <select id="tasks-tab-filter-prio" class="glass-widget" style="font-size: 0.72rem; padding: 6px 12px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); background: var(--bg-sidebar); color: var(--text-main);">
+                    <option value="all">Priority</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                  </select>
+                </div>
+                <input type="text" id="tasks-search-input" placeholder="Search tasks..." class="glass-widget" style="font-size: 0.75rem; padding: 6px 14px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); background: var(--bg-sidebar); color: var(--text-main); width: 220px;">
+              </div>
+
+              <!-- Real-Time Full Tasks Table Container -->
+              <div id="full-tasks-list-container" style="display: flex; flex-direction: column; gap: 10px; min-height: 240px;">
+                <!-- Dynamic Tasks Rows -->
               </div>
             </div>
           </div>
 
-          <!-- SUBTAB 3: GOALS TRACKER -->
+          <!-- SUBTAB 2: GOALS TRACKER -->
           <div id="tasks-subview-goals" class="tasks-subview-panel" style="display: none;">
+            <div class="view-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <div>
+                <h3 style="font-size: 1.3rem; font-weight: 800; margin: 0; color: var(--text-main);">Goals</h3>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 2px 0 0 0;">Track your goals and achieve more</p>
+              </div>
+              <button onclick="window.LifeOS.modules.productivity.openAddGoalModal()" class="btn-primary-glow" style="padding: 8px 16px; font-size: 0.78rem; font-weight: 700; border: none; cursor: pointer; color: #fff; border-radius: var(--radius-sm);">+ Add Goal</button>
+            </div>
+
+            <!-- Top 4 Goal Summary KPI Cards -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px;">
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 14px;">
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(168, 85, 247, 0.15); color: #a855f7; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-bullseye"></i></div>
+                <div><span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Total Goals</span><div style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);" id="tab-goals-kpi-total">0</div></div>
+              </div>
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 14px;">
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(16, 185, 129, 0.15); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-trophy"></i></div>
+                <div><span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Completed</span><div style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);" id="tab-goals-kpi-completed">0</div></div>
+              </div>
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 14px;">
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-tasks"></i></div>
+                <div><span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">In Progress</span><div style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);" id="tab-goals-kpi-in-progress">0</div></div>
+              </div>
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 14px;">
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(239, 68, 68, 0.15); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fas fa-pause-circle"></i></div>
+                <div><span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">On Hold</span><div style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);" id="tab-goals-kpi-on-hold">0</div></div>
+              </div>
+            </div>
+
+            <!-- Goals List Card with Search -->
             <div class="glass-card" style="padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h3 style="font-size: 1.1rem; font-weight: 800; margin: 0; color: var(--text-main);">Strategic Goals Directory</h3>
-                <button onclick="window.LifeOS.modules.productivity.openAddGoalModal()" class="btn-primary-glow" style="padding: 6px 14px; font-size: 0.75rem; font-weight: 700; border: none; cursor: pointer; color: #fff; border-radius: var(--radius-sm);">+ Add Goal</button>
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+                <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: var(--text-main);">All Strategic Goals</h4>
+                <input type="text" id="goals-search-input" placeholder="Search goals..." class="glass-widget" style="font-size: 0.75rem; padding: 6px 14px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); background: var(--bg-sidebar); color: var(--text-main); width: 220px;">
               </div>
-              <div id="full-goals-grid-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
-                <!-- Full Goals Grid -->
+              <div id="full-goals-grid-container" style="display: flex; flex-direction: column; gap: 14px; min-height: 240px;">
+                <!-- Real-Time Goals List -->
               </div>
             </div>
           </div>
 
-          <!-- SUBTAB 4: KANBAN BOARD -->
+          <!-- SUBTAB 3: KANBAN BOARD -->
           <div id="tasks-subview-kanban" class="tasks-subview-panel" style="display: none;">
+            <div class="view-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <div>
+                <h3 style="font-size: 1.3rem; font-weight: 800; margin: 0; color: var(--text-main);">Kanban Board</h3>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 2px 0 0 0;">Visualize your workflow</p>
+              </div>
+              <button onclick="window.LifeOS.modules.productivity.openAddTaskModal()" class="btn-primary-glow" style="padding: 8px 16px; font-size: 0.78rem; font-weight: 700; border: none; cursor: pointer; color: #fff; border-radius: var(--radius-sm);">+ Add Task</button>
+            </div>
+
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
-              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border-top: 3px solid var(--blue);">
-                <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 14px 0; color: var(--text-main);">To Do</h4>
-                <div id="kanban-todo-container" style="display: flex; flex-direction: column; gap: 10px; min-height: 200px;"></div>
+              <!-- Column 1: To Do -->
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border-top: 3px solid var(--blue); display: flex; flex-direction: column; justify-content: space-between; min-height: 380px;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-main);">To Do</h4>
+                    <span id="kanban-count-todo" class="badge" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">0</span>
+                  </div>
+                  <div id="kanban-todo-container" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                </div>
+                <button onclick="window.LifeOS.modules.productivity.openAddTaskModal()" class="btn-glass-subtle" style="width: 100%; margin-top: 14px; padding: 8px; font-size: 0.72rem; cursor: pointer;">+ Add Task</button>
               </div>
-              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border-top: 3px solid var(--orange);">
-                <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 14px 0; color: var(--text-main);">In Progress</h4>
-                <div id="kanban-in-progress-container" style="display: flex; flex-direction: column; gap: 10px; min-height: 200px;"></div>
+
+              <!-- Column 2: In Progress -->
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border-top: 3px solid var(--orange); display: flex; flex-direction: column; justify-content: space-between; min-height: 380px;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-main);">In Progress</h4>
+                    <span id="kanban-count-in-progress" class="badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">0</span>
+                  </div>
+                  <div id="kanban-in-progress-container" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                </div>
+                <button onclick="window.LifeOS.modules.productivity.openAddTaskModal()" class="btn-glass-subtle" style="width: 100%; margin-top: 14px; padding: 8px; font-size: 0.72rem; cursor: pointer;">+ Add Task</button>
               </div>
-              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border-top: 3px solid var(--primary);">
-                <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 14px 0; color: var(--text-main);">Under Review</h4>
-                <div id="kanban-review-container" style="display: flex; flex-direction: column; gap: 10px; min-height: 200px;"></div>
+
+              <!-- Column 3: Review -->
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border-top: 3px solid var(--primary); display: flex; flex-direction: column; justify-content: space-between; min-height: 380px;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-main);">Review</h4>
+                    <span id="kanban-count-review" class="badge" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;">0</span>
+                  </div>
+                  <div id="kanban-review-container" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                </div>
+                <button onclick="window.LifeOS.modules.productivity.openAddTaskModal()" class="btn-glass-subtle" style="width: 100%; margin-top: 14px; padding: 8px; font-size: 0.72rem; cursor: pointer;">+ Add Task</button>
               </div>
-              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border-top: 3px solid var(--green);">
-                <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 14px 0; color: var(--text-main);">Completed</h4>
-                <div id="kanban-completed-container" style="display: flex; flex-direction: column; gap: 10px; min-height: 200px;"></div>
+
+              <!-- Column 4: Done -->
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border-top: 3px solid var(--green); display: flex; flex-direction: column; justify-content: space-between; min-height: 380px;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-main);">Done</h4>
+                    <span id="kanban-count-done" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">0</span>
+                  </div>
+                  <div id="kanban-completed-container" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                </div>
+                <button onclick="window.LifeOS.modules.productivity.openAddTaskModal()" class="btn-glass-subtle" style="width: 100%; margin-top: 14px; padding: 8px; font-size: 0.72rem; cursor: pointer;">+ Add Task</button>
               </div>
             </div>
           </div>
 
-          <!-- SUBTAB 5: CALENDAR VIEW -->
+          <!-- SUBTAB 4: CALENDAR VIEW -->
           <div id="tasks-subview-calendar" class="tasks-subview-panel" style="display: none;">
-            <div class="glass-card" style="padding: 20px; border-radius: var(--radius-md); text-align: center;">
-              <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 12px;">Tasks & Milestones Calendar</h3>
-              <div id="tasks-calendar-container" style="min-height: 300px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.85rem;">
-                <!-- Real-time Tasks Calendar Grid -->
+            <div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 16px;">
+              <!-- Main Monthly Calendar Grid -->
+              <div class="glass-card" style="padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <h3 style="font-size: 1.2rem; font-weight: 800; margin: 0; color: var(--text-main);" id="calendar-month-year-label">May 2025</h3>
+                    <div style="display: flex; gap: 4px;">
+                      <button class="btn-glass-subtle" style="padding: 4px 10px; font-size: 0.75rem;" onclick="window.LifeOS.modules.productivity.prevMonth()">&lt;</button>
+                      <button class="btn-glass-subtle" style="padding: 4px 10px; font-size: 0.75rem;" onclick="window.LifeOS.modules.productivity.nextMonth()">&gt;</button>
+                      <button class="btn-glass-subtle" style="padding: 4px 10px; font-size: 0.75rem;" onclick="window.LifeOS.modules.productivity.currentMonth()">Today</button>
+                    </div>
+                  </div>
+                  <button onclick="window.LifeOS.modules.productivity.openAddTaskModal()" class="btn-primary-glow" style="padding: 6px 14px; font-size: 0.75rem; font-weight: 700; border: none; cursor: pointer; color: #fff; border-radius: var(--radius-sm);">+ Add Event</button>
+                </div>
+                <div id="tasks-calendar-grid-container"></div>
+              </div>
+
+              <!-- Calendar Right Sidebar: Upcoming Events -->
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                  <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0 0 14px 0; color: var(--text-main);">Upcoming Events</h4>
+                  <div id="calendar-upcoming-events-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- SUBTAB 6: TIMELINE ROADMAP -->
+          <!-- SUBTAB 5: TIMELINE STREAM -->
           <div id="tasks-subview-timeline" class="tasks-subview-panel" style="display: none;">
-            <div class="glass-card" style="padding: 20px; border-radius: var(--radius-md);">
-              <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 14px;">Project & Milestone Roadmap</h3>
-              <div id="tasks-timeline-container" style="display: flex; flex-direction: column; gap: 14px; min-height: 250px;">
-                <!-- Real-time Timeline Rows -->
+            <div class="glass-card" style="padding: 22px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div>
+                  <h3 style="font-size: 1.2rem; font-weight: 800; margin: 0; color: var(--text-main);">Timeline</h3>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">Real-time stream of task completions, milestone updates, and events</span>
+                </div>
               </div>
+              <div id="tasks-timeline-container" style="display: flex; flex-direction: column; gap: 16px; min-height: 250px;"></div>
             </div>
           </div>
 
-          <!-- SUBTAB 7: ANALYTICS -->
+          <!-- SUBTAB 6: ANALYTICS DASHBOARD -->
           <div id="tasks-subview-analytics" class="tasks-subview-panel" style="display: none;">
-            <div class="glass-card" style="padding: 20px; border-radius: var(--radius-md);">
-              <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 14px;">Productivity & Completion Analytics</h3>
-              <div id="tasks-analytics-container" style="min-height: 250px; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
-                <!-- Analytics Charts -->
+            <div class="view-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <div>
+                <h3 style="font-size: 1.3rem; font-weight: 800; margin: 0; color: var(--text-main);">Analytics</h3>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 2px 0 0 0;">Insights and productivity overview</p>
               </div>
+            </div>
+
+            <!-- Top 4 Analytic Metric Cards -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px;">
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">Productivity Score</span>
+                <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 4px 0;" id="analytics-score-val">85%</div>
+                <span style="font-size: 0.65rem; color: var(--green); font-weight: 700;">↑ 12% from last week</span>
+              </div>
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">Tasks Completed</span>
+                <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 4px 0;" id="analytics-completed-val">0</div>
+                <span style="font-size: 0.65rem; color: var(--green); font-weight: 700;">↑ 28% from last week</span>
+              </div>
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">Focus Time</span>
+                <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 4px 0;">12h 30m</div>
+                <span style="font-size: 0.65rem; color: var(--green); font-weight: 700;">↑ 2h 15m from last week</span>
+              </div>
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <span style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">Goal Progress</span>
+                <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 4px 0;" id="analytics-goal-val">0%</div>
+                <span style="font-size: 0.65rem; color: var(--green); font-weight: 700;">↑ 10% from last week</span>
+              </div>
+            </div>
+
+            <!-- Middle Row: Line Chart + Donut Chart -->
+            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; margin-bottom: 20px;">
+              <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0 0 14px 0; color: var(--text-main);">Tasks Completion Overview</h4>
+                <div id="analytics-line-chart-container" style="height: 180px; width: 100%;"></div>
+              </div>
+              <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0 0 14px 0; color: var(--text-main);">Tasks by Priority</h4>
+                <div style="display: flex; align-items: center; gap: 14px;">
+                  <div id="analytics-donut-container" style="width: 110px; height: 110px; position: relative; flex-shrink: 0;"></div>
+                  <div id="analytics-legend-container" style="display: flex; flex-direction: column; gap: 6px; font-size: 0.72rem; flex-grow: 1;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Row: Focus Bar Chart + Category Breakdown -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0 0 14px 0; color: var(--text-main);">Focus Time (This Week)</h4>
+                <div id="analytics-focus-bar-container" style="height: 130px; width: 100%;"></div>
+              </div>
+              <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0 0 14px 0; color: var(--text-main);">Top Categories</h4>
+                <div id="analytics-categories-breakdown-container" style="display: flex; flex-direction: column; gap: 10px;"></div>
+              </div>
+            </div>
+          </div>
+        </section> </div>
             </div>
           </div>
         </section>
@@ -6044,36 +6231,36 @@
   </div>
 
   <!-- Helpers & Validation & Controllers -->
-  <script src="helpers/financeHelper.js?v=42"></script>
-  <script src="validation/financeValidation.js?v=42"></script>
-  <script src="controllers/financeController.js?v=42"></script>
+  <script src="helpers/financeHelper.js?v=43"></script>
+  <script src="validation/financeValidation.js?v=43"></script>
+  <script src="controllers/financeController.js?v=43"></script>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=42"></script>
-  <script src="core/router.js?v=42"></script>
-  <script src="services/authService.js?v=42"></script>
-  <script src="services/supabaseService.js?v=42"></script>
-  <script src="services/storageService.js?v=42"></script>
-  <script src="services/syncService.js?v=42"></script>
-  <script src="services/notificationService.js?v=42"></script>
-  <script src="services/validationService.js?v=42"></script>
-  <script src="services/budgetService.js?v=42"></script>
-  <script src="services/financeService.js?v=42"></script>
-  <script src="services/chartService.js?v=42"></script>
+  <script src="core/config.js?v=43"></script>
+  <script src="core/router.js?v=43"></script>
+  <script src="services/authService.js?v=43"></script>
+  <script src="services/supabaseService.js?v=43"></script>
+  <script src="services/storageService.js?v=43"></script>
+  <script src="services/syncService.js?v=43"></script>
+  <script src="services/notificationService.js?v=43"></script>
+  <script src="services/validationService.js?v=43"></script>
+  <script src="services/budgetService.js?v=43"></script>
+  <script src="services/financeService.js?v=43"></script>
+  <script src="services/chartService.js?v=43"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=42"></script>
-  <script src="js/user.js?v=42"></script>
-  <script src="js/productivity.js?v=42"></script>
-  <script src="js/notes.js?v=42"></script>
-  <script src="js/finance.js?v=42"></script>
-  <script src="js/health.js?v=42"></script>
-  <script src="js/medicine.js?v=42"></script>
-  <script src="js/habits.js?v=42"></script>
-  <script src="js/personal.js?v=42"></script>
-  <script src="js/lifestyle.js?v=42"></script>
-  <script src="js/ai.js?v=42"></script>
-  <script src="js/analytics.js?v=42"></script>
+  <script src="js/app.js?v=43"></script>
+  <script src="js/user.js?v=43"></script>
+  <script src="js/productivity.js?v=43"></script>
+  <script src="js/notes.js?v=43"></script>
+  <script src="js/finance.js?v=43"></script>
+  <script src="js/health.js?v=43"></script>
+  <script src="js/medicine.js?v=43"></script>
+  <script src="js/habits.js?v=43"></script>
+  <script src="js/personal.js?v=43"></script>
+  <script src="js/lifestyle.js?v=43"></script>
+  <script src="js/ai.js?v=43"></script>
+  <script src="js/analytics.js?v=43"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {

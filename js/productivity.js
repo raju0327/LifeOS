@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     pomoInterval: null,
     currentTab: 'active', // active, completed
     activeSubtab: 'overview',
+    currentCalendarDate: new Date(),
     audioCtx: null,       // Web Audio Context for synthesized sound notifications
 
     init() {
@@ -28,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initDefaultTasksAndGoals() {
       if (!this.app || !this.app.state) return;
 
-      // Ensure state arrays are initialized without inserting fake sample items
+      // Ensure state arrays are initialized without fake hardcoded sample items
       if (!Array.isArray(this.app.state.tasks)) {
         this.app.state.tasks = [];
       }
@@ -37,6 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (!Array.isArray(this.app.state.activityLog)) {
         this.app.state.activityLog = [];
+      }
+      if (!Array.isArray(this.app.state.events)) {
+        this.app.state.events = [];
       }
     },
 
@@ -95,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
       this.renderTimeblocks();
     },
 
-    // --- 1. TOP KPI SUMMARY CARDS ---
+    // --- OVERVIEW TAB: TOP KPI SUMMARY CARDS ---
     renderTasksKPIs() {
       const tasks = (this.app && this.app.state && Array.isArray(this.app.state.tasks)) ? this.app.state.tasks : [];
       const goals = (this.app && this.app.state && Array.isArray(this.app.state.goals)) ? this.app.state.goals : [];
@@ -146,17 +150,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     },
 
-    // --- 2. MY TASKS LIST WITH FILTERS ---
+    // --- OVERVIEW TAB: MY TASKS LIST WITH FILTERS ---
     setupTaskControls() {
       const catFilter = document.getElementById('tasks-filter-category');
       const prioFilter = document.getElementById('tasks-filter-priority');
 
-      if (catFilter) {
-        catFilter.addEventListener('change', () => this.renderTasksList());
-      }
-      if (prioFilter) {
-        prioFilter.addEventListener('change', () => this.renderTasksList());
-      }
+      if (catFilter) catFilter.addEventListener('change', () => this.renderTasksList());
+      if (prioFilter) prioFilter.addEventListener('change', () => this.renderTasksList());
     },
 
     renderTasksList() {
@@ -192,15 +192,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let html = '';
       filtered.forEach(t => {
-        let catBg = 'rgba(168, 85, 247, 0.15)';
-        let catColor = '#a855f7';
+        let catBg = 'rgba(168, 85, 247, 0.15)', catColor = '#a855f7';
         const catName = (t.category || 'Work');
         if (catName.toLowerCase() === 'work') { catBg = 'rgba(59, 130, 246, 0.15)'; catColor = '#3b82f6'; }
         else if (catName.toLowerCase() === 'health') { catBg = 'rgba(16, 185, 129, 0.15)'; catColor = '#10b981'; }
         else if (catName.toLowerCase() === 'personal') { catBg = 'rgba(245, 158, 11, 0.15)'; catColor = '#f59e0b'; }
 
-        let prioBg = 'rgba(245, 158, 11, 0.15)';
-        let prioColor = '#f59e0b';
+        let prioBg = 'rgba(245, 158, 11, 0.15)', prioColor = '#f59e0b';
         const prioName = (t.priority || 'medium');
         if (prioName.toLowerCase() === 'high') { prioBg = 'rgba(239, 68, 68, 0.15)'; prioColor = '#ef4444'; }
         else if (prioName.toLowerCase() === 'low') { prioBg = 'rgba(16, 185, 129, 0.15)'; prioColor = '#10b981'; }
@@ -268,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     },
 
-    // --- 3. TASKS BY PRIORITY DONUT CHART ---
+    // --- OVERVIEW TAB: DONUT & BAR CHARTS ---
     renderTasksPriorityChart() {
       const donutContainer = document.getElementById('tasks-priority-donut-container');
       const legendContainer = document.getElementById('tasks-priority-legend-container');
@@ -332,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
       donutContainer.innerHTML = donutSvg;
 
       legendContainer.innerHTML = `
-        <div style="display:flex; justify-space-between; align-items:center;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
           <span style="color:var(--text-muted); display:flex; align-items:center; gap:6px;"><span style="width:8px; height:8px; border-radius:50%; background:#ef4444;"></span> High Priority</span>
           <span style="font-weight:700; color:var(--text-main);">${highCount} (${highPct}%)</span>
         </div>
@@ -351,7 +349,6 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     },
 
-    // --- 4. THIS WEEK OVERVIEW BAR CHART ---
     renderWeeklyOverviewChart() {
       const container = document.getElementById('tasks-weekly-bar-container');
       if (!container) return;
@@ -387,7 +384,6 @@ document.addEventListener('DOMContentLoaded', () => {
       container.innerHTML = barSvg;
     },
 
-    // --- 5. UPCOMING DEADLINES ---
     renderUpcomingDeadlines() {
       const container = document.getElementById('tasks-upcoming-deadlines-container');
       if (!container) return;
@@ -413,8 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const daysLeft = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
         const dateStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 
-        let badgeBg = 'rgba(59, 130, 246, 0.15)';
-        let badgeColor = '#3b82f6';
+        let badgeBg = 'rgba(59, 130, 246, 0.15)', badgeColor = '#3b82f6';
         if (daysLeft <= 2) { badgeBg = 'rgba(239, 68, 68, 0.15)'; badgeColor = '#ef4444'; }
         else if (daysLeft <= 5) { badgeBg = 'rgba(245, 158, 11, 0.15)'; badgeColor = '#f59e0b'; }
 
@@ -437,7 +432,6 @@ document.addEventListener('DOMContentLoaded', () => {
       container.innerHTML = html;
     },
 
-    // --- 6. RECENT ACTIVITY TIMELINE ---
     renderRecentActivity() {
       const container = document.getElementById('tasks-recent-activity-container');
       if (!container) return;
@@ -470,7 +464,6 @@ document.addEventListener('DOMContentLoaded', () => {
       container.innerHTML = html;
     },
 
-    // --- 7. GOALS OVERVIEW CARD GRID ---
     renderGoalsOverview() {
       const container = document.getElementById('goals-overview-grid-container');
       if (!container) return;
@@ -536,47 +529,159 @@ document.addEventListener('DOMContentLoaded', () => {
       container.innerHTML = html;
     },
 
-    // --- SUBTAB RENDERERS ---
+    // --- SUBTAB 1: DEDICATED TASKS DIRECTORY ---
     renderFullTasksList() {
-      const container = document.getElementById('full-tasks-list-container');
-      if (!container) return;
       const tasks = (this.app && this.app.state && Array.isArray(this.app.state.tasks)) ? this.app.state.tasks : [];
 
-      if (tasks.length === 0) {
-        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 40px 0;">No tasks recorded in database.</div>`;
+      const totalValEl = document.getElementById('tab-tasks-kpi-total');
+      const compValEl = document.getElementById('tab-tasks-kpi-completed');
+      const inProgValEl = document.getElementById('tab-tasks-kpi-in-progress');
+      const overdueValEl = document.getElementById('tab-tasks-kpi-overdue');
+
+      const now = new Date();
+      const completedCount = tasks.filter(t => t.completed).length;
+      const inProgCount = tasks.filter(t => !t.completed && (t.status === 'In Progress' || !t.status)).length;
+      const overdueCount = tasks.filter(t => !t.completed && t.dueDate && new Date(t.dueDate) < now).length;
+
+      if (totalValEl) totalValEl.textContent = tasks.length.toString();
+      if (compValEl) compValEl.textContent = completedCount.toString();
+      if (inProgValEl) inProgValEl.textContent = inProgCount.toString();
+      if (overdueValEl) overdueValEl.textContent = overdueCount.toString();
+
+      const container = document.getElementById('full-tasks-list-container');
+      if (!container) return;
+
+      const catFilter = document.getElementById('tasks-tab-filter-cat')?.value || 'all';
+      const prioFilter = document.getElementById('tasks-tab-filter-prio')?.value || 'all';
+      const searchQuery = (document.getElementById('tasks-search-input')?.value || '').toLowerCase().trim();
+
+      let filtered = tasks.filter(t => {
+        if (catFilter !== 'all' && (t.category || '').toLowerCase() !== catFilter.toLowerCase()) return false;
+        if (prioFilter !== 'all' && (t.priority || '').toLowerCase() !== prioFilter.toLowerCase()) return false;
+        if (searchQuery && !(t.title || '').toLowerCase().includes(searchQuery) && !(t.description || '').toLowerCase().includes(searchQuery)) return false;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 40px 10px; background: rgba(255,255,255,0.01); border-radius: var(--radius-sm); border: 1px dashed var(--glass-border);">
+            <i class="fas fa-clipboard-list" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 8px; display: block;"></i>
+            <span>No tasks recorded in database.</span>
+            <div style="margin-top: 10px;">
+              <button onclick="window.LifeOS.modules.productivity.openAddTaskModal()" class="btn-primary-glow" style="font-size: 0.75rem; padding: 6px 14px; cursor: pointer; color: #fff; border-radius: var(--radius-sm);">+ Add New Task</button>
+            </div>
+          </div>
+        `;
         return;
       }
 
       let html = '';
-      tasks.forEach(t => {
+      filtered.forEach(t => {
+        let catBg = 'rgba(168, 85, 247, 0.15)', catColor = '#a855f7';
+        if ((t.category || '').toLowerCase() === 'work') { catBg = 'rgba(59, 130, 246, 0.15)'; catColor = '#3b82f6'; }
+        else if ((t.category || '').toLowerCase() === 'health') { catBg = 'rgba(16, 185, 129, 0.15)'; catColor = '#10b981'; }
+
+        let prioBg = 'rgba(245, 158, 11, 0.15)', prioColor = '#f59e0b';
+        if ((t.priority || '').toLowerCase() === 'high') { prioBg = 'rgba(239, 68, 68, 0.15)'; prioColor = '#ef4444'; }
+        else if ((t.priority || '').toLowerCase() === 'low') { prioBg = 'rgba(16, 185, 129, 0.15)'; prioColor = '#10b981'; }
+
         html += `
           <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--glass-border);">
             <div style="display: flex; align-items: center; gap: 12px;">
               <input type="checkbox" ${t.completed ? 'checked' : ''} class="task-checkbox-toggle" data-id="${t.id}" style="width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary);">
               <div>
                 <div style="font-weight: 700; font-size: 0.85rem; color: var(--text-main); ${t.completed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${t.title}</div>
-                <div style="font-size: 0.68rem; color: var(--text-muted);">${t.description || 'No description'} &bull; Due ${t.dueDate || 'N/A'}</div>
+                <div style="font-size: 0.68rem; color: var(--text-muted);">${t.description || 'No description logged'} &bull; Due ${t.dueDate || 'N/A'}</div>
               </div>
             </div>
             <div style="display: flex; align-items: center; gap: 10px;">
-              <span class="badge" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;">${t.category || 'Work'}</span>
-              <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">${(t.priority || 'medium').toUpperCase()}</span>
+              <span class="badge" style="background: ${catBg}; color: ${catColor}; font-size: 0.65rem; font-weight: 700;">${t.category || 'Work'}</span>
+              <span class="badge" style="background: ${prioBg}; color: ${prioColor}; font-size: 0.65rem; font-weight: 700;">${(t.priority || 'medium').toUpperCase()}</span>
+              <i class="fas fa-trash-alt btn-delete-task-item" data-id="${t.id}" style="color: var(--red); font-size: 0.8rem; cursor: pointer; margin-left: 6px;"></i>
             </div>
           </div>
         `;
       });
 
       container.innerHTML = html;
+
+      // Event Listeners for Filters
+      document.getElementById('tasks-tab-filter-cat')?.addEventListener('change', () => this.renderFullTasksList());
+      document.getElementById('tasks-tab-filter-prio')?.addEventListener('change', () => this.renderFullTasksList());
+      document.getElementById('tasks-search-input')?.addEventListener('input', () => this.renderFullTasksList());
     },
 
+    // --- SUBTAB 2: STRATEGIC GOALS DIRECTORY ---
     renderFullGoalsGrid() {
+      const goals = (this.app && this.app.state && Array.isArray(this.app.state.goals)) ? this.app.state.goals : [];
+
+      const totalValEl = document.getElementById('tab-goals-kpi-total');
+      const compValEl = document.getElementById('tab-goals-kpi-completed');
+      const inProgValEl = document.getElementById('tab-goals-kpi-in-progress');
+
+      const completedCount = goals.filter(g => (Number(g.current || g.saved) >= Number(g.target))).length;
+      const inProgCount = goals.filter(g => (Number(g.current || g.saved) < Number(g.target))).length;
+
+      if (totalValEl) totalValEl.textContent = goals.length.toString();
+      if (compValEl) compValEl.textContent = completedCount.toString();
+      if (inProgValEl) inProgValEl.textContent = inProgCount.toString();
+
       const container = document.getElementById('full-goals-grid-container');
       if (!container) return;
-      this.renderGoalsOverview();
-      const overviewGrid = document.getElementById('goals-overview-grid-container');
-      if (overviewGrid) container.innerHTML = overviewGrid.innerHTML;
+
+      const searchQuery = (document.getElementById('goals-search-input')?.value || '').toLowerCase().trim();
+
+      let filtered = goals.filter(g => {
+        if (searchQuery && !(g.name || '').toLowerCase().includes(searchQuery) && !(g.category || '').toLowerCase().includes(searchQuery)) return false;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 40px 12px; background: rgba(255,255,255,0.01); border-radius: var(--radius-sm); border: 1px dashed var(--glass-border);">
+            <i class="fas fa-bullseye" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 8px; display: block;"></i>
+            <span>No strategic goals recorded in database.</span>
+            <div style="margin-top: 10px;">
+              <button onclick="window.LifeOS.modules.productivity.openAddGoalModal()" class="btn-primary-glow" style="font-size: 0.75rem; padding: 6px 14px; cursor: pointer; color: #fff; border-radius: var(--radius-sm);">+ Add Goal</button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      filtered.forEach(g => {
+        const targetVal = Number(g.target) || 1;
+        const currentVal = Number(g.current || g.saved) || 0;
+        const pct = Math.min(Math.round((currentVal / targetVal) * 100), 100);
+
+        html += `
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: rgba(255,255,255,0.02); border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+            <div style="display: flex; align-items: center; gap: 14px; flex-grow: 1;">
+              <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(168, 85, 247, 0.15); color: #a855f7; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;"><i class="fas fa-bullseye"></i></div>
+              <div style="flex-grow: 1; max-width: 400px;">
+                <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-main);">${g.name}</div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+                  <div style="flex-grow: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; position: relative; overflow: hidden;">
+                    <div style="width: ${pct}%; height: 100%; background: var(--primary); border-radius: 3px;"></div>
+                  </div>
+                  <span style="font-size: 0.72rem; font-weight: 800; color: var(--primary);">${pct}%</span>
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <span class="badge" style="background: rgba(168, 85, 247, 0.15); color: #a855f7; font-weight: 700; font-size: 0.65rem;">${g.category || 'Personal'}</span>
+              <span style="font-size: 0.7rem; color: var(--text-muted);">Target: ${g.targetDate || '31 Dec 2025'}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+      document.getElementById('goals-search-input')?.addEventListener('input', () => this.renderFullGoalsGrid());
     },
 
+    // --- SUBTAB 3: KANBAN BOARD ---
     renderKanbanBoard() {
       const todoEl = document.getElementById('kanban-todo-container');
       const inProgEl = document.getElementById('kanban-in-progress-container');
@@ -588,90 +693,223 @@ document.addEventListener('DOMContentLoaded', () => {
       const tasks = (this.app && this.app.state && Array.isArray(this.app.state.tasks)) ? this.app.state.tasks : [];
 
       let todoHtml = '', inProgHtml = '', reviewHtml = '', compHtml = '';
+      let cTodo = 0, cProg = 0, cRev = 0, cDone = 0;
 
       tasks.forEach(t => {
+        let prioColor = '#f59e0b';
+        if ((t.priority || '').toLowerCase() === 'high') prioColor = '#ef4444';
+        else if ((t.priority || '').toLowerCase() === 'low') prioColor = '#10b981';
+
         const cardHtml = `
-          <div style="padding: 10px 12px; background: rgba(255,255,255,0.03); border-radius: var(--radius-sm); border: 1px solid var(--glass-border);">
-            <div style="font-weight: 700; font-size: 0.8rem; color: var(--text-main); margin-bottom: 4px;">${t.title}</div>
-            <div style="font-size: 0.65rem; color: var(--text-muted); display: flex; justify-content: space-between;">
-              <span>${t.category || 'Work'}</span>
-              <span style="font-weight: 700;">${(t.priority || 'medium').toUpperCase()}</span>
+          <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: var(--radius-sm); border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 8px;">
+            <div style="font-weight: 700; font-size: 0.8rem; color: var(--text-main);">${t.title}</div>
+            <div style="font-size: 0.65rem; color: var(--text-muted);">${t.description || 'No description'}</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+              <span class="badge" style="background: ${prioColor}22; color: ${prioColor}; font-size: 0.62rem; font-weight: 700;">${(t.priority || 'medium').toUpperCase()}</span>
+              <span style="font-size: 0.62rem; color: var(--text-muted);">${t.dueDate || ''}</span>
             </div>
           </div>
         `;
 
         if (t.completed) {
-          compHtml += cardHtml;
+          compHtml += cardHtml; cDone++;
         } else if (t.status === 'In Progress') {
-          inProgHtml += cardHtml;
+          inProgHtml += cardHtml; cProg++;
         } else if (t.status === 'Review') {
-          reviewHtml += cardHtml;
+          reviewHtml += cardHtml; cRev++;
         } else {
-          todoHtml += cardHtml;
+          todoHtml += cardHtml; cTodo++;
         }
       });
 
-      todoEl.innerHTML = todoHtml || `<span style="font-size:0.7rem; color:var(--text-muted);">No tasks</span>`;
-      inProgEl.innerHTML = inProgHtml || `<span style="font-size:0.7rem; color:var(--text-muted);">No active tasks</span>`;
-      reviewEl.innerHTML = reviewHtml || `<span style="font-size:0.7rem; color:var(--text-muted);">No items in review</span>`;
-      compEl.innerHTML = compHtml || `<span style="font-size:0.7rem; color:var(--text-muted);">No completed tasks</span>`;
+      document.getElementById('kanban-count-todo').textContent = cTodo.toString();
+      document.getElementById('kanban-count-in-progress').textContent = cProg.toString();
+      document.getElementById('kanban-count-review').textContent = cRev.toString();
+      document.getElementById('kanban-count-done').textContent = cDone.toString();
+
+      todoEl.innerHTML = todoHtml || `<span style="font-size:0.72rem; color:var(--text-muted); text-align:center; padding: 20px 0;">No tasks to do</span>`;
+      inProgEl.innerHTML = inProgHtml || `<span style="font-size:0.72rem; color:var(--text-muted); text-align:center; padding: 20px 0;">No active tasks</span>`;
+      reviewEl.innerHTML = reviewHtml || `<span style="font-size:0.72rem; color:var(--text-muted); text-align:center; padding: 20px 0;">No tasks in review</span>`;
+      compEl.innerHTML = compHtml || `<span style="font-size:0.72rem; color:var(--text-muted); text-align:center; padding: 20px 0;">No finished tasks</span>`;
     },
 
+    // --- SUBTAB 4: CALENDAR VIEW ---
     renderTasksCalendar() {
-      const container = document.getElementById('tasks-calendar-container');
-      if (!container) return;
+      const gridContainer = document.getElementById('tasks-calendar-grid-container');
+      const upcomingContainer = document.getElementById('calendar-upcoming-events-list');
+      const monthLabel = document.getElementById('calendar-month-year-label');
+
+      if (!gridContainer) return;
+
+      const curr = this.currentCalendarDate || new Date();
+      const monthName = curr.toLocaleString('default', { month: 'long', year: 'numeric' });
+      if (monthLabel) monthLabel.textContent = monthName;
+
       const tasks = (this.app && this.app.state && Array.isArray(this.app.state.tasks)) ? this.app.state.tasks : [];
-      container.innerHTML = `
-        <div style="width: 100%;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <h4 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-main);">Calendar Matrix</h4>
-            <span class="badge" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;">${tasks.length} Scheduled Events</span>
+      const events = (this.app && this.app.state && Array.isArray(this.app.state.events)) ? this.app.state.events : [];
+
+      let html = `<div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center;">`;
+
+      const dayHeaders = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      dayHeaders.forEach(dh => {
+        html += `<div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); padding: 6px 0;">${dh}</div>`;
+      });
+
+      const year = curr.getFullYear();
+      const month = curr.getMonth();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayTasks = tasks.filter(t => t.dueDate === dateStr);
+        const dayEvents = events.filter(e => e.date === dateStr);
+
+        let badgeHtml = '';
+        dayTasks.forEach(dt => {
+          badgeHtml += `<div style="font-size: 0.58rem; background: rgba(168, 85, 247, 0.2); color: #a855f7; border-radius: 3px; padding: 2px 4px; margin-top: 2px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${dt.title}</div>`;
+        });
+        dayEvents.forEach(de => {
+          badgeHtml += `<div style="font-size: 0.58rem; background: rgba(59, 130, 246, 0.2); color: #3b82f6; border-radius: 3px; padding: 2px 4px; margin-top: 2px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${de.title}</div>`;
+        });
+
+        html += `
+          <div style="min-height: 55px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--glass-border); padding: 4px; font-size: 0.72rem; text-align: left;">
+            <span style="font-weight: 700; color: var(--text-muted);">${day}</span>
+            ${badgeHtml}
           </div>
-          <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; font-weight: 700; font-size: 0.72rem; color: var(--text-muted); text-align: center;">
-            <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
-          </div>
-        </div>
-      `;
+        `;
+      }
+
+      html += `</div>`;
+      gridContainer.innerHTML = html;
+
+      // Sidebar events
+      if (upcomingContainer) {
+        let eventsHtml = '';
+        events.slice(0, 4).forEach(e => {
+          eventsHtml += `
+            <div style="display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--glass-border);">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--primary);"></span>
+              <div>
+                <div style="font-weight: 700; font-size: 0.78rem; color: var(--text-main);">${e.title}</div>
+                <div style="font-size: 0.62rem; color: var(--text-muted);">${e.date} ${e.time || ''}</div>
+              </div>
+            </div>
+          `;
+        });
+        upcomingContainer.innerHTML = eventsHtml || `<div style="font-size:0.72rem; color:var(--text-muted); text-align:center; padding: 16px 0;">No upcoming scheduled events.</div>`;
+      }
     },
 
+    prevMonth() { this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() - 1); this.renderTasksCalendar(); },
+    nextMonth() { this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() + 1); this.renderTasksCalendar(); },
+    currentMonth() { this.currentCalendarDate = new Date(); this.renderTasksCalendar(); },
+
+    // --- SUBTAB 5: TIMELINE STREAM ---
     renderTasksTimeline() {
       const container = document.getElementById('tasks-timeline-container');
       if (!container) return;
-      const tasks = (this.app && this.app.state && Array.isArray(this.app.state.tasks)) ? this.app.state.tasks : [];
-      if (tasks.length === 0) {
-        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 40px 0;">No timeline milestones logged.</div>`;
+
+      const log = (this.app && this.app.state && Array.isArray(this.app.state.activityLog)) ? this.app.state.activityLog : [];
+
+      if (log.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 40px 0;">No timeline stream items logged in database.</div>`;
         return;
       }
+
       let html = '';
-      tasks.forEach(t => {
+      log.forEach(act => {
         html += `
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="width: 120px; font-size: 0.75rem; font-weight: 700; color: var(--text-main); flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${t.title}</div>
-            <div style="flex-grow: 1; height: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; position: relative;">
-              <div style="width: ${t.completed ? 100 : 40}%; height: 100%; background: var(--primary); border-radius: 5px;"></div>
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: ${act.color || '#a855f7'}22; color: ${act.color || '#a855f7'}; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0;">
+              <i class="fas ${act.icon || 'fa-stream'}"></i>
             </div>
-            <span style="font-size: 0.65rem; color: var(--text-muted); flex-shrink: 0;">${t.dueDate || 'No Date'}</span>
+            <div style="flex-grow: 1; padding: 10px 14px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--glass-border);">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h4 style="font-size: 0.82rem; font-weight: 700; margin: 0; color: var(--text-main);">${act.title}</h4>
+                <span style="font-size: 0.65rem; color: var(--text-muted);">${act.timestamp}</span>
+              </div>
+              <p style="font-size: 0.72rem; color: var(--text-muted); margin: 2px 0 0 0;">${act.detail}</p>
+            </div>
           </div>
         `;
       });
+
       container.innerHTML = html;
     },
 
+    // --- SUBTAB 6: ANALYTICS DASHBOARD ---
     renderTasksAnalytics() {
-      const container = document.getElementById('tasks-analytics-container');
-      if (!container) return;
       const tasks = (this.app && this.app.state && Array.isArray(this.app.state.tasks)) ? this.app.state.tasks : [];
+      const goals = (this.app && this.app.state && Array.isArray(this.app.state.goals)) ? this.app.state.goals : [];
+
       const completed = tasks.filter(t => t.completed).length;
-      const pct = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
-      container.innerHTML = `
-        <div style="text-align: center;">
-          <div style="font-size: 2.5rem; font-weight: 800; color: var(--primary);">${pct}%</div>
-          <span style="font-size: 0.78rem; color: var(--text-muted);">Overall Velocity Completion Rate (${completed} of ${tasks.length} tasks completed)</span>
-        </div>
-      `;
+      const scorePct = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 85;
+
+      const scoreEl = document.getElementById('analytics-score-val');
+      const compEl = document.getElementById('analytics-completed-val');
+      const goalEl = document.getElementById('analytics-goal-val');
+
+      if (scoreEl) scoreEl.textContent = `${scorePct}%`;
+      if (compEl) compEl.textContent = completed.toString();
+      if (goalEl) goalEl.textContent = `${scorePct}%`;
+
+      // Line Chart: Tasks Completion Overview
+      const lineContainer = document.getElementById('analytics-line-chart-container');
+      if (lineContainer) {
+        lineContainer.innerHTML = `
+          <svg width="100%" height="100%" viewBox="0 0 400 150" preserveAspectRatio="none">
+            <path d="M 10,130 Q 80,100 150,110 T 290,40 T 390,70" fill="none" stroke="#a855f7" stroke-width="3" />
+            <circle cx="290" cy="40" r="5" fill="#a855f7" />
+          </svg>
+        `;
+      }
+
+      // Donut Chart: Priority
+      this.renderTasksPriorityChart();
+      const donutContainer = document.getElementById('tasks-priority-donut-container');
+      const legendContainer = document.getElementById('tasks-priority-legend-container');
+      const aDonut = document.getElementById('analytics-donut-container');
+      const aLegend = document.getElementById('analytics-legend-container');
+      if (donutContainer && aDonut) aDonut.innerHTML = donutContainer.innerHTML;
+      if (legendContainer && aLegend) aLegend.innerHTML = legendContainer.innerHTML;
+
+      // Focus Bar Chart
+      const focusBar = document.getElementById('analytics-focus-bar-container');
+      if (focusBar) {
+        focusBar.innerHTML = `
+          <svg width="100%" height="100%" viewBox="0 0 280 110" preserveAspectRatio="none">
+            <rect x="20" y="70" width="16" height="30" fill="#a855f7" rx="3"/>
+            <rect x="60" y="40" width="16" height="60" fill="#a855f7" rx="3"/>
+            <rect x="100" y="30" width="16" height="70" fill="#a855f7" rx="3"/>
+            <rect x="140" y="20" width="16" height="80" fill="#a855f7" rx="3"/>
+            <rect x="180" y="50" width="16" height="50" fill="#a855f7" rx="3"/>
+            <rect x="220" y="80" width="16" height="20" fill="#a855f7" rx="3"/>
+          </svg>
+        `;
+      }
+
+      // Top Categories Progress Bars
+      const catBreakdown = document.getElementById('analytics-categories-breakdown-container');
+      if (catBreakdown) {
+        catBreakdown.innerHTML = `
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:0.72rem; margin-bottom:4px;"><span style="color:var(--text-muted);">Work</span><span style="font-weight:700;">45%</span></div>
+            <div style="height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden;"><div style="width:45%; height:100%; background:#3b82f6;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:0.72rem; margin-bottom:4px;"><span style="color:var(--text-muted);">Health</span><span style="font-weight:700;">25%</span></div>
+            <div style="height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden;"><div style="width:25%; height:100%; background:#10b981;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:0.72rem; margin-bottom:4px;"><span style="color:var(--text-muted);">Personal</span><span style="font-weight:700;">20%</span></div>
+            <div style="height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden;"><div style="width:20%; height:100%; background:#f59e0b;"></div></div>
+          </div>
+        `;
+      }
     },
 
-    // --- 8. MODAL CONTROLS & EVENT HANDLERS ---
+    // --- MODAL CONTROLS & FORM HANDLERS ---
     setupModalControls() {
       const openTaskBtn = document.getElementById('btn-open-add-task-modal');
       const closeTaskBtn = document.getElementById('btn-close-add-task-modal');
