@@ -1929,18 +1929,18 @@
               </div>
 
               <!-- Right: Donut Chart & Trend -->
-              <div style="display: flex; flex-direction: column; gap: 16px;">
-                <div class="glass-card"
+              <div class="mobile-charts-swipe-wrapper" style="display: flex; flex-direction: column; gap: 16px;">
+                <div class="glass-card budget-chart-card"
                   style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                     <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0;">Budget vs Actual Chart</h4>
                     <span style="font-size: 0.72rem; color: var(--text-muted);">This Month</span>
                   </div>
-                  <div id="budget-vs-actual-chart-container" style="height: 140px; width: 100%;"></div>
+                  <div id="budget-vs-actual-chart-container" style="height: 140px; width: 100%; min-width: 300px; overflow-x: auto;"></div>
                 </div>
 
                 <div class="budget-charts-subgrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                  <div class="glass-card"
+                  <div class="glass-card budget-chart-card"
                     style="padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
                     <h5 style="font-size: 0.82rem; font-weight: 700; margin: 0 0 10px 0;">Spending by Category</h5>
                     <div style="display: flex; align-items: center; gap: 10px;">
@@ -1951,14 +1951,14 @@
                       </div>
                     </div>
                   </div>
-                  <div class="glass-card"
+                  <div class="glass-card budget-chart-card"
                     style="padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
                     <div
                       style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                       <h5 style="font-size: 0.82rem; font-weight: 700; margin: 0;">Utilization Trend</h5>
                       <span style="font-size: 0.65rem; color: var(--text-muted);">6 Months</span>
                     </div>
-                    <div id="budget-trend-chart-container" style="height: 100px; width: 100%;"></div>
+                    <div id="budget-trend-chart-container" style="height: 100px; width: 100%; min-width: 260px; overflow-x: auto;"></div>
                   </div>
                 </div>
               </div>
@@ -5735,36 +5735,36 @@
   </div>
 
   <!-- Helpers & Validation & Controllers -->
-  <script src="helpers/financeHelper.js?v=39"></script>
-  <script src="validation/financeValidation.js?v=39"></script>
-  <script src="controllers/financeController.js?v=39"></script>
+  <script src="helpers/financeHelper.js?v=40"></script>
+  <script src="validation/financeValidation.js?v=40"></script>
+  <script src="controllers/financeController.js?v=40"></script>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=39"></script>
-  <script src="core/router.js?v=39"></script>
-  <script src="services/authService.js?v=39"></script>
-  <script src="services/supabaseService.js?v=39"></script>
-  <script src="services/storageService.js?v=39"></script>
-  <script src="services/syncService.js?v=39"></script>
-  <script src="services/notificationService.js?v=39"></script>
-  <script src="services/validationService.js?v=39"></script>
-  <script src="services/budgetService.js?v=39"></script>
-  <script src="services/financeService.js?v=39"></script>
-  <script src="services/chartService.js?v=39"></script>
+  <script src="core/config.js?v=40"></script>
+  <script src="core/router.js?v=40"></script>
+  <script src="services/authService.js?v=40"></script>
+  <script src="services/supabaseService.js?v=40"></script>
+  <script src="services/storageService.js?v=40"></script>
+  <script src="services/syncService.js?v=40"></script>
+  <script src="services/notificationService.js?v=40"></script>
+  <script src="services/validationService.js?v=40"></script>
+  <script src="services/budgetService.js?v=40"></script>
+  <script src="services/financeService.js?v=40"></script>
+  <script src="services/chartService.js?v=40"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=39"></script>
-  <script src="js/user.js?v=39"></script>
-  <script src="js/productivity.js?v=39"></script>
-  <script src="js/notes.js?v=39"></script>
-  <script src="js/finance.js?v=39"></script>
-  <script src="js/health.js?v=39"></script>
-  <script src="js/medicine.js?v=39"></script>
-  <script src="js/habits.js?v=39"></script>
-  <script src="js/personal.js?v=39"></script>
-  <script src="js/lifestyle.js?v=39"></script>
-  <script src="js/ai.js?v=39"></script>
-  <script src="js/analytics.js?v=39"></script>
+  <script src="js/app.js?v=40"></script>
+  <script src="js/user.js?v=40"></script>
+  <script src="js/productivity.js?v=40"></script>
+  <script src="js/notes.js?v=40"></script>
+  <script src="js/finance.js?v=40"></script>
+  <script src="js/health.js?v=40"></script>
+  <script src="js/medicine.js?v=40"></script>
+  <script src="js/habits.js?v=40"></script>
+  <script src="js/personal.js?v=40"></script>
+  <script src="js/lifestyle.js?v=40"></script>
+  <script src="js/ai.js?v=40"></script>
+  <script src="js/analytics.js?v=40"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {

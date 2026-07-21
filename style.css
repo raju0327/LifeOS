@@ -3012,13 +3012,51 @@ html, body {
 /* MOBILE ONLY: Stack all 2-column grids 1-by-1 vertically (No 2-column flex on mobile) */
 @media (max-width: 768px) {
   .budget-middle-split,
-  .budget-charts-subgrid,
   .finance-dash-row,
   .budget-overview-grid {
     grid-template-columns: 1fr !important;
     display: grid !important;
     gap: 16px !important;
     width: 100% !important;
+  }
+
+  /* Swipe-to-Scroll / Drag-to-Move for Budget vs Actual, Spending by Category, and Utilization Trend */
+  .mobile-charts-swipe-wrapper {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    gap: 14px !important;
+    scroll-snap-type: x mandatory !important;
+    touch-action: pan-x !important;
+    -webkit-overflow-scrolling: touch !important;
+    user-select: none !important;
+    cursor: grab !important;
+    width: 100% !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 16px !important;
+  }
+  .mobile-charts-swipe-wrapper::-webkit-scrollbar {
+    height: 4px;
+  }
+  .mobile-charts-swipe-wrapper::-webkit-scrollbar-thumb {
+    background: var(--primary-glow);
+    border-radius: 4px;
+  }
+  .mobile-charts-swipe-wrapper.active-drag {
+    cursor: grabbing !important;
+  }
+  .mobile-charts-swipe-wrapper > .budget-chart-card,
+  .mobile-charts-swipe-wrapper > .budget-charts-subgrid {
+    flex: 0 0 88% !important;
+    min-width: 280px !important;
+    max-width: 340px !important;
+    scroll-snap-align: start !important;
+  }
+  .mobile-charts-swipe-wrapper .budget-charts-subgrid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
   }
 }
 
