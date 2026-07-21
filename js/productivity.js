@@ -97,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
       this.renderProjects();
       this.renderEvents();
       this.renderTimeblocks();
+      this.renderTasksCalendar();
     },
 
     // --- OVERVIEW TAB: TOP KPI SUMMARY CARDS ---
@@ -1027,9 +1028,77 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Legacy Projects & Calendar Handlers ---
     setupProjectControls() {},
     renderProjects() {},
-    setupCalendarControls() {},
-    renderEvents() {},
-    renderTimeblocks() {},
+    setupCalendarControls() {
+      const eventForm = document.getElementById('event-form');
+      if (eventForm) {
+        eventForm.onsubmit = (e) => {
+          e.preventDefault();
+          const title = document.getElementById('event-title')?.value.trim();
+          const date = document.getElementById('event-date')?.value;
+          const time = document.getElementById('event-time')?.value;
+
+          if (!title || !date) return;
+
+          const newEvent = {
+            id: Date.now(),
+            title,
+            date,
+            time: time || '12:00'
+          };
+
+          if (!Array.isArray(this.app.state.events)) {
+            this.app.state.events = [];
+          }
+          this.app.state.events.unshift(newEvent);
+          this.app.saveState();
+          this.app.showToast(`Scheduled event: ${title}`, 'success');
+          eventForm.reset();
+          this.render();
+        };
+      }
+    },
+    renderEvents() {
+      const container = document.getElementById('events-list-container');
+      if (!container) return;
+
+      const events = (this.app && this.app.state && Array.isArray(this.app.state.events)) ? this.app.state.events : [];
+      if (events.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.72rem; padding: 14px 0;">No scheduled events.</div>`;
+        return;
+      }
+
+      let html = '';
+      events.forEach(e => {
+        html += `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--glass-border); margin-bottom: 6px;">
+            <div>
+              <div style="font-weight: 700; font-size: 0.78rem; color: var(--text-main);">${e.title}</div>
+              <div style="font-size: 0.62rem; color: var(--text-muted);">${e.date} &bull; ${e.time || ''}</div>
+            </div>
+            <i class="fas fa-trash-alt btn-delete-event" data-id="${e.id}" style="color: var(--red); font-size: 0.75rem; cursor: pointer;"></i>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+
+      container.querySelectorAll('.btn-delete-event').forEach(btn => {
+        btn.onclick = () => {
+          const id = btn.getAttribute('data-id');
+          const idx = events.findIndex(evt => evt.id.toString() === id.toString());
+          if (idx !== -1) {
+            events.splice(idx, 1);
+            this.app.saveState();
+            this.app.showToast('Event removed', 'info');
+            this.render();
+          }
+        };
+      });
+    },
+    renderTimeblocks() {
+      if (window.LifeOS && window.LifeOS.modules && window.LifeOS.modules.timeblocks) {
+        window.LifeOS.modules.timeblocks.render();
+      }
+    },
     setupPomodoroTimer() {},
     setupFocusMode() {}
   };

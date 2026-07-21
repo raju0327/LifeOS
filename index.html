@@ -1147,7 +1147,6 @@
             <button class="tasks-subnav-btn" data-subtab="tasks" onclick="window.LifeOS.modules.productivity.switchSubtab('tasks')"><i class="fas fa-list-check" style="margin-right: 6px;"></i>Tasks</button>
             <button class="tasks-subnav-btn" data-subtab="goals" onclick="window.LifeOS.modules.productivity.switchSubtab('goals')"><i class="fas fa-bullseye" style="margin-right: 6px;"></i>Goals</button>
             <button class="tasks-subnav-btn" data-subtab="kanban" onclick="window.LifeOS.modules.productivity.switchSubtab('kanban')"><i class="fas fa-columns" style="margin-right: 6px;"></i>Kanban</button>
-            <button class="tasks-subnav-btn" data-subtab="calendar" onclick="window.LifeOS.modules.productivity.switchSubtab('calendar')"><i class="fas fa-calendar-alt" style="margin-right: 6px;"></i>Calendar</button>
             <button class="tasks-subnav-btn" data-subtab="timeline" onclick="window.LifeOS.modules.productivity.switchSubtab('timeline')"><i class="fas fa-stream" style="margin-right: 6px;"></i>Timeline</button>
             <button class="tasks-subnav-btn" data-subtab="analytics" onclick="window.LifeOS.modules.productivity.switchSubtab('analytics')"><i class="fas fa-chart-pie" style="margin-right: 6px;"></i>Analytics</button>
           </div>
@@ -1496,34 +1495,6 @@
             </div>
           </div>
 
-          <!-- SUBTAB 4: CALENDAR VIEW -->
-          <div id="tasks-subview-calendar" class="tasks-subview-panel" style="display: none;">
-            <div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 16px;">
-              <!-- Main Monthly Calendar Grid -->
-              <div class="glass-card" style="padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                  <div style="display: flex; align-items: center; gap: 12px;">
-                    <h3 style="font-size: 1.2rem; font-weight: 800; margin: 0; color: var(--text-main);" id="calendar-month-year-label">May 2025</h3>
-                    <div style="display: flex; gap: 4px;">
-                      <button class="btn-glass-subtle" style="padding: 4px 10px; font-size: 0.75rem;" onclick="window.LifeOS.modules.productivity.prevMonth()">&lt;</button>
-                      <button class="btn-glass-subtle" style="padding: 4px 10px; font-size: 0.75rem;" onclick="window.LifeOS.modules.productivity.nextMonth()">&gt;</button>
-                      <button class="btn-glass-subtle" style="padding: 4px 10px; font-size: 0.75rem;" onclick="window.LifeOS.modules.productivity.currentMonth()">Today</button>
-                    </div>
-                  </div>
-                  <button onclick="window.LifeOS.modules.productivity.openAddTaskModal()" class="btn-primary-glow" style="padding: 6px 14px; font-size: 0.75rem; font-weight: 700; border: none; cursor: pointer; color: #fff; border-radius: var(--radius-sm);">+ Add Event</button>
-                </div>
-                <div id="tasks-calendar-grid-container"></div>
-              </div>
-
-              <!-- Calendar Right Sidebar: Upcoming Events -->
-              <div style="display: flex; flex-direction: column; gap: 16px;">
-                <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
-                  <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0 0 14px 0; color: var(--text-main);">Upcoming Events</h4>
-                  <div id="calendar-upcoming-events-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <!-- SUBTAB 5: TIMELINE STREAM -->
           <div id="tasks-subview-timeline" class="tasks-subview-panel" style="display: none;">
@@ -1601,51 +1572,84 @@
 
         <!-- 4. PLANNER VIEW (Calendar, Events, Routines) -->
         <section id="planner-view" class="view-panel">
-          <div class="view-header">
-            <h2>Calendar & Routines</h2>
-            <p class="subtitle">Schedule specific events, habits, and timeblock hourly agendas</p>
+          <div class="view-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div>
+              <h2 style="font-size: 1.4rem; font-weight: 800; margin: 0; color: var(--text-main);">Calendar & Routines</h2>
+              <p class="subtitle" style="font-size: 0.78rem; color: var(--text-muted); margin: 2px 0 0 0;">Schedule specific events, habits, and timeblock hourly agendas</p>
+            </div>
+            <button onclick="window.LifeOS.modules.productivity.openAddTaskModal()" class="btn-primary-glow" style="padding: 8px 16px; font-size: 0.78rem; font-weight: 700; border: none; cursor: pointer; color: #fff; border-radius: var(--radius-sm);">+ Add Event</button>
           </div>
 
-          <div class="planner-layout">
-            <div class="planner-main">
-              <!-- Calendar/Timeblocker Grid -->
-              <div class="glass-card timeblocks-card">
-                <div class="schedule-header">
-                  <h3>Hourly Schedule</h3>
-                  <span class="schedule-date" id="planner-date-header">Saturday</span>
+          <div class="planner-layout" style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 16px;">
+            <!-- Left Panel: Monthly Calendar & Hourly Schedule -->
+            <div class="planner-main" style="display: flex; flex-direction: column; gap: 16px;">
+              <!-- Main Monthly Calendar Grid -->
+              <div class="glass-card" style="padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <h3 style="font-size: 1.2rem; font-weight: 800; margin: 0; color: var(--text-main);" id="calendar-month-year-label">May 2025</h3>
+                    <div style="display: flex; gap: 4px;">
+                      <button class="btn-glass-subtle" style="padding: 4px 10px; font-size: 0.75rem;" onclick="window.LifeOS.modules.productivity.prevMonth()">&lt;</button>
+                      <button class="btn-glass-subtle" style="padding: 4px 10px; font-size: 0.75rem;" onclick="window.LifeOS.modules.productivity.nextMonth()">&gt;</button>
+                      <button class="btn-glass-subtle" style="padding: 4px 10px; font-size: 0.75rem;" onclick="window.LifeOS.modules.productivity.currentMonth()">Today</button>
+                    </div>
+                  </div>
                 </div>
-                <div class="timeblock-grid" id="planner-slots-container">
+                <div id="tasks-calendar-grid-container"></div>
+              </div>
+              <!-- Hourly Timeblocker Agenda -->
+              <div class="glass-card timeblocks-card" style="padding: 20px;">
+                <div class="schedule-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                  <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--text-main);">Hourly Schedule</h3>
+                  <span class="schedule-date" id="timeblock-date" style="font-size: 0.8rem; color: var(--text-muted);">Today</span>
+                </div>
+                <div class="timeblock-grid" id="timeblock-slots-container">
                   <!-- Generated hours -->
                 </div>
               </div>
             </div>
 
-            <div class="planner-sidebar">
-              <!-- Calendar Events Logger -->
-              <div class="glass-card events-logger-card">
-                <h3>Create Event / Reminder</h3>
+            <!-- Right Panel: Create Event, Task Pool & Upcoming Events List -->
+            <div class="planner-sidebar" style="display: flex; flex-direction: column; gap: 16px;">
+              <!-- Create Event Form -->
+              <div class="glass-card events-logger-card" style="padding: 20px;">
+                <h3 style="margin-top: 0; font-size: 1rem; font-weight: 700; color: var(--text-main);">Create Event / Reminder</h3>
                 <form id="event-form">
                   <div class="input-group">
-                    <label for="event-title">Event Title</label>
-                    <input type="text" id="event-title" placeholder="Meeting, Webinar, Birthday" required>
+                    <label for="event-title" style="font-size: 0.75rem; color: var(--text-muted);">Event Title</label>
+                    <input type="text" id="event-title" placeholder="Meeting, Webinar, Birthday" required class="glass-widget" style="width: 100%; box-sizing: border-box;">
                   </div>
-                  <div class="form-row">
+                  <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
                     <div class="input-group">
-                      <label for="event-date">Date</label>
-                      <input type="date" id="event-date" required>
+                      <label for="event-date" style="font-size: 0.75rem; color: var(--text-muted);">Date</label>
+                      <input type="date" id="event-date" required class="glass-widget" style="width: 100%; box-sizing: border-box;">
                     </div>
                     <div class="input-group">
-                      <label for="event-time">Time</label>
-                      <input type="time" id="event-time" required>
+                      <label for="event-time" style="font-size: 0.75rem; color: var(--text-muted);">Time</label>
+                      <input type="time" id="event-time" required class="glass-widget" style="width: 100%; box-sizing: border-box;">
                     </div>
                   </div>
-                  <button type="submit" class="btn-primary-glow btn-full">Schedule Event</button>
+                  <button type="submit" class="btn-primary-glow btn-full" style="width: 100%; margin-top: 14px; padding: 10px; font-weight: 700;">Schedule Event</button>
                 </form>
-                <div class="events-history-list" id="events-list-container">
-                  <!-- Dynamic events -->
+              </div>
+
+              <!-- Unscheduled Tasks Pool -->
+              <div class="glass-card" style="padding: 20px;">
+                <h3 style="margin-top: 0; font-size: 1rem; font-weight: 700; color: var(--text-main);">Unscheduled Task Pool</h3>
+                <p style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 12px;">Click a task below, then click any hour slot on the left to schedule it.</p>
+                <div id="unscheduled-tasks-pool" style="display: flex; flex-direction: column; gap: 8px; max-height: 180px; overflow-y: auto;">
+                  <!-- Tasks dynamic list -->
+                </div>
+                <div id="unscheduled-empty-state" class="hidden" style="text-align: center; font-size: 0.75rem; color: var(--text-muted); padding: 14px 0;">
+                  No active tasks to schedule.
                 </div>
               </div>
-            </div>
+
+              <!-- Upcoming Events -->
+              <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0 0 14px 0; color: var(--text-main);">Upcoming Events</h4>
+                <div id="calendar-upcoming-events-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+              </div>
           </div>
         </section>
 
@@ -6227,36 +6231,36 @@
   </div>
 
   <!-- Helpers & Validation & Controllers -->
-  <script src="helpers/financeHelper.js?v=45"></script>
-  <script src="validation/financeValidation.js?v=45"></script>
-  <script src="controllers/financeController.js?v=45"></script>
+  <script src="helpers/financeHelper.js?v=46"></script>
+  <script src="validation/financeValidation.js?v=46"></script>
+  <script src="controllers/financeController.js?v=46"></script>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=45"></script>
-  <script src="core/router.js?v=45"></script>
-  <script src="services/authService.js?v=45"></script>
-  <script src="services/supabaseService.js?v=45"></script>
-  <script src="services/storageService.js?v=45"></script>
-  <script src="services/syncService.js?v=45"></script>
-  <script src="services/notificationService.js?v=45"></script>
-  <script src="services/validationService.js?v=45"></script>
-  <script src="services/budgetService.js?v=45"></script>
-  <script src="services/financeService.js?v=45"></script>
-  <script src="services/chartService.js?v=45"></script>
+  <script src="core/config.js?v=46"></script>
+  <script src="core/router.js?v=46"></script>
+  <script src="services/authService.js?v=46"></script>
+  <script src="services/supabaseService.js?v=46"></script>
+  <script src="services/storageService.js?v=46"></script>
+  <script src="services/syncService.js?v=46"></script>
+  <script src="services/notificationService.js?v=46"></script>
+  <script src="services/validationService.js?v=46"></script>
+  <script src="services/budgetService.js?v=46"></script>
+  <script src="services/financeService.js?v=46"></script>
+  <script src="services/chartService.js?v=46"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=45"></script>
-  <script src="js/user.js?v=45"></script>
-  <script src="js/productivity.js?v=45"></script>
-  <script src="js/notes.js?v=45"></script>
-  <script src="js/finance.js?v=45"></script>
-  <script src="js/health.js?v=45"></script>
-  <script src="js/medicine.js?v=45"></script>
-  <script src="js/habits.js?v=45"></script>
-  <script src="js/personal.js?v=45"></script>
-  <script src="js/lifestyle.js?v=45"></script>
-  <script src="js/ai.js?v=45"></script>
-  <script src="js/analytics.js?v=45"></script>
+  <script src="js/app.js?v=46"></script>
+  <script src="js/user.js?v=46"></script>
+  <script src="js/productivity.js?v=46"></script>
+  <script src="js/notes.js?v=46"></script>
+  <script src="js/finance.js?v=46"></script>
+  <script src="js/health.js?v=46"></script>
+  <script src="js/medicine.js?v=46"></script>
+  <script src="js/habits.js?v=46"></script>
+  <script src="js/personal.js?v=46"></script>
+  <script src="js/lifestyle.js?v=46"></script>
+  <script src="js/ai.js?v=46"></script>
+  <script src="js/analytics.js?v=46"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
