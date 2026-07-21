@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const ProductivityModule = {
     pomoInterval: null,
     currentTab: 'active', // active, completed
+    activeSubtab: 'overview',
     audioCtx: null,       // Web Audio Context for synthesized sound notifications
 
     init() {
@@ -27,44 +28,68 @@ document.addEventListener('DOMContentLoaded', () => {
     initDefaultTasksAndGoals() {
       if (!this.app || !this.app.state) return;
 
-      if (!Array.isArray(this.app.state.tasks) || this.app.state.tasks.length === 0) {
-        this.app.state.tasks = [
-          { id: 'task-1', title: 'Design Finance Dashboard', description: 'Create responsive dashboard for finance module', category: 'Finance', priority: 'high', dueDate: '2025-05-24', status: 'In Progress', completed: false },
-          { id: 'task-2', title: 'Complete Project Documentation', description: 'Update all project docs and API reference', category: 'Work', priority: 'medium', dueDate: '2025-05-26', status: 'Pending', completed: false },
-          { id: 'task-3', title: 'Morning Workout', description: '45 min cardio and strength training', category: 'Health', priority: 'low', dueDate: '2025-05-25', status: 'Completed', completed: true },
-          { id: 'task-4', title: 'Read 20 Pages', description: 'Atomic Habits - Chapter 4', category: 'Personal', priority: 'medium', dueDate: '2025-05-25', status: 'Pending', completed: false },
-          { id: 'task-5', title: 'Plan Monthly Budget', description: 'Review expenses and set budget for June', category: 'Finance', priority: 'high', dueDate: '2025-05-27', status: 'Pending', completed: false }
-        ];
+      // Ensure state arrays are initialized without inserting fake sample items
+      if (!Array.isArray(this.app.state.tasks)) {
+        this.app.state.tasks = [];
       }
-
-      if (!Array.isArray(this.app.state.goals) || this.app.state.goals.length === 0) {
-        this.app.state.goals = [
-          { id: 'goal-1', name: 'Launch Life OS v2.0', category: 'Product Goal', target: 100, current: 75, targetDate: '2025-06-30', details: '6 milestones', color: '#a855f7' },
-          { id: 'goal-2', name: 'Read 12 Books', category: 'Personal Goal', target: 12, current: 6, targetDate: '2025-12-31', details: '6 / 12 books', color: '#3b82f6' },
-          { id: 'goal-3', name: 'Save ₹5,00,000', category: 'Financial Goal', target: 500000, current: 312000, targetDate: '2025-12-31', details: '₹3,12,000 saved', color: '#10b981' },
-          { id: 'goal-4', name: 'Lose 10 Kg', category: 'Health Goal', target: 10, current: 4, targetDate: '2025-08-31', details: '4 / 10 kg', color: '#ef4444' }
-        ];
+      if (!Array.isArray(this.app.state.goals)) {
+        this.app.state.goals = [];
       }
-
       if (!Array.isArray(this.app.state.activityLog)) {
-        this.app.state.activityLog = [
-          { id: 'act-1', title: 'Task completed', detail: 'Morning Workout', timestamp: '2 hours ago', icon: 'fa-check-circle', color: '#10b981' },
-          { id: 'act-2', title: 'New task added', detail: 'Design Finance Dashboard', timestamp: '5 hours ago', icon: 'fa-plus-circle', color: '#a855f7' },
-          { id: 'act-3', title: 'Task updated', detail: 'Complete Project Documentation', timestamp: '1 day ago', icon: 'fa-edit', color: '#f59e0b' },
-          { id: 'act-4', title: 'Goal progress updated', detail: 'Launch Life OS v2.0', timestamp: '1 day ago', icon: 'fa-bullseye', color: '#ec4899' }
-        ];
+        this.app.state.activityLog = [];
+      }
+    },
+
+    switchSubtab(subtabName) {
+      this.activeSubtab = subtabName;
+      document.querySelectorAll('.tasks-subnav-btn').forEach(btn => {
+        if (btn.getAttribute('data-subtab') === subtabName) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      document.querySelectorAll('.tasks-subview-panel').forEach(panel => {
+        if (panel.id === `tasks-subview-${subtabName}`) {
+          panel.style.display = 'block';
+          panel.classList.add('active');
+        } else {
+          panel.style.display = 'none';
+          panel.classList.remove('active');
+        }
+      });
+
+      this.renderSubtabContent(subtabName);
+    },
+
+    renderSubtabContent(subtabName) {
+      if (subtabName === 'overview') {
+        this.renderTasksKPIs();
+        this.renderTasksList();
+        this.renderTasksPriorityChart();
+        this.renderWeeklyOverviewChart();
+        this.renderUpcomingDeadlines();
+        this.renderRecentActivity();
+        this.renderGoalsOverview();
+      } else if (subtabName === 'tasks') {
+        this.renderFullTasksList();
+      } else if (subtabName === 'goals') {
+        this.renderFullGoalsGrid();
+      } else if (subtabName === 'kanban') {
+        this.renderKanbanBoard();
+      } else if (subtabName === 'calendar') {
+        this.renderTasksCalendar();
+      } else if (subtabName === 'timeline') {
+        this.renderTasksTimeline();
+      } else if (subtabName === 'analytics') {
+        this.renderTasksAnalytics();
       }
     },
 
     render() {
       this.initDefaultTasksAndGoals();
-      this.renderTasksKPIs();
-      this.renderTasksList();
-      this.renderTasksPriorityChart();
-      this.renderWeeklyOverviewChart();
-      this.renderUpcomingDeadlines();
-      this.renderRecentActivity();
-      this.renderGoalsOverview();
+      this.renderSubtabContent(this.activeSubtab);
       this.renderProjects();
       this.renderEvents();
       this.renderTimeblocks();
@@ -92,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         totalGoalTarget += Number(g.target) || 1;
         totalGoalCurrent += Number(g.current || g.saved) || 0;
       });
-      const overallGoalsPct = totalGoalTarget > 0 ? Math.min(Math.round((totalGoalCurrent / totalGoalTarget) * 100), 100) : 68;
+      const overallGoalsPct = totalGoalTarget > 0 ? Math.min(Math.round((totalGoalCurrent / totalGoalTarget) * 100), 100) : 0;
 
       const totalValEl = document.getElementById('kpi-total-tasks-val');
       const compValEl = document.getElementById('kpi-completed-tasks-val');
@@ -153,7 +178,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (badge) badge.textContent = `${filtered.length} Task${filtered.length === 1 ? '' : 's'}`;
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 30px 0;">No matching tasks found. Click "+ Add New Task" to create one!</div>`;
+        container.innerHTML = `
+          <div style="text-align: center; color: var(--text-muted); font-size: 0.78rem; padding: 36px 12px; background: rgba(255,255,255,0.01); border-radius: var(--radius-sm); border: 1px dashed var(--glass-border);">
+            <i class="fas fa-clipboard-list" style="font-size: 1.4rem; color: var(--primary); margin-bottom: 8px; display: block;"></i>
+            <span>No tasks recorded in database.</span>
+            <div style="margin-top: 10px;">
+              <button onclick="window.LifeOS.modules.productivity.openAddTaskModal()" class="btn-primary-glow" style="font-size: 0.72rem; padding: 6px 12px; cursor: pointer; color: #fff; border-radius: var(--radius-sm);">+ Add New Task</button>
+            </div>
+          </div>
+        `;
         return;
       }
 
@@ -174,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let statusColor = t.completed ? '#10b981' : (t.status === 'In Progress' ? '#3b82f6' : '#94a3b8');
 
-        let dateStr = '26 May 2025';
+        let dateStr = 'No due date';
         if (t.dueDate) {
           const d = new Date(t.dueDate);
           dateStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -188,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      style="width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary);">
               <div>
                 <div style="font-weight: 700; font-size: 0.8rem; color: var(--text-main); ${t.completed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${t.title}</div>
-                <div style="font-size: 0.65rem; color: var(--text-muted);">${t.description || 'No additional details logged'}</div>
+                <div style="font-size: 0.65rem; color: var(--text-muted);">${t.description || 'No details logged'}</div>
               </div>
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
@@ -242,8 +275,19 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!donutContainer || !legendContainer) return;
 
       const tasks = (this.app && this.app.state && Array.isArray(this.app.state.tasks)) ? this.app.state.tasks : [];
-      const total = tasks.length || 1;
 
+      if (tasks.length === 0) {
+        donutContainer.innerHTML = `
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="35" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="12"/>
+            <text x="50" y="52" font-size="12" font-weight="700" fill="#94a3b8" text-anchor="middle">0</text>
+          </svg>
+        `;
+        legendContainer.innerHTML = `<span style="color:var(--text-muted); font-size:0.7rem;">No task priority records.</span>`;
+        return;
+      }
+
+      const total = tasks.length;
       const highCount = tasks.filter(t => (t.priority || '').toLowerCase() === 'high').length;
       const medCount = tasks.filter(t => (t.priority || '').toLowerCase() === 'medium').length;
       const lowCount = tasks.filter(t => (t.priority || '').toLowerCase() === 'low').length;
@@ -288,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
       donutContainer.innerHTML = donutSvg;
 
       legendContainer.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; justify-space-between; align-items:center;">
           <span style="color:var(--text-muted); display:flex; align-items:center; gap:6px;"><span style="width:8px; height:8px; border-radius:50%; background:#ef4444;"></span> High Priority</span>
           <span style="font-weight:700; color:var(--text-main);">${highCount} (${highPct}%)</span>
         </div>
@@ -312,9 +356,21 @@ document.addEventListener('DOMContentLoaded', () => {
       const container = document.getElementById('tasks-weekly-bar-container');
       if (!container) return;
 
+      const tasks = (this.app && this.app.state && Array.isArray(this.app.state.tasks)) ? this.app.state.tasks : [];
+
       const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-      const values = [4, 8, 12, 15, 9, 3, 2];
-      const maxVal = 15;
+      const values = [0, 0, 0, 0, 0, 0, 0];
+
+      tasks.forEach(t => {
+        if (t.dueDate) {
+          const d = new Date(t.dueDate);
+          let dayIdx = d.getDay() - 1;
+          if (dayIdx < 0) dayIdx = 6;
+          values[dayIdx]++;
+        }
+      });
+
+      const maxVal = Math.max(...values, 5);
 
       let barSvg = `<svg width="100%" height="100%" viewBox="0 0 280 90" preserveAspectRatio="none">`;
 
@@ -422,7 +478,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const goals = (this.app && this.app.state && Array.isArray(this.app.state.goals)) ? this.app.state.goals : [];
 
       if (goals.length === 0) {
-        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 30px 0; grid-column: span 4;">No goals recorded. Click "+ Add Goal" to log your first strategic goal!</div>`;
+        container.innerHTML = `
+          <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 40px 12px; background: rgba(255,255,255,0.01); border-radius: var(--radius-sm); border: 1px dashed var(--glass-border); grid-column: span 4;">
+            <i class="fas fa-bullseye" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 8px; display: block;"></i>
+            <span>No strategic goals recorded in database.</span>
+            <div style="margin-top: 10px;">
+              <button onclick="window.LifeOS.modules.productivity.openAddGoalModal()" class="btn-primary-glow" style="font-size: 0.75rem; padding: 6px 14px; cursor: pointer; color: #fff; border-radius: var(--radius-sm);">+ Add Goal</button>
+            </div>
+          </div>
+        `;
         return;
       }
 
@@ -436,7 +500,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const circumference = 2 * Math.PI * 22;
         const dashArray = (pct / 100) * circumference;
 
-        let dateStr = '31 Dec 2025';
+        let dateStr = 'No target date';
         if (g.targetDate) {
           const d = new Date(g.targetDate);
           dateStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -470,6 +534,141 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       container.innerHTML = html;
+    },
+
+    // --- SUBTAB RENDERERS ---
+    renderFullTasksList() {
+      const container = document.getElementById('full-tasks-list-container');
+      if (!container) return;
+      const tasks = (this.app && this.app.state && Array.isArray(this.app.state.tasks)) ? this.app.state.tasks : [];
+
+      if (tasks.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 40px 0;">No tasks recorded in database.</div>`;
+        return;
+      }
+
+      let html = '';
+      tasks.forEach(t => {
+        html += `
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--glass-border);">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <input type="checkbox" ${t.completed ? 'checked' : ''} class="task-checkbox-toggle" data-id="${t.id}" style="width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary);">
+              <div>
+                <div style="font-weight: 700; font-size: 0.85rem; color: var(--text-main); ${t.completed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${t.title}</div>
+                <div style="font-size: 0.68rem; color: var(--text-muted);">${t.description || 'No description'} &bull; Due ${t.dueDate || 'N/A'}</div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="badge" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;">${t.category || 'Work'}</span>
+              <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">${(t.priority || 'medium').toUpperCase()}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    },
+
+    renderFullGoalsGrid() {
+      const container = document.getElementById('full-goals-grid-container');
+      if (!container) return;
+      this.renderGoalsOverview();
+      const overviewGrid = document.getElementById('goals-overview-grid-container');
+      if (overviewGrid) container.innerHTML = overviewGrid.innerHTML;
+    },
+
+    renderKanbanBoard() {
+      const todoEl = document.getElementById('kanban-todo-container');
+      const inProgEl = document.getElementById('kanban-in-progress-container');
+      const reviewEl = document.getElementById('kanban-review-container');
+      const compEl = document.getElementById('kanban-completed-container');
+
+      if (!todoEl || !inProgEl || !reviewEl || !compEl) return;
+
+      const tasks = (this.app && this.app.state && Array.isArray(this.app.state.tasks)) ? this.app.state.tasks : [];
+
+      let todoHtml = '', inProgHtml = '', reviewHtml = '', compHtml = '';
+
+      tasks.forEach(t => {
+        const cardHtml = `
+          <div style="padding: 10px 12px; background: rgba(255,255,255,0.03); border-radius: var(--radius-sm); border: 1px solid var(--glass-border);">
+            <div style="font-weight: 700; font-size: 0.8rem; color: var(--text-main); margin-bottom: 4px;">${t.title}</div>
+            <div style="font-size: 0.65rem; color: var(--text-muted); display: flex; justify-content: space-between;">
+              <span>${t.category || 'Work'}</span>
+              <span style="font-weight: 700;">${(t.priority || 'medium').toUpperCase()}</span>
+            </div>
+          </div>
+        `;
+
+        if (t.completed) {
+          compHtml += cardHtml;
+        } else if (t.status === 'In Progress') {
+          inProgHtml += cardHtml;
+        } else if (t.status === 'Review') {
+          reviewHtml += cardHtml;
+        } else {
+          todoHtml += cardHtml;
+        }
+      });
+
+      todoEl.innerHTML = todoHtml || `<span style="font-size:0.7rem; color:var(--text-muted);">No tasks</span>`;
+      inProgEl.innerHTML = inProgHtml || `<span style="font-size:0.7rem; color:var(--text-muted);">No active tasks</span>`;
+      reviewEl.innerHTML = reviewHtml || `<span style="font-size:0.7rem; color:var(--text-muted);">No items in review</span>`;
+      compEl.innerHTML = compHtml || `<span style="font-size:0.7rem; color:var(--text-muted);">No completed tasks</span>`;
+    },
+
+    renderTasksCalendar() {
+      const container = document.getElementById('tasks-calendar-container');
+      if (!container) return;
+      const tasks = (this.app && this.app.state && Array.isArray(this.app.state.tasks)) ? this.app.state.tasks : [];
+      container.innerHTML = `
+        <div style="width: 100%;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h4 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-main);">Calendar Matrix</h4>
+            <span class="badge" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;">${tasks.length} Scheduled Events</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; font-weight: 700; font-size: 0.72rem; color: var(--text-muted); text-align: center;">
+            <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+          </div>
+        </div>
+      `;
+    },
+
+    renderTasksTimeline() {
+      const container = document.getElementById('tasks-timeline-container');
+      if (!container) return;
+      const tasks = (this.app && this.app.state && Array.isArray(this.app.state.tasks)) ? this.app.state.tasks : [];
+      if (tasks.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 40px 0;">No timeline milestones logged.</div>`;
+        return;
+      }
+      let html = '';
+      tasks.forEach(t => {
+        html += `
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 120px; font-size: 0.75rem; font-weight: 700; color: var(--text-main); flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${t.title}</div>
+            <div style="flex-grow: 1; height: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; position: relative;">
+              <div style="width: ${t.completed ? 100 : 40}%; height: 100%; background: var(--primary); border-radius: 5px;"></div>
+            </div>
+            <span style="font-size: 0.65rem; color: var(--text-muted); flex-shrink: 0;">${t.dueDate || 'No Date'}</span>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    },
+
+    renderTasksAnalytics() {
+      const container = document.getElementById('tasks-analytics-container');
+      if (!container) return;
+      const tasks = (this.app && this.app.state && Array.isArray(this.app.state.tasks)) ? this.app.state.tasks : [];
+      const completed = tasks.filter(t => t.completed).length;
+      const pct = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
+      container.innerHTML = `
+        <div style="text-align: center;">
+          <div style="font-size: 2.5rem; font-weight: 800; color: var(--primary);">${pct}%</div>
+          <span style="font-size: 0.78rem; color: var(--text-muted);">Overall Velocity Completion Rate (${completed} of ${tasks.length} tasks completed)</span>
+        </div>
+      `;
     },
 
     // --- 8. MODAL CONTROLS & EVENT HANDLERS ---
@@ -586,10 +785,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     openAddTaskModal() { this.toggleModal('productivity-add-task-overlay', true); },
     openAddGoalModal() { this.toggleModal('productivity-add-goal-overlay', true); },
-    showAllTasks() { this.app.showToast('Displaying all tasks.', 'info'); },
-    showAllDeadlines() { this.app.showToast('Displaying all upcoming deadlines.', 'info'); },
-    showAllActivity() { this.app.showToast('Displaying full activity audit log.', 'info'); },
-    showAllGoals() { this.app.showToast('Displaying all goals.', 'info'); },
 
     // --- Legacy Projects & Calendar Handlers ---
     setupProjectControls() {},

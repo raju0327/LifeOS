@@ -1143,194 +1143,275 @@
 
           <!-- Top Sub-Navigation Tabs Bar -->
           <div class="tasks-subnav glass-card" style="display: flex; gap: 8px; padding: 6px; margin-bottom: 20px; border-radius: var(--radius-sm); overflow-x: auto; white-space: nowrap;">
-            <button class="tasks-subnav-btn active" data-subtab="overview"><i class="fas fa-chart-line" style="margin-right: 6px;"></i>Overview</button>
-            <button class="tasks-subnav-btn" data-subtab="tasks"><i class="fas fa-list-check" style="margin-right: 6px;"></i>Tasks</button>
-            <button class="tasks-subnav-btn" data-subtab="goals"><i class="fas fa-bullseye" style="margin-right: 6px;"></i>Goals</button>
-            <button class="tasks-subnav-btn" data-subtab="kanban"><i class="fas fa-columns" style="margin-right: 6px;"></i>Kanban</button>
-            <button class="tasks-subnav-btn" data-subtab="calendar"><i class="fas fa-calendar-alt" style="margin-right: 6px;"></i>Calendar</button>
-            <button class="tasks-subnav-btn" data-subtab="timeline"><i class="fas fa-stream" style="margin-right: 6px;"></i>Timeline</button>
-            <button class="tasks-subnav-btn" data-subtab="analytics"><i class="fas fa-chart-pie" style="margin-right: 6px;"></i>Analytics</button>
+            <button class="tasks-subnav-btn active" data-subtab="overview" onclick="window.LifeOS.modules.productivity.switchSubtab('overview')"><i class="fas fa-chart-line" style="margin-right: 6px;"></i>Overview</button>
+            <button class="tasks-subnav-btn" data-subtab="tasks" onclick="window.LifeOS.modules.productivity.switchSubtab('tasks')"><i class="fas fa-list-check" style="margin-right: 6px;"></i>Tasks</button>
+            <button class="tasks-subnav-btn" data-subtab="goals" onclick="window.LifeOS.modules.productivity.switchSubtab('goals')"><i class="fas fa-bullseye" style="margin-right: 6px;"></i>Goals</button>
+            <button class="tasks-subnav-btn" data-subtab="kanban" onclick="window.LifeOS.modules.productivity.switchSubtab('kanban')"><i class="fas fa-columns" style="margin-right: 6px;"></i>Kanban</button>
+            <button class="tasks-subnav-btn" data-subtab="calendar" onclick="window.LifeOS.modules.productivity.switchSubtab('calendar')"><i class="fas fa-calendar-alt" style="margin-right: 6px;"></i>Calendar</button>
+            <button class="tasks-subnav-btn" data-subtab="timeline" onclick="window.LifeOS.modules.productivity.switchSubtab('timeline')"><i class="fas fa-stream" style="margin-right: 6px;"></i>Timeline</button>
+            <button class="tasks-subnav-btn" data-subtab="analytics" onclick="window.LifeOS.modules.productivity.switchSubtab('analytics')"><i class="fas fa-chart-pie" style="margin-right: 6px;"></i>Analytics</button>
           </div>
 
-          <!-- 1. TOP ROW: 5 SUMMARY KPI CARDS -->
-          <div class="tasks-kpi-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 20px;">
-            <!-- Card 1: Total Tasks -->
-            <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); position: relative; overflow: hidden;">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(168, 85, 247, 0.15); color: #a855f7; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
-                  <i class="fas fa-clipboard-list"></i>
-                </div>
-                <span style="font-size: 0.68rem; color: #a855f7; font-weight: 700; background: rgba(168, 85, 247, 0.1); padding: 2px 6px; border-radius: 4px;">↑ <span id="kpi-total-tasks-trend">12%</span></span>
-              </div>
-              <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">Total Tasks</span>
-              <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 2px 0;" id="kpi-total-tasks-val">0</div>
-              <span style="font-size: 0.65rem; color: var(--text-muted);">All Tasks &bull; Active & Completed</span>
-            </div>
-
-            <!-- Card 2: Completed -->
-            <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); position: relative; overflow: hidden;">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
-                  <i class="fas fa-check-circle"></i>
-                </div>
-                <span style="font-size: 0.68rem; color: #3b82f6; font-weight: 700; background: rgba(59, 130, 246, 0.1); padding: 2px 6px; border-radius: 4px;">↑ <span id="kpi-completed-tasks-trend">28%</span></span>
-              </div>
-              <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">Completed</span>
-              <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 2px 0;" id="kpi-completed-tasks-val">0</div>
-              <span style="font-size: 0.65rem; color: var(--text-muted);">Finished Tasks</span>
-            </div>
-
-            <!-- Card 3: In Progress -->
-            <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); position: relative; overflow: hidden;">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
-                  <i class="fas fa-spinner"></i>
-                </div>
-                <span style="font-size: 0.68rem; color: #f59e0b; font-weight: 700; background: rgba(245, 158, 11, 0.1); padding: 2px 6px; border-radius: 4px;">↑ <span id="kpi-in-progress-trend">5%</span></span>
-              </div>
-              <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">In Progress</span>
-              <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 2px 0;" id="kpi-in-progress-val">0</div>
-              <span style="font-size: 0.65rem; color: var(--text-muted);">Currently Active</span>
-            </div>
-
-            <!-- Card 4: Overdue -->
-            <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); position: relative; overflow: hidden;">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(239, 68, 68, 0.15); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
-                  <i class="fas fa-exclamation-circle"></i>
-                </div>
-                <span style="font-size: 0.68rem; color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.1); padding: 2px 6px; border-radius: 4px;">↓ <span id="kpi-overdue-tasks-trend">8%</span></span>
-              </div>
-              <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">Overdue</span>
-              <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 2px 0;" id="kpi-overdue-tasks-val">0</div>
-              <span style="font-size: 0.65rem; color: var(--text-muted);">Need Attention</span>
-            </div>
-
-            <!-- Card 5: Goals Progress -->
-            <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: space-between;">
-              <div>
-                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">Goals Progress</span>
-                <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 2px 0;" id="kpi-goals-progress-pct">0%</div>
-                <span style="font-size: 0.65rem; color: var(--green); font-weight: 700;">↑ <span id="kpi-goals-progress-trend">15%</span> <span style="color: var(--text-muted); font-weight: 400;">overall</span></span>
-              </div>
-              <div id="kpi-goals-donut-ring" style="width: 50px; height: 50px; flex-shrink: 0;">
-                <!-- Dynamic SVG Circle Ring -->
-              </div>
-            </div>
-          </div>
-
-          <!-- 2. MIDDLE ROW: 3-COLUMN LAYOUT -->
-          <div class="tasks-middle-row" style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 16px; margin-bottom: 20px;">
-            <!-- Left Column: My Tasks List -->
-            <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between;">
-              <div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                  <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: var(--text-main);">My Tasks</h4>
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <select id="tasks-filter-category" class="glass-widget" style="font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--bg-sidebar); color: var(--text-main);">
-                      <option value="all">All Tasks</option>
-                      <option value="Finance">Finance</option>
-                      <option value="Work">Work</option>
-                      <option value="Health">Health</option>
-                      <option value="Personal">Personal</option>
-                    </select>
-                    <select id="tasks-filter-priority" class="glass-widget" style="font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--bg-sidebar); color: var(--text-main);">
-                      <option value="all">Priority</option>
-                      <option value="high">High</option>
-                      <option value="medium">Medium</option>
-                      <option value="low">Low</option>
-                    </select>
+          <!-- SUBTAB 1: OVERVIEW DASHBOARD -->
+          <div id="tasks-subview-overview" class="tasks-subview-panel active">
+            <!-- 1. TOP ROW: 5 SUMMARY KPI CARDS -->
+            <div class="tasks-kpi-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 20px;">
+              <!-- Card 1: Total Tasks -->
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); position: relative; overflow: hidden;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                  <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(168, 85, 247, 0.15); color: #a855f7; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+                    <i class="fas fa-clipboard-list"></i>
                   </div>
+                  <span style="font-size: 0.68rem; color: #a855f7; font-weight: 700; background: rgba(168, 85, 247, 0.1); padding: 2px 6px; border-radius: 4px;">↑ <span id="kpi-total-tasks-trend">12%</span></span>
                 </div>
-
-                <!-- Dynamic Real-Time Tasks List Container -->
-                <div id="tasks-list-container" style="display: flex; flex-direction: column; gap: 10px; min-height: 240px;">
-                  <!-- Dynamic Task Rows -->
-                </div>
+                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">Total Tasks</span>
+                <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 2px 0;" id="kpi-total-tasks-val">0</div>
+                <span style="font-size: 0.65rem; color: var(--text-muted);">All Tasks &bull; Active & Completed</span>
               </div>
 
-              <div style="margin-top: 14px; text-align: right; border-top: 1px solid var(--glass-border); padding-top: 10px;">
-                <span id="task-count-badge" class="badge" style="float: left; font-size: 0.68rem; margin-top: 2px;">0 Tasks</span>
-                <a href="javascript:void(0)" id="btn-tasks-view-all" style="font-size: 0.75rem; font-weight: 700; color: var(--primary); text-decoration: none;">View all tasks <i class="fas fa-chevron-right" style="font-size: 0.65rem;"></i></a>
-              </div>
-            </div>
-
-            <!-- Middle Column: Tasks by Priority & Weekly Overview -->
-            <div style="display: flex; flex-direction: column; gap: 16px;">
-              <!-- Card 1: Tasks by Priority (Donut Chart) -->
-              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
-                <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 12px 0; color: var(--text-main);">Tasks by Priority</h4>
-                <div style="display: flex; align-items: center; gap: 14px;">
-                  <div id="tasks-priority-donut-container" style="width: 100px; height: 100px; position: relative; flex-shrink: 0;">
-                    <!-- Dynamic Donut Chart -->
+              <!-- Card 2: Completed -->
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); position: relative; overflow: hidden;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                  <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+                    <i class="fas fa-check-circle"></i>
                   </div>
-                  <div id="tasks-priority-legend-container" style="display: flex; flex-direction: column; gap: 6px; font-size: 0.7rem; flex-grow: 1;">
-                    <!-- Dynamic Priority Breakdown -->
+                  <span style="font-size: 0.68rem; color: #3b82f6; font-weight: 700; background: rgba(59, 130, 246, 0.1); padding: 2px 6px; border-radius: 4px;">↑ <span id="kpi-completed-tasks-trend">28%</span></span>
+                </div>
+                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">Completed</span>
+                <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 2px 0;" id="kpi-completed-tasks-val">0</div>
+                <span style="font-size: 0.65rem; color: var(--text-muted);">Finished Tasks</span>
+              </div>
+
+              <!-- Card 3: In Progress -->
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); position: relative; overflow: hidden;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                  <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+                    <i class="fas fa-spinner"></i>
                   </div>
+                  <span style="font-size: 0.68rem; color: #f59e0b; font-weight: 700; background: rgba(245, 158, 11, 0.1); padding: 2px 6px; border-radius: 4px;">↑ <span id="kpi-in-progress-trend">5%</span></span>
                 </div>
+                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">In Progress</span>
+                <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 2px 0;" id="kpi-in-progress-val">0</div>
+                <span style="font-size: 0.65rem; color: var(--text-muted);">Currently Active</span>
               </div>
 
-              <!-- Card 2: This Week Overview (Bar Chart) -->
-              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
-                <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 10px 0; color: var(--text-main);">This Week Overview</h4>
-                <div id="tasks-weekly-bar-container" style="height: 110px; width: 100%;">
-                  <!-- Dynamic SVG Weekly Bar Chart -->
+              <!-- Card 4: Overdue -->
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); position: relative; overflow: hidden;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                  <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(239, 68, 68, 0.15); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+                    <i class="fas fa-exclamation-circle"></i>
+                  </div>
+                  <span style="font-size: 0.68rem; color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.1); padding: 2px 6px; border-radius: 4px;">↓ <span id="kpi-overdue-tasks-trend">8%</span></span>
                 </div>
+                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">Overdue</span>
+                <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 2px 0;" id="kpi-overdue-tasks-val">0</div>
+                <span style="font-size: 0.65rem; color: var(--text-muted);">Need Attention</span>
               </div>
-            </div>
 
-            <!-- Right Column: Upcoming Deadlines & Recent Activity -->
-            <div style="display: flex; flex-direction: column; gap: 16px;">
-              <!-- Card 1: Upcoming Deadlines -->
-              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between;">
+              <!-- Card 5: Goals Progress -->
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: space-between;">
                 <div>
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-main);">Upcoming Deadlines</h4>
-                    <span style="font-size: 0.68rem; color: var(--primary); font-weight: 700;">Deadlines</span>
+                  <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; display: block;">Goals Progress</span>
+                  <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 2px 0;" id="kpi-goals-progress-pct">0%</div>
+                  <span style="font-size: 0.65rem; color: var(--green); font-weight: 700;">↑ <span id="kpi-goals-progress-trend">15%</span> <span style="color: var(--text-muted); font-weight: 400;">overall</span></span>
+                </div>
+                <div id="kpi-goals-donut-ring" style="width: 50px; height: 50px; flex-shrink: 0;">
+                  <!-- Dynamic SVG Circle Ring -->
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. MIDDLE ROW: 3-COLUMN LAYOUT -->
+            <div class="tasks-middle-row" style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+              <!-- Left Column: My Tasks List -->
+              <div class="glass-card" style="padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: var(--text-main);">My Tasks</h4>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <select id="tasks-filter-category" class="glass-widget" style="font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--bg-sidebar); color: var(--text-main);">
+                        <option value="all">All Tasks</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Work">Work</option>
+                        <option value="Health">Health</option>
+                        <option value="Personal">Personal</option>
+                      </select>
+                      <select id="tasks-filter-priority" class="glass-widget" style="font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--bg-sidebar); color: var(--text-main);">
+                        <option value="all">Priority</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                      </select>
+                    </div>
                   </div>
-                  <div id="tasks-upcoming-deadlines-container" style="display: flex; flex-direction: column; gap: 8px;">
-                    <!-- Dynamic Upcoming Task Deadlines -->
+
+                  <!-- Dynamic Real-Time Tasks List Container -->
+                  <div id="tasks-list-container" style="display: flex; flex-direction: column; gap: 10px; min-height: 240px;">
+                    <!-- Dynamic Task Rows -->
                   </div>
                 </div>
-                <div style="margin-top: 10px; text-align: right; border-top: 1px solid var(--glass-border); padding-top: 8px;">
-                  <a href="javascript:void(0)" id="btn-deadlines-view-all" style="font-size: 0.72rem; font-weight: 700; color: var(--primary); text-decoration: none;">View all deadlines <i class="fas fa-chevron-right" style="font-size: 0.65rem;"></i></a>
+
+                <div style="margin-top: 14px; text-align: right; border-top: 1px solid var(--glass-border); padding-top: 10px;">
+                  <span id="task-count-badge" class="badge" style="float: left; font-size: 0.68rem; margin-top: 2px;">0 Tasks</span>
+                  <a href="javascript:void(0)" onclick="window.LifeOS.modules.productivity.switchSubtab('tasks')" style="font-size: 0.75rem; font-weight: 700; color: var(--primary); text-decoration: none;">View all tasks <i class="fas fa-chevron-right" style="font-size: 0.65rem;"></i></a>
                 </div>
               </div>
 
-              <!-- Card 2: Recent Activity -->
-              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between;">
-                <div>
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-main);">Recent Activity</h4>
-                    <span style="font-size: 0.68rem; color: var(--text-muted);">Real-time Log</span>
-                  </div>
-                  <div id="tasks-recent-activity-container" style="display: flex; flex-direction: column; gap: 8px;">
-                    <!-- Dynamic Activity Timeline -->
+              <!-- Middle Column: Tasks by Priority & Weekly Overview -->
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <!-- Card 1: Tasks by Priority (Donut Chart) -->
+                <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                  <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 12px 0; color: var(--text-main);">Tasks by Priority</h4>
+                  <div style="display: flex; align-items: center; gap: 14px;">
+                    <div id="tasks-priority-donut-container" style="width: 100px; height: 100px; position: relative; flex-shrink: 0;">
+                      <!-- Dynamic Donut Chart -->
+                    </div>
+                    <div id="tasks-priority-legend-container" style="display: flex; flex-direction: column; gap: 6px; font-size: 0.7rem; flex-grow: 1;">
+                      <!-- Dynamic Priority Breakdown -->
+                    </div>
                   </div>
                 </div>
+
+                <!-- Card 2: This Week Overview (Bar Chart) -->
+                <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                  <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 10px 0; color: var(--text-main);">This Week Overview</h4>
+                  <div id="tasks-weekly-bar-container" style="height: 110px; width: 100%;">
+                    <!-- Dynamic SVG Weekly Bar Chart -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column: Upcoming Deadlines & Recent Activity -->
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <!-- Card 1: Upcoming Deadlines -->
+                <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between;">
+                  <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                      <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-main);">Upcoming Deadlines</h4>
+                      <span style="font-size: 0.68rem; color: var(--primary); font-weight: 700;">Deadlines</span>
+                    </div>
+                    <div id="tasks-upcoming-deadlines-container" style="display: flex; flex-direction: column; gap: 8px;">
+                      <!-- Dynamic Upcoming Task Deadlines -->
+                    </div>
+                  </div>
+                  <div style="margin-top: 10px; text-align: right; border-top: 1px solid var(--glass-border); padding-top: 8px;">
+                    <a href="javascript:void(0)" onclick="window.LifeOS.modules.productivity.switchSubtab('calendar')" style="font-size: 0.72rem; font-weight: 700; color: var(--primary); text-decoration: none;">View all deadlines <i class="fas fa-chevron-right" style="font-size: 0.65rem;"></i></a>
+                  </div>
+                </div>
+
+                <!-- Card 2: Recent Activity -->
+                <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); display: flex; flex-direction: column; justify-content: space-between;">
+                  <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                      <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-main);">Recent Activity</h4>
+                      <span style="font-size: 0.68rem; color: var(--text-muted);">Real-time Log</span>
+                    </div>
+                    <div id="tasks-recent-activity-container" style="display: flex; flex-direction: column; gap: 8px;">
+                      <!-- Dynamic Activity Timeline -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. BOTTOM ROW: GOALS OVERVIEW CARD GRID -->
+            <div class="glass-card" style="padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); margin-bottom: 20px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div>
+                  <h3 style="font-size: 1.1rem; font-weight: 800; margin: 0; color: var(--text-main);">Goals Overview</h3>
+                  <span style="font-size: 0.72rem; color: var(--text-muted);">Track long-term strategic objectives and milestone targets</span>
+                </div>
+                <button onclick="window.LifeOS.modules.productivity.openAddGoalModal()" class="btn-primary-glow" style="padding: 6px 14px; font-size: 0.75rem; font-weight: 700; border: none; cursor: pointer; color: #fff; border-radius: var(--radius-sm);">
+                  <i class="fas fa-plus"></i> Add Goal
+                </button>
+              </div>
+
+              <!-- Dynamic Goals Grid -->
+              <div id="goals-overview-grid-container" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+                <!-- Dynamic Goal Cards -->
+              </div>
+
+              <div style="margin-top: 16px; text-align: right; border-top: 1px solid var(--glass-border); padding-top: 10px;">
+                <a href="javascript:void(0)" onclick="window.LifeOS.modules.productivity.switchSubtab('goals')" style="font-size: 0.78rem; font-weight: 700; color: var(--primary); text-decoration: none;">View all goals <i class="fas fa-chevron-right" style="font-size: 0.65rem;"></i></a>
               </div>
             </div>
           </div>
 
-          <!-- 3. BOTTOM ROW: GOALS OVERVIEW CARD GRID -->
-          <div class="glass-card" style="padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); margin-bottom: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-              <div>
-                <h3 style="font-size: 1.1rem; font-weight: 800; margin: 0; color: var(--text-main);">Goals Overview</h3>
-                <span style="font-size: 0.72rem; color: var(--text-muted);">Track long-term strategic objectives and milestone targets</span>
+          <!-- SUBTAB 2: DEDICATED TASKS DIRECTORY -->
+          <div id="tasks-subview-tasks" class="tasks-subview-panel" style="display: none;">
+            <div class="glass-card" style="padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 1.1rem; font-weight: 800; margin: 0; color: var(--text-main);">Full Tasks Directory</h3>
+                <button onclick="window.LifeOS.modules.productivity.openAddTaskModal()" class="btn-primary-glow" style="padding: 6px 14px; font-size: 0.75rem; font-weight: 700; border: none; cursor: pointer; color: #fff; border-radius: var(--radius-sm);">+ Add Task</button>
               </div>
-              <button id="btn-open-add-goal-modal-bottom" class="btn-primary-glow" style="padding: 6px 14px; font-size: 0.75rem; font-weight: 700; border: none; cursor: pointer; color: #fff; border-radius: var(--radius-sm);">
-                <i class="fas fa-plus"></i> Add Goal
-              </button>
+              <div id="full-tasks-list-container" style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- Full Tasks List -->
+              </div>
             </div>
+          </div>
 
-            <!-- Dynamic Goals Grid -->
-            <div id="goals-overview-grid-container" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
-              <!-- Dynamic Goal Cards -->
+          <!-- SUBTAB 3: GOALS TRACKER -->
+          <div id="tasks-subview-goals" class="tasks-subview-panel" style="display: none;">
+            <div class="glass-card" style="padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 1.1rem; font-weight: 800; margin: 0; color: var(--text-main);">Strategic Goals Directory</h3>
+                <button onclick="window.LifeOS.modules.productivity.openAddGoalModal()" class="btn-primary-glow" style="padding: 6px 14px; font-size: 0.75rem; font-weight: 700; border: none; cursor: pointer; color: #fff; border-radius: var(--radius-sm);">+ Add Goal</button>
+              </div>
+              <div id="full-goals-grid-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                <!-- Full Goals Grid -->
+              </div>
             </div>
+          </div>
 
-            <div style="margin-top: 16px; text-align: right; border-top: 1px solid var(--glass-border); padding-top: 10px;">
-              <a href="javascript:void(0)" id="btn-goals-view-all" style="font-size: 0.78rem; font-weight: 700; color: var(--primary); text-decoration: none;">View all goals <i class="fas fa-chevron-right" style="font-size: 0.65rem;"></i></a>
+          <!-- SUBTAB 4: KANBAN BOARD -->
+          <div id="tasks-subview-kanban" class="tasks-subview-panel" style="display: none;">
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border-top: 3px solid var(--blue);">
+                <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 14px 0; color: var(--text-main);">To Do</h4>
+                <div id="kanban-todo-container" style="display: flex; flex-direction: column; gap: 10px; min-height: 200px;"></div>
+              </div>
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border-top: 3px solid var(--orange);">
+                <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 14px 0; color: var(--text-main);">In Progress</h4>
+                <div id="kanban-in-progress-container" style="display: flex; flex-direction: column; gap: 10px; min-height: 200px;"></div>
+              </div>
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border-top: 3px solid var(--primary);">
+                <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 14px 0; color: var(--text-main);">Under Review</h4>
+                <div id="kanban-review-container" style="display: flex; flex-direction: column; gap: 10px; min-height: 200px;"></div>
+              </div>
+              <div class="glass-card" style="padding: 16px; border-radius: var(--radius-md); border-top: 3px solid var(--green);">
+                <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 14px 0; color: var(--text-main);">Completed</h4>
+                <div id="kanban-completed-container" style="display: flex; flex-direction: column; gap: 10px; min-height: 200px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUBTAB 5: CALENDAR VIEW -->
+          <div id="tasks-subview-calendar" class="tasks-subview-panel" style="display: none;">
+            <div class="glass-card" style="padding: 20px; border-radius: var(--radius-md); text-align: center;">
+              <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 12px;">Tasks & Milestones Calendar</h3>
+              <div id="tasks-calendar-container" style="min-height: 300px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.85rem;">
+                <!-- Real-time Tasks Calendar Grid -->
+              </div>
+            </div>
+          </div>
+
+          <!-- SUBTAB 6: TIMELINE ROADMAP -->
+          <div id="tasks-subview-timeline" class="tasks-subview-panel" style="display: none;">
+            <div class="glass-card" style="padding: 20px; border-radius: var(--radius-md);">
+              <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 14px;">Project & Milestone Roadmap</h3>
+              <div id="tasks-timeline-container" style="display: flex; flex-direction: column; gap: 14px; min-height: 250px;">
+                <!-- Real-time Timeline Rows -->
+              </div>
+            </div>
+          </div>
+
+          <!-- SUBTAB 7: ANALYTICS -->
+          <div id="tasks-subview-analytics" class="tasks-subview-panel" style="display: none;">
+            <div class="glass-card" style="padding: 20px; border-radius: var(--radius-md);">
+              <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 14px;">Productivity & Completion Analytics</h3>
+              <div id="tasks-analytics-container" style="min-height: 250px; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+                <!-- Analytics Charts -->
+              </div>
             </div>
           </div>
         </section>
@@ -5963,36 +6044,36 @@
   </div>
 
   <!-- Helpers & Validation & Controllers -->
-  <script src="helpers/financeHelper.js?v=41"></script>
-  <script src="validation/financeValidation.js?v=41"></script>
-  <script src="controllers/financeController.js?v=41"></script>
+  <script src="helpers/financeHelper.js?v=42"></script>
+  <script src="validation/financeValidation.js?v=42"></script>
+  <script src="controllers/financeController.js?v=42"></script>
 
   <!-- Core & Services Layer -->
-  <script src="core/config.js?v=41"></script>
-  <script src="core/router.js?v=41"></script>
-  <script src="services/authService.js?v=41"></script>
-  <script src="services/supabaseService.js?v=41"></script>
-  <script src="services/storageService.js?v=41"></script>
-  <script src="services/syncService.js?v=41"></script>
-  <script src="services/notificationService.js?v=41"></script>
-  <script src="services/validationService.js?v=41"></script>
-  <script src="services/budgetService.js?v=41"></script>
-  <script src="services/financeService.js?v=41"></script>
-  <script src="services/chartService.js?v=41"></script>
+  <script src="core/config.js?v=42"></script>
+  <script src="core/router.js?v=42"></script>
+  <script src="services/authService.js?v=42"></script>
+  <script src="services/supabaseService.js?v=42"></script>
+  <script src="services/storageService.js?v=42"></script>
+  <script src="services/syncService.js?v=42"></script>
+  <script src="services/notificationService.js?v=42"></script>
+  <script src="services/validationService.js?v=42"></script>
+  <script src="services/budgetService.js?v=42"></script>
+  <script src="services/financeService.js?v=42"></script>
+  <script src="services/chartService.js?v=42"></script>
 
   <!-- Script Modules -->
-  <script src="js/app.js?v=41"></script>
-  <script src="js/user.js?v=41"></script>
-  <script src="js/productivity.js?v=41"></script>
-  <script src="js/notes.js?v=41"></script>
-  <script src="js/finance.js?v=41"></script>
-  <script src="js/health.js?v=41"></script>
-  <script src="js/medicine.js?v=41"></script>
-  <script src="js/habits.js?v=41"></script>
-  <script src="js/personal.js?v=41"></script>
-  <script src="js/lifestyle.js?v=41"></script>
-  <script src="js/ai.js?v=41"></script>
-  <script src="js/analytics.js?v=41"></script>
+  <script src="js/app.js?v=42"></script>
+  <script src="js/user.js?v=42"></script>
+  <script src="js/productivity.js?v=42"></script>
+  <script src="js/notes.js?v=42"></script>
+  <script src="js/finance.js?v=42"></script>
+  <script src="js/health.js?v=42"></script>
+  <script src="js/medicine.js?v=42"></script>
+  <script src="js/habits.js?v=42"></script>
+  <script src="js/personal.js?v=42"></script>
+  <script src="js/lifestyle.js?v=42"></script>
+  <script src="js/ai.js?v=42"></script>
+  <script src="js/analytics.js?v=42"></script>
   <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
